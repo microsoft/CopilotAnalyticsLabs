@@ -2,16 +2,14 @@ import { useEffect, useMemo, useState } from "react";
 import { makeStyles, mergeClasses, shorthands } from "@fluentui/react-components";
 import {
   ArrowDownload16Regular,
-  ArrowRight16Regular,
   Beaker24Regular,
   BookOpenGlobe24Regular,
   ChevronDown16Regular,
   Code24Regular,
   DocumentBulletList24Regular,
   Eye16Regular,
-  Mail24Regular,
-  Sparkle24Regular,
   Star16Filled,
+  ChatBubblesQuestion24Regular,
 } from "@fluentui/react-icons";
 import { research, resources, templates } from "./data";
 
@@ -246,7 +244,7 @@ const useStyles = makeStyles({
   },
   heroRibbon: {
     position: "absolute",
-    right: "-80px",
+    left: "-80px",
     bottom: "-24px",
     width: "640px",
     height: "360px",
@@ -254,10 +252,10 @@ const useStyles = makeStyles({
     pointerEvents: "none",
     background:
       "radial-gradient(circle at 38% 58%, rgba(255,255,255,0) 24%, rgba(118,79,245,0.16) 25%, rgba(118,79,245,0.16) 26%, rgba(255,255,255,0) 27%), radial-gradient(circle at 48% 62%, rgba(255,255,255,0) 30%, rgba(63,108,233,0.16) 31%, rgba(63,108,233,0.16) 32%, rgba(255,255,255,0) 33%), radial-gradient(circle at 56% 68%, rgba(255,255,255,0) 36%, rgba(32,187,198,0.16) 37%, rgba(32,187,198,0.16) 38%, rgba(255,255,255,0) 39%), radial-gradient(circle at 72% 68%, rgba(255,255,255,0) 34%, rgba(255,170,204,0.16) 35%, rgba(255,170,204,0.16) 36%, rgba(255,255,255,0) 37%)",
-    transform: "rotate(-10deg)",
+    transform: "rotate(10deg) scaleX(-1)",
     '@media (max-width: 1200px)': {
       width: "480px",
-      right: "-120px",
+      left: "-120px",
     },
     '@media (max-width: 600px)': {
       display: "none",
@@ -300,9 +298,11 @@ const useStyles = makeStyles({
     fontWeight: 600,
     letterSpacing: "-0.02em",
     color: "#0E1726",
+    whiteSpace: "nowrap",
     '@media (max-width: 600px)': {
       fontSize: "32px",
       lineHeight: "40px",
+      whiteSpace: "normal",
     },
   },
   heroSubtitle: {
@@ -311,6 +311,10 @@ const useStyles = makeStyles({
     fontSize: "16px",
     lineHeight: "22px",
     color: "#424242",
+    whiteSpace: "nowrap",
+    '@media (max-width: 600px)': {
+      whiteSpace: "normal",
+    },
   },
   valuesShell: {
     width: "100%",
@@ -366,12 +370,20 @@ const useStyles = makeStyles({
     lineHeight: "24px",
     fontWeight: 600,
     color: "#000000",
+    whiteSpace: "nowrap",
+    '@media (max-width: 1024px)': {
+      whiteSpace: "normal",
+    },
   },
   valueDescription: {
     margin: 0,
     fontSize: "12px",
     lineHeight: "16px",
     color: "#616161",
+    display: "-webkit-box",
+    WebkitLineClamp: "2",
+    WebkitBoxOrient: "vertical",
+    overflow: "hidden",
   },
   primaryButton: {
     display: "inline-flex",
@@ -387,6 +399,7 @@ const useStyles = makeStyles({
     textDecorationLine: "none",
     ...shorthands.padding("6px", "12px"),
     ...shorthands.borderRadius("4px"),
+    ...shorthands.borderStyle("none"),
     ':hover': {
       backgroundColor: "#294DAE",
     },
@@ -413,15 +426,14 @@ const useStyles = makeStyles({
     position: "sticky",
     top: "48px",
     zIndex: 90,
-    backgroundColor: "#ffffff",
-    boxShadow: "0 0 2px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.14)",
+    background: "linear-gradient(90deg, rgba(240,231,255,0.6) 0%, rgba(255,255,255,0.95) 40%, rgba(228,243,255,0.6) 100%)",
+    boxShadow: "0 2px 4px rgba(0,0,0,0.08)",
     '@media (max-width: 600px)': {
       top: "96px",
     },
   },
   tabsRail: {
-    height: "1px",
-    background: "linear-gradient(137deg, rgba(118,79,245,0.25) 13%, rgba(63,108,233,0.2) 43%, rgba(32,187,198,0.2) 100%)",
+    display: "none",
   },
   tabsList: {
     display: "flex",
@@ -683,6 +695,7 @@ const useStyles = makeStyles({
   codeGrid: {
     display: "grid",
     gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+    gridAutoRows: "1fr",
     gap: "20px",
     '@media (max-width: 600px)': {
       gridTemplateColumns: "1fr",
@@ -695,7 +708,7 @@ const useStyles = makeStyles({
     backgroundColor: "#ffffff",
     boxShadow: "0 0 2px rgba(0,0,0,0.12), 0 4px 16px rgba(0,0,0,0.08)",
     ...shorthands.borderRadius("16px"),
-    ...shorthands.padding("24px"),
+    ...shorthands.padding("28px"),
     boxSizing: "border-box",
     '@media (max-width: 600px)': {
       flexDirection: "column",
@@ -703,15 +716,11 @@ const useStyles = makeStyles({
     },
   },
   codeCardFeatured: {
-    gridRow: "span 2",
-    height: "auto",
-    minHeight: "unset",
     flexDirection: "column",
     alignItems: "flex-start",
-    ...shorthands.padding("24px"),
+    ...shorthands.padding("28px"),
     gap: "16px",
     '@media (max-width: 600px)': {
-      gridRow: "span 1",
       height: "auto",
     },
   },
@@ -755,6 +764,7 @@ const useStyles = makeStyles({
   researchGrid: {
     display: "grid",
     gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
+    gridAutoRows: "1fr",
     gap: "24px",
     '@media (max-width: 900px)': {
       gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
@@ -771,7 +781,7 @@ const useStyles = makeStyles({
     backgroundColor: "#ffffff",
     boxShadow: "0 0 2px rgba(0,0,0,0.12), 0 4px 16px rgba(0,0,0,0.06)",
     ...shorthands.borderRadius("16px"),
-    ...shorthands.padding("16px"),
+    ...shorthands.padding("24px"),
     textDecorationLine: "none",
   },
   researchTitle: {
@@ -877,15 +887,17 @@ const useStyles = makeStyles({
 
 function MicrosoftLogoWordmark() {
   return (
-    <svg width="78" height="16" viewBox="0 0 78 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Microsoft">
-      <rect x="0" y="0" width="7" height="7" fill="#F25022" />
-      <rect x="8.5" y="0" width="7" height="7" fill="#7FBA00" />
-      <rect x="0" y="8.5" width="7" height="7" fill="#00A4EF" />
-      <rect x="8.5" y="8.5" width="7" height="7" fill="#FFB900" />
-      <text x="21" y="11.5" fill="#5E5E5E" fontFamily="Segoe UI, Arial, sans-serif" fontSize="11">
+    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <rect x="0" y="0" width="7.3" height="7.3" fill="#F25022" />
+        <rect x="8.7" y="0" width="7.3" height="7.3" fill="#7FBA00" />
+        <rect x="0" y="8.7" width="7.3" height="7.3" fill="#00A4EF" />
+        <rect x="8.7" y="8.7" width="7.3" height="7.3" fill="#FFB900" />
+      </svg>
+      <span style={{ fontSize: "14px", fontWeight: 600, color: "#424242", fontFamily: '"Segoe UI", "Segoe UI Web (West European)", system-ui, sans-serif', whiteSpace: "nowrap" }}>
         Microsoft
-      </text>
-    </svg>
+      </span>
+    </div>
   );
 }
 
@@ -962,7 +974,11 @@ function App() {
 
         <div className={styles.navLinks}>
           <a className={styles.navLink} href={VIVA_INSIGHTS_URL} target="_blank" rel="noreferrer">
-            <Sparkle24Regular fontSize={16} />
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M8 1C4.13 1 1 4.13 1 8s3.13 7 7 7 7-3.13 7-7-3.13-7-7-7zm0 12.6c-3.09 0-5.6-2.51-5.6-5.6S4.91 2.4 8 2.4s5.6 2.51 5.6 5.6-2.51 5.6-5.6 5.6z" fill="#0078D4"/>
+              <path d="M8 4a4 4 0 100 8 4 4 0 000-8zm0 6.4A2.4 2.4 0 118 5.6a2.4 2.4 0 010 4.8z" fill="#0078D4"/>
+              <circle cx="8" cy="8" r="1.5" fill="#0078D4"/>
+            </svg>
             <span>Viva Insights</span>
           </a>
           <a className={styles.navLink} href={WHATS_COMING_URL} target="_blank" rel="noreferrer">
@@ -973,7 +989,7 @@ function App() {
             href="mailto:copilot@microsoft.com?subject=Copilot%20Analytics%20Labs%20feedback"
             aria-label="Send feedback"
           >
-            <Mail24Regular fontSize={16} />
+            <ChatBubblesQuestion24Regular fontSize={16} />
           </a>
         </div>
       </nav>
@@ -1106,9 +1122,8 @@ function App() {
                       ) : null}
 
                       <div>
-                        <a className={isFeatured ? styles.primaryButton : styles.secondaryButton} href={item.url} target="_blank" rel="noreferrer">
+                        <a className={styles.secondaryButton} href={item.url} target="_blank" rel="noreferrer">
                           View template
-                          {isFeatured && <ArrowRight16Regular fontSize={14} />}
                         </a>
                       </div>
                     </div>
@@ -1181,9 +1196,8 @@ function App() {
                     </div>
 
                     <div>
-                      <a className={isFeatured ? styles.primaryButton : styles.secondaryButton} href={item.url} target="_blank" rel="noreferrer">
+                      <a className={styles.secondaryButton} href={item.url} target="_blank" rel="noreferrer">
                         View code
-                        {isFeatured && <ArrowRight16Regular fontSize={14} />}
                       </a>
                     </div>
                   </div>
@@ -1208,7 +1222,7 @@ function App() {
 
           <div className={styles.researchGrid}>
             {orderedResearch.map((item) => (
-              <a key={item.id} className={styles.researchCard} href={item.url} target="_blank" rel="noreferrer">
+              <article key={item.id} className={styles.researchCard}>
                 <div className={styles.badgeRow}>
                   {(researchTags[item.id] ?? []).map((tag) => (
                     <span
@@ -1229,11 +1243,14 @@ function App() {
                     </span>
                   ))}
                 </div>
-                <div className={styles.templateCardContent}>
+                <div className={styles.templateCardContent} style={{ flex: 1 }}>
                   <h3 className={styles.researchTitle}>{item.title}</h3>
                   <p className={styles.researchDescription}>{item.description}</p>
                 </div>
-              </a>
+                <a href={item.url} target="_blank" rel="noreferrer" style={{ color: "#335CCC", fontSize: "14px", fontWeight: 600, textDecoration: "none", marginTop: "auto" }}>
+                  View report
+                </a>
+              </article>
             ))}
           </div>
         </div>
