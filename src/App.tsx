@@ -703,10 +703,11 @@ const useStyles = makeStyles({
   codeGrid: {
     display: "grid",
     gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
-    gridAutoRows: "1fr",
+    gridTemplateRows: "1fr 1fr 1fr",
     gap: "20px",
     '@media (max-width: 600px)': {
       gridTemplateColumns: "1fr",
+      gridTemplateRows: "auto",
     },
   },
   codeCard: {
