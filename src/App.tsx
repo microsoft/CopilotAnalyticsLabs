@@ -974,10 +974,20 @@ function App() {
 
         <div className={styles.navLinks}>
           <a className={styles.navLink} href={VIVA_INSIGHTS_URL} target="_blank" rel="noreferrer">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-              <path d="M8 1C4.13 1 1 4.13 1 8s3.13 7 7 7 7-3.13 7-7-3.13-7-7-7zm0 12.6c-3.09 0-5.6-2.51-5.6-5.6S4.91 2.4 8 2.4s5.6 2.51 5.6 5.6-2.51 5.6-5.6 5.6z" fill="#0078D4"/>
-              <path d="M8 4a4 4 0 100 8 4 4 0 000-8zm0 6.4A2.4 2.4 0 118 5.6a2.4 2.4 0 010 4.8z" fill="#0078D4"/>
-              <circle cx="8" cy="8" r="1.5" fill="#0078D4"/>
+            <svg width="16" height="16" viewBox="0 0 96 96" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <defs>
+                <linearGradient id="vivaInsightsGrad1" x1="10%" y1="0%" x2="90%" y2="100%">
+                  <stop offset="0%" stopColor="#18A797"/>
+                  <stop offset="100%" stopColor="#0E7A6B"/>
+                </linearGradient>
+                <linearGradient id="vivaInsightsGrad2" x1="30%" y1="0%" x2="70%" y2="100%">
+                  <stop offset="0%" stopColor="#5EC6B8"/>
+                  <stop offset="100%" stopColor="#18A797"/>
+                </linearGradient>
+              </defs>
+              <path d="M48 4C26.4 4 8.8 18.4 4.8 38c-1.6 7.6-0.8 15.6 2 23.2 4 10.4 12.4 19.2 22.8 24 5.6 2.4 11.6 4 17.6 4.4 0.4 0 0.8 0 1.2 0 6.4 0 12.8-1.6 18.4-4.4 10-5.2 18-13.6 22-24 2.8-7.2 3.6-15.2 2.4-22.8C87.6 18.8 70 4 48 4z" fill="url(#vivaInsightsGrad1)"/>
+              <path d="M48 20c-12 0-22 7.2-26.4 17.6-1.6 4-2 8.4-1.2 12.8 1.2 6 4.8 11.2 10 14.8 3.6 2.4 7.6 3.6 12 4h1.2c4 0 8-1.2 11.6-3.2 5.6-3.6 9.6-9.2 10.8-15.6 0.8-4 0.4-8.4-1.2-12.4C60.4 27.6 54.8 22.4 48 20z" fill="url(#vivaInsightsGrad2)"/>
+              <circle cx="48" cy="48" r="10" fill="#ffffff"/>
             </svg>
             <span>Viva Insights</span>
           </a>
