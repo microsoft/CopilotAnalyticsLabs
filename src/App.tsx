@@ -22,15 +22,15 @@ const PRIVACY_URL = "https://privacy.microsoft.com/en-us/privacystatement";
 
 const sectionTabs = [
   { id: "templates", label: "Templates" },
-  { id: "sample-code", label: "Sample codes" },
+  { id: "sample-code", label: "Sample Code" },
   { id: "research", label: "Research" },
 ] as const;
 
 const heroValues = [
   {
-    title: "Pick a template, ship a dashboard",
+    title: "Pick a template, build a dashboard",
     description:
-      "Templates with setup steps and data connectors. Go from browsing to dashboard quickly.",
+      "Templates with setup flows and data connectors - go from discovery to a working dashboard quickly.",
     Icon: DataTrending24Regular,
     accent: "linear-gradient(135deg, #FFE1B8 0%, #FFD5E6 100%)",
     color: "#C85A1A",
@@ -38,15 +38,15 @@ const heroValues = [
   {
     title: "Real code, run on your data",
     description:
-      "Executable sample code, prompt libraries, and toolkit. Run against your own data. Today.",
+      "Sample code, prompt libraries and toolkit - ready to run on your environment and data.",
     Icon: PersonBoard24Regular,
     accent: "linear-gradient(135deg, #E1E8FF 0%, #F2E5FF 100%)",
     color: "#5E4BD8",
   },
   {
-    title: "Research playbooks, proven in field",
+    title: "Proven playbooks, from real deployments",
     description:
-      "Adoption playbooks and research from real enterprise rollouts, build on what works.",
+      "Adoption playbooks and research grounded in enterprise rollouts - build on patterns that work.",
     Icon: DataBarVerticalAscending24Regular,
     accent: "linear-gradient(135deg, #E8F7E5 0%, #DFF5FF 100%)",
     color: "#2B7A56",
@@ -73,7 +73,7 @@ const templateMeta: Record<
 > = {
   "aio-dashboard": {
     featured: true,
-    badges: [{ text: "Featured in Labs", tone: "green" }],
+    badges: [{ text: "Featured for Viva Insights Analysis - Essentials", tone: "green" }],
     stats: [
       { value: "—", label: "Stars" },
       { value: "—", label: "Downloads" },
@@ -95,7 +95,7 @@ const resourceMeta: Record<
   "viva-insights-essentials": {
     featured: true,
     badges: [
-      { text: "Featured in Labs", tone: "green" },
+      { text: "Featured for Viva Insights Analysis - Essentials", tone: "green" },
       { text: "Starter kit", tone: "blue" },
     ],
     accent: "linear-gradient(135deg, #FFF2D8 0%, #EAE6FF 100%)",
@@ -444,9 +444,13 @@ const useStyles = makeStyles({
     display: "flex",
     alignItems: "center",
     gap: "16px",
-    ...shorthands.padding("4px", "256px", "0"),
+    maxWidth: "928px",
+    marginLeft: "auto",
+    marginRight: "auto",
+    ...shorthands.padding("4px", "0", "0"),
     '@media (max-width: 1200px)': {
       ...shorthands.padding("4px", "80px", "0"),
+      maxWidth: "100%",
     },
     '@media (max-width: 600px)': {
       ...shorthands.padding("4px", "16px", "0"),
@@ -464,6 +468,7 @@ const useStyles = makeStyles({
     color: "#424242",
     fontSize: "14px",
     lineHeight: "20px",
+    fontFamily: '"Segoe UI", "Segoe UI Web (West European)", system-ui, sans-serif',
     ...shorthands.padding("12px", "10px"),
     ...shorthands.borderStyle("none"),
     cursor: "pointer",
@@ -1069,9 +1074,9 @@ function App() {
         <div className={styles.heroRibbon} />
         <div className={styles.heroContent}>
           <div className={styles.heroHeader}>
-            <h1 className={styles.heroTitle}>Build what's next in analytics</h1>
+            <h1 className={styles.heroTitle}>Frontier analytics for Copilot and agents</h1>
             <p className={styles.heroSubtitle}>
-              Guided templates, sample code, and playbooks to build Copilot and AI analytics that go beyond what's available in Viva today.
+              Guided templates, sample code, and playbooks grounded in real customer deployments - helping you design and deploy analytics beyond what's available in Viva Insights today.
             </p>
           </div>
 
@@ -1121,10 +1126,10 @@ function App() {
           <div className={styles.sectionTitleArea}>
             <p className={styles.eyebrow}>Template library</p>
             <div className={styles.sectionHeadingRow}>
-              <h2 className={styles.sectionHeading}>Pick a template, start building</h2>
+              <h2 className={styles.sectionHeading}>Pick a template, build a dashboard</h2>
             </div>
             <p className={styles.sectionDescription}>
-              Step-by-step templates to build dashboards across adoption, usage, impact, and business value, using data sources beyond Viva.
+              Templates with setup flows and data connectors - go from discovery to a working dashboard quickly.
             </p>
           </div>
 
@@ -1222,7 +1227,7 @@ function App() {
               <h2 className={styles.sectionHeading}>Grab the code, make it yours</h2>
             </div>
             <p className={styles.sectionDescription}>
-              Runnable scripts, prompt libraries, and analytical methods in Python, R, and Power BI, adapt them to your org's data.
+              Production-ready templates for dashboards across adoption, usage, impact, and business value, combining Viva Insights with broader organizational signals.
             </p>
           </div>
 
@@ -1287,7 +1292,7 @@ function App() {
               <h2 className={styles.sectionHeading}>Strategies already in play</h2>
             </div>
             <p className={styles.sectionDescription}>
-              Adoption playbooks, methodology guides, and research from real enterprise rollouts, so you don't start from scratch.
+              Adoption playbooks, analytical methods, and deployment research inspired by real enterprise Copilot rollouts.
             </p>
           </div>
 
