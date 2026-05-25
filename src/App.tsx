@@ -73,7 +73,7 @@ const templateMeta: Record<
 > = {
   "aio-dashboard": {
     featured: true,
-    badges: [{ text: "Featured for Viva Insights Analysis - Essentials", tone: "green" }],
+    badges: [{ text: "Featured", tone: "green" }],
     stats: [
       { value: "—", label: "Stars" },
       { value: "—", label: "Downloads" },
@@ -95,7 +95,7 @@ const resourceMeta: Record<
   "viva-insights-essentials": {
     featured: true,
     badges: [
-      { text: "Featured for Viva Insights Analysis - Essentials", tone: "green" },
+      { text: "Featured", tone: "green" },
       { text: "Starter kit", tone: "blue" },
     ],
     accent: "linear-gradient(135deg, #FFF2D8 0%, #EAE6FF 100%)",
@@ -307,7 +307,6 @@ const useStyles = makeStyles({
     fontSize: "16px",
     lineHeight: "22px",
     color: "#424242",
-    whiteSpace: "nowrap",
     '@media (max-width: 600px)': {
       whiteSpace: "normal",
     },
@@ -386,7 +385,7 @@ const useStyles = makeStyles({
     lineHeight: "16px",
     color: "#616161",
     display: "-webkit-box",
-    WebkitLineClamp: "2",
+    WebkitLineClamp: "3",
     WebkitBoxOrient: "vertical",
     overflow: "hidden",
   },
@@ -1129,7 +1128,7 @@ function App() {
               <h2 className={styles.sectionHeading}>Pick a template, build a dashboard</h2>
             </div>
             <p className={styles.sectionDescription}>
-              Templates with setup flows and data connectors - go from discovery to a working dashboard quickly.
+              Production-ready templates for dashboards across adoption, usage, impact, and business value, combining Viva Insights with broader organizational signals.
             </p>
           </div>
 
@@ -1227,7 +1226,7 @@ function App() {
               <h2 className={styles.sectionHeading}>Grab the code, make it yours</h2>
             </div>
             <p className={styles.sectionDescription}>
-              Production-ready templates for dashboards across adoption, usage, impact, and business value, combining Viva Insights with broader organizational signals.
+              Reusable scripts, prompt libraries, and analytical methods for Python, R, and Power BI - adaptable to your organization's data.
             </p>
           </div>
 
