@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://swadas1989.github.io/CopilotAnalyticsLabs/sitemap.xml
+Sitemap: https://microsoft.github.io/CopilotAnalyticsLabs/sitemap.xml
