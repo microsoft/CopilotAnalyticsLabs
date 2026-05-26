@@ -40,10 +40,10 @@ const base = import.meta.env.BASE_URL;
 export const templates: TemplateItem[] = [
   {
     id: "aio-dashboard",
-    title: "All in One Dashboard",
+    title: "AI in One Dashboard",
     description:
       "Comprehensive Copilot and Agent analytics covering adoption, usage, impact, and ROI — all in a single Power BI dashboard.",
-    url: "https://github.com/microsoft/AI-in-One-Dashboard",
+    url: "https://github.com/microsoft/AI-in-One-Dashboard#-dashboard-preview",
     icon: BoardSplit24Regular,
     image: `${base}images/card-aio-featured.png`,
   },
@@ -52,7 +52,7 @@ export const templates: TemplateItem[] = [
     title: "GitHub Copilot Impact Report (Org Level)",
     description:
       "Org-wide GitHub Copilot usage and productivity impact analysis with seat utilization and code completion metrics.",
-    url: "https://github.com/microsoft/GitHubCopilotImpact",
+    url: "https://github.com/microsoft/GitHubCopilotImpact#-github-copilot-impact",
     icon: DataTrending24Regular,
     image: `${base}images/card-github-copilot-org.png`,
   },
@@ -61,7 +61,7 @@ export const templates: TemplateItem[] = [
     title: "AI Business Value Dashboard",
     description:
       "Quantify business value of AI adoption across your organization with executive-ready visualizations.",
-    url: "https://github.com/Keithland89/AI-Business-Value-Dashboard",
+    url: "https://github.com/Keithland89/AI-Business-Value-Dashboard#-ai-business-value-dashboard",
     icon: Sparkle24Regular,
     image: `${base}images/card-ai-business-value.png`,
   },
@@ -70,7 +70,7 @@ export const templates: TemplateItem[] = [
     title: "GitHub Copilot Impact (Personal)",
     description:
       "Your personal impact report — what you built, the skills augmented, and the ROI delivered with GitHub Copilot.",
-    url: "https://github.com/microsoft/What-I-Did-Copilot",
+    url: "https://github.com/microsoft/What-I-Did-Copilot#what-i-did--github-copilot-impact-report",
     icon: PersonBoard24Regular,
     image: `${base}images/card-github-copilot-personal.png`,
   },
@@ -79,7 +79,7 @@ export const templates: TemplateItem[] = [
     title: "Microsoft 365 Copilot Personal Insights",
     description:
       "Personal adoption and engagement dashboard tracking your Microsoft 365 Copilot usage journey and productivity gains.",
-    url: "https://github.com/sbrandl1005/copilot-personal-dashboard",
+    url: "https://github.com/sbrandl1005/copilot-personal-dashboard#whats-in-this-report",
     icon: PersonBoard24Regular,
     image: `${base}images/card-m365-copilot-personal.png`,
   },
@@ -88,7 +88,7 @@ export const templates: TemplateItem[] = [
     title: "Microsoft 365 App Usage Analytics",
     description:
       "Microsoft 365 app usage analytics and Copilot license recommendations across your tenant.",
-    url: "https://github.com/microsoft/M365UsageAnalytics",
+    url: "https://github.com/microsoft/M365UsageAnalytics#m365-usage-dashboard",
     icon: AppGeneric24Regular,
     image: `${base}images/card-m365-app-usage.png`,
   },
@@ -97,7 +97,7 @@ export const templates: TemplateItem[] = [
     title: "SuperUser Impact Report",
     description:
       "Analyze the work and productivity impact of superusers across your organization with detailed pattern analysis.",
-    url: "https://github.com/microsoft/superuserimpact",
+    url: "https://github.com/microsoft/superuserimpact#superuser-impact-report",
     icon: PeopleStar24Regular,
     image: `${base}images/card-superuser-impact.png`,
   },

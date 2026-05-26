@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { makeStyles, mergeClasses, shorthands } from "@fluentui/react-components";
 import {
-  ArrowDownload16Regular,
   ChevronDown16Regular,
   DataBarVerticalAscending24Regular,
   DataTrending24Regular,
@@ -77,7 +76,6 @@ const templateMeta: Record<
     badges: [{ text: "Featured", tone: "green" }],
     stats: [
       { value: "—", label: "Stars" },
-      { value: "—", label: "Downloads" },
       { value: "—", label: "Watching" },
     ],
   },
@@ -1238,7 +1236,6 @@ function App() {
                               let value = stat.value;
                               if (item.id === "aio-dashboard") {
                                 if (stat.label === "Stars") value = ghStats.stars;
-                                else if (stat.label === "Downloads") value = ghStats.forks;
                                 else if (stat.label === "Watching") value = ghStats.watchers;
                               }
                               return (
@@ -1246,7 +1243,6 @@ function App() {
                                   <span className={styles.statValue}>
                                     {stat.label === "Stars" && <Star16Filled fontSize={14} style={{ color: "#EAA300", marginRight: 4 }} />}
                                     {stat.label === "Watching" && <Eye16Regular fontSize={14} style={{ marginRight: 4 }} />}
-                                    {stat.label === "Downloads" && <ArrowDownload16Regular fontSize={14} style={{ marginRight: 4 }} />}
                                     {value}
                                   </span>
                                   <span className={styles.statLabel}>{stat.label}</span>
