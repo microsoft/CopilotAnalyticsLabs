@@ -4,10 +4,12 @@ import {
   ChevronDown16Regular,
   DataBarVerticalAscending24Regular,
   DataTrending24Regular,
+  Dismiss24Regular,
   DocumentBulletList24Regular,
   Eye16Regular,
   PersonBoard24Regular,
   PersonFeedback20Regular,
+  Sparkle24Regular,
   Star16Filled,
 } from "@fluentui/react-icons";
 import { research, resources, templates } from "./data";
@@ -24,6 +26,7 @@ const sectionTabs = [
   { id: "templates", label: "Templates" },
   { id: "sample-code", label: "Sample Code" },
   { id: "research", label: "Research" },
+  { id: "product-roadmap", label: "Product Roadmap" },
 ] as const;
 
 const heroValues = [
@@ -50,6 +53,14 @@ const heroValues = [
     Icon: DataBarVerticalAscending24Regular,
     accent: "linear-gradient(135deg, #E8F7E5 0%, #DFF5FF 100%)",
     color: "#2B7A56",
+  },
+  {
+    title: "See what's coming next",
+    description:
+      "Product roadmap with upcoming capabilities — agent analytics, ROI measurement, and foundational trust.",
+    Icon: Sparkle24Regular,
+    accent: "linear-gradient(135deg, #E1F5FE 0%, #F3E5F5 100%)",
+    color: "#6A1B9A",
   },
 ];
 
@@ -148,6 +159,67 @@ const researchTags: Record<string, { text: string; tone: string }[]> = {
     { text: "Advanced", tone: "slate" },
   ],
 };
+
+interface RoadmapItem {
+  id: string;
+  title: string;
+  description: string;
+  icon: React.ComponentType;
+  details?: string[];
+}
+
+const roadmapItems: RoadmapItem[] = [
+  {
+    id: "agent-analytics",
+    title: "Agent Analytics",
+    description:
+      "Comprehensive analytics for AI agents — dashboards, metrics, lifecycle management, and augmented capacity insights.",
+    icon: DataTrending24Regular,
+    details: [
+      "Agent 365 Dashboard",
+      "Agent metrics in advanced reporting",
+      "Lifecycle, sharing & promotion",
+      "Augmented capacity & AI teammates",
+    ],
+  },
+  {
+    id: "value-and-roi",
+    title: "Value and ROI",
+    description:
+      "Quantify and communicate the business value and return on investment of AI across your organization.",
+    icon: DataBarVerticalAscending24Regular,
+    details: [
+      "Copilot credits & consumption metrics",
+      "Task & intent analytics",
+      "Inferred satisfaction & impact",
+      "Deeper Cowork & Work IQ measurement",
+    ],
+  },
+  {
+    id: "insights-agent",
+    title: "Insights Agent",
+    description:
+      "AI-powered agent that surfaces proactive insights and recommendations from your analytics data.",
+    icon: Sparkle24Regular,
+    details: [
+      "Insights Agent — General Availability",
+      "Intelligent summaries",
+      "Build-your-own custom dashboards",
+    ],
+  },
+  {
+    id: "trust-access-foundation",
+    title: "Trust, Access and Foundation",
+    description:
+      "Foundational capabilities for security, governance, access control, and trust across the analytics platform.",
+    icon: DocumentBulletList24Regular,
+    details: [
+      "Identified user-level export",
+      "Programmatic export via Fabric",
+      "Scoped CDB/ADB partitions, flexible time ranges, tenant metric customization and GM/CXO access fixes",
+    ],
+  },
+];
 
 const useStyles = makeStyles({
   page: {
@@ -349,8 +421,11 @@ const useStyles = makeStyles({
   valuesGrid: {
     width: "100%",
     display: "grid",
-    gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
+    gridTemplateColumns: "repeat(4, minmax(0, 1fr))",
     gap: "24px",
+    '@media (max-width: 900px)': {
+      gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+    },
     '@media (max-width: 600px)': {
       gridTemplateColumns: "1fr",
       gap: "20px",
@@ -383,10 +458,7 @@ const useStyles = makeStyles({
     lineHeight: "24px",
     fontWeight: 600,
     color: "#000000",
-    whiteSpace: "nowrap",
-    '@media (max-width: 1024px)': {
-      whiteSpace: "normal",
-    },
+    whiteSpace: "normal",
     '@media (max-width: 600px)': {
       fontSize: "14px",
       lineHeight: "20px",
@@ -902,6 +974,140 @@ const useStyles = makeStyles({
     color: "#5E6A7B",
     backgroundColor: "#EFF2F6",
   },
+  sectionRoadmapBg: {
+    background:
+      "linear-gradient(113deg, rgba(228,243,255,0.7) 0%, rgba(255,255,255,1) 40%, rgba(240,231,255,0.9) 100%)",
+  },
+  roadmapGrid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+    gridAutoRows: "1fr",
+    gap: "16px",
+    '@media (max-width: 600px)': {
+      gridTemplateColumns: "1fr",
+    },
+  },
+  roadmapCard: {
+    minHeight: "146px",
+    display: "flex",
+    flexDirection: "column",
+    gap: "16px",
+    backgroundColor: "#ffffff",
+    boxShadow: "0 0 2px rgba(0,0,0,0.12), 0 4px 16px rgba(0,0,0,0.06)",
+    ...shorthands.borderRadius("16px"),
+    ...shorthands.padding("20px", "16px", "16px", "20px"),
+    textDecorationLine: "none",
+    cursor: "pointer",
+    transitionProperty: "box-shadow, transform",
+    transitionDuration: "0.2s",
+    ':hover': {
+      boxShadow: "0 0 2px rgba(0,0,0,0.16), 0 8px 24px rgba(0,0,0,0.10)",
+      transform: "translateY(-2px)",
+    },
+    '@media (max-width: 600px)': {
+      minHeight: "auto",
+      ...shorthands.padding("16px"),
+      gap: "12px",
+    },
+  },
+  roadmapCardIcon: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    width: "40px",
+    height: "40px",
+    ...shorthands.borderRadius("10px"),
+    backgroundColor: "#F0EBFF",
+    color: "#5E4BD8",
+  },
+  roadmapTitle: {
+    margin: 0,
+    fontSize: "16px",
+    lineHeight: "24px",
+    fontWeight: 600,
+    color: "#000000",
+  },
+  roadmapDescription: {
+    margin: 0,
+    fontSize: "14px",
+    lineHeight: "18px",
+    color: "#424242",
+  },
+  roadmapLinks: {
+    display: "flex",
+    gap: "24px",
+    flexWrap: "wrap",
+    justifyContent: "center",
+  },
+  roadmapLink: {
+    color: "#335CCC",
+    fontSize: "14px",
+    lineHeight: "20px",
+    fontWeight: 500,
+    textDecorationLine: "none",
+    ':hover': {
+      textDecorationLine: "underline",
+    },
+  },
+  roadmapDetailOverlay: {
+    position: "fixed",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0, 0, 0, 0.4)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 1000,
+  },
+  roadmapDetailPanel: {
+    backgroundColor: "#ffffff",
+    ...shorthands.borderRadius("16px"),
+    ...shorthands.padding("32px"),
+    maxWidth: "480px",
+    width: "90%",
+    boxShadow: "0 8px 32px rgba(0,0,0,0.16)",
+    position: "relative",
+  },
+  roadmapDetailClose: {
+    position: "absolute",
+    top: "16px",
+    right: "16px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    width: "32px",
+    height: "32px",
+    ...shorthands.borderRadius("8px"),
+    backgroundColor: "transparent",
+    ...shorthands.border("none"),
+    cursor: "pointer",
+    color: "#424242",
+    ':hover': {
+      backgroundColor: "#F5F5F5",
+    },
+  },
+  roadmapDetailTitle: {
+    margin: 0,
+    fontSize: "20px",
+    lineHeight: "28px",
+    fontWeight: 600,
+    color: "#000000",
+    marginBottom: "16px",
+  },
+  roadmapDetailList: {
+    margin: 0,
+    ...shorthands.padding("0", "0", "0", "20px"),
+    display: "flex",
+    flexDirection: "column",
+    gap: "10px",
+  },
+  roadmapDetailListItem: {
+    fontSize: "14px",
+    lineHeight: "20px",
+    color: "#424242",
+  },
   footer: {
     backgroundColor: "#ffffff",
     boxShadow: "0 -1px 0 rgba(0,0,0,0.08)",
@@ -972,6 +1178,7 @@ function App() {
   const [activeTab, setActiveTab] = useState<(typeof sectionTabs)[number]["id"]>("templates");
   const [ghStats, setGhStats] = useState<{ stars: string; forks: string; watchers: string }>({ stars: "—", forks: "—", watchers: "—" });
   const [showContactDialog, setShowContactDialog] = useState(false);
+  const [selectedRoadmapItem, setSelectedRoadmapItem] = useState<RoadmapItem | null>(null);
 
   useEffect(() => {
     logPageView();
@@ -1387,6 +1594,73 @@ function App() {
           </div>
         </div>
       </section>
+
+      <section id="product-roadmap" className={mergeClasses(styles.section, styles.sectionRoadmapBg)}>
+        <div className={styles.sectionContent}>
+          <div className={styles.sectionTitleArea}>
+            <p className={styles.eyebrow}>Product roadmap</p>
+            <div className={styles.sectionHeadingRow}>
+              <h2 className={styles.sectionHeading}>What's next for Copilot Analytics</h2>
+            </div>
+            <p className={styles.sectionDescription}>
+              Upcoming capabilities and investments shaping the future of AI-powered analytics.
+            </p>
+          </div>
+
+          <div className={styles.roadmapGrid}>
+            {roadmapItems.map((item) => (
+              <article
+                key={item.id}
+                className={styles.roadmapCard}
+                onClick={() => item.details && setSelectedRoadmapItem(item)}
+                role={item.details ? "button" : undefined}
+                tabIndex={item.details ? 0 : undefined}
+                onKeyDown={(e) => {
+                  if (item.details && (e.key === "Enter" || e.key === " ")) {
+                    e.preventDefault();
+                    setSelectedRoadmapItem(item);
+                  }
+                }}
+              >
+                <div className={styles.roadmapCardIcon}>
+                  <item.icon />
+                </div>
+                <div className={styles.templateCardContent} style={{ flex: 1 }}>
+                  <h3 className={styles.roadmapTitle}>{item.title}</h3>
+                  <p className={styles.roadmapDescription}>{item.description}</p>
+                </div>
+              </article>
+            ))}
+          </div>
+
+          <div className={styles.roadmapLinks}>
+            <a className={styles.roadmapLink} href="https://www.microsoft.com/en-us/microsoft-365/roadmap?filters=Microsoft%20Viva" target="_blank" rel="noreferrer">
+              For detailed roadmap — click here ↗
+            </a>
+            <a className={styles.roadmapLink} href="https://forms.microsoft.com/Pages/ResponsePage.aspx?id=v4j5cvGGr0GRqy180BHbR0To00bktq1Ilw6hJ9BCmj5UODhQNTBPUkI2NUlRQU9VUzI0WkNPUTJSSi4u" target="_blank" rel="noreferrer">
+              Product roadmap feedback ↗
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {selectedRoadmapItem && (
+        <div className={styles.roadmapDetailOverlay} onClick={() => setSelectedRoadmapItem(null)}>
+          <div className={styles.roadmapDetailPanel} onClick={(e) => e.stopPropagation()}>
+            <button className={styles.roadmapDetailClose} onClick={() => setSelectedRoadmapItem(null)} aria-label="Close">
+              <Dismiss24Regular />
+            </button>
+            <h3 className={styles.roadmapDetailTitle}>{selectedRoadmapItem.title}</h3>
+            {selectedRoadmapItem.details && (
+              <ul className={styles.roadmapDetailList}>
+                {selectedRoadmapItem.details.map((detail) => (
+                  <li key={detail} className={styles.roadmapDetailListItem}>{detail}</li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </div>
+      )}
 
       <footer className={styles.footer}>
         <div className={styles.footerContent}>
