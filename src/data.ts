@@ -4,7 +4,6 @@ import {
   Sparkle24Regular,
   DocumentBulletList24Regular,
   PersonBoard24Regular,
-  AppGeneric24Regular,
   PeopleStar24Regular,
 } from "@fluentui/react-icons";
 
@@ -84,15 +83,6 @@ export const templates: TemplateItem[] = [
     image: `${base}images/card-m365-copilot-personal.png`,
   },
   {
-    id: "m365-app-usage",
-    title: "Microsoft 365 App Usage Analytics",
-    description:
-      "Microsoft 365 app usage analytics and Copilot license recommendations across your tenant.",
-    url: "https://github.com/microsoft/M365UsageAnalytics#m365-usage-dashboard",
-    icon: AppGeneric24Regular,
-    image: `${base}images/card-m365-app-usage.png`,
-  },
-  {
     id: "superuser-impact",
     title: "SuperUser Impact Report",
     description:
@@ -153,6 +143,15 @@ export const resources: ResourceItem[] = [
     icon: DocumentBulletList24Regular,
     category: "Code",
     image: `${base}images/code-network-analysis.png`,
+  },
+  {
+    id: "portable-audit-exporter",
+    title: "Portable Audit Exporter",
+    description:
+      "Export and analyze Microsoft 365 audit logs with a portable, ready-to-run toolkit for compliance and usage insights.",
+    url: "https://github.com/microsoft/pax",
+    icon: DocumentBulletList24Regular,
+    category: "Code",
   },
 ];
 

@@ -33,23 +33,23 @@ const heroValues = [
   {
     title: "Pick a template, build a dashboard",
     description:
-      "Templates with setup flows and data connectors - go from discovery to a working dashboard quickly.",
+      "Templates with guided setup and data connectors to help you go from discovery to a working dashboard quickly.",
     Icon: DataTrending24Regular,
     accent: "linear-gradient(135deg, #FFE1B8 0%, #FFD5E6 100%)",
     color: "#C85A1A",
   },
   {
-    title: "Real code, run on your data",
+    title: "Real code, ready for your data",
     description:
-      "Sample code, prompt libraries and toolkit - ready to run on your environment and data.",
+      "Sample code, prompt libraries, and a toolkit that are ready to run in your environment, with your data.",
     Icon: PersonBoard24Regular,
     accent: "linear-gradient(135deg, #E1E8FF 0%, #F2E5FF 100%)",
     color: "#5E4BD8",
   },
   {
-    title: "Proven playbooks, from real deployments",
+    title: "Proven playbooks, built on real deployments",
     description:
-      "Adoption playbooks and research grounded in enterprise rollouts - build on patterns that work.",
+      "Adoption playbooks and research based on enterprise rollouts, so you can build on proven patterns.",
     Icon: DataBarVerticalAscending24Regular,
     accent: "linear-gradient(135deg, #E8F7E5 0%, #DFF5FF 100%)",
     color: "#2B7A56",
@@ -70,7 +70,6 @@ const templateOrder = [
   "github-copilot-impact-org",
   "github-copilot-impact-personal",
   "m365-copilot-personal",
-  "m365-app-usage",
   "superuser-impact",
 ];
 
@@ -126,6 +125,10 @@ const resourceMeta: Record<
   "network-analysis": {
     accent: "linear-gradient(135deg, #FFF7DF 0%, #E8F5FF 100%)",
     color: "#2976A8",
+  },
+  "portable-audit-exporter": {
+    accent: "linear-gradient(135deg, #E8F5E9 0%, #E3F2FD 100%)",
+    color: "#2E7D32",
   },
 };
 
@@ -1341,7 +1344,7 @@ function App() {
           <div className={styles.heroHeader}>
             <h1 className={styles.heroTitle}>Frontier analytics for Copilot and agents</h1>
             <p className={styles.heroSubtitle}>
-              Guided templates, sample code, and playbooks grounded in real customer deployments - helping you design and deploy analytics beyond what's available in Viva Insights today.
+              Guided templates, sample code, and playbooks grounded in real customer deployments to help you design and deploy analytics beyond what's available in Viva Insights today.
             </p>
           </div>
 
@@ -1394,7 +1397,7 @@ function App() {
               <h2 className={styles.sectionHeading}>Pick a template, build a dashboard</h2>
             </div>
             <p className={styles.sectionDescription}>
-              Production-ready templates for dashboards across adoption, usage, impact, and business value, combining Viva Insights with broader organizational signals.
+              Production-ready dashboard templates for adoption, usage, impact, and business value that combine Viva Insights data with broader organizational signals.
             </p>
           </div>
 
@@ -1490,7 +1493,7 @@ function App() {
               <h2 className={styles.sectionHeading}>Grab the code, make it yours</h2>
             </div>
             <p className={styles.sectionDescription}>
-              Reusable scripts, prompt libraries, and analytical methods for Python, R, and Power BI - adaptable to your organization's data.
+              Reusable scripts, prompt libraries, and analytical methods for Python, R, and Power BI that you can adapt to your organization's data.
             </p>
           </div>
 
