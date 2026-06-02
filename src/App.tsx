@@ -1210,6 +1210,9 @@ function App() {
 
       {showContactDialog && (
         <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="contact-dialog-title"
           style={{
             position: "fixed",
             top: 0,
@@ -1223,8 +1226,39 @@ function App() {
             justifyContent: "center",
           }}
           onClick={() => setShowContactDialog(false)}
+          onKeyDown={(e) => {
+            if (e.key === "Escape") setShowContactDialog(false);
+            if (e.key === "Tab") {
+              const dialog = e.currentTarget.querySelector<HTMLElement>('[data-dialog-panel]');
+              if (!dialog) return;
+              const focusable = dialog.querySelectorAll<HTMLElement>(
+                'a[href], button, textarea, input, select, [tabindex]:not([tabindex="-1"])'
+              );
+              if (focusable.length === 0) return;
+              const first = focusable[0];
+              const last = focusable[focusable.length - 1];
+              if (e.shiftKey) {
+                if (document.activeElement === first) {
+                  e.preventDefault();
+                  last.focus();
+                }
+              } else {
+                if (document.activeElement === last) {
+                  e.preventDefault();
+                  first.focus();
+                }
+              }
+            }
+          }}
+          ref={(el) => {
+            if (el) {
+              const close = el.querySelector<HTMLElement>('[data-dialog-close]');
+              if (close) close.focus();
+            }
+          }}
         >
           <div
+            data-dialog-panel=""
             style={{
               backgroundColor: "#ffffff",
               borderRadius: "12px",
@@ -1238,7 +1272,7 @@ function App() {
             onClick={(e) => e.stopPropagation()}
           >
             <PersonFeedback20Regular style={{ fontSize: "32px", color: "#6264A7", marginBottom: "12px" }} />
-            <h3 style={{ margin: "0 0 12px", fontSize: "18px", fontWeight: 600, color: "#242424" }}>
+            <h3 id="contact-dialog-title" style={{ margin: "0 0 12px", fontSize: "18px", fontWeight: 600, color: "#242424" }}>
               Contact Us
             </h3>
             <p style={{ margin: "0 0 20px", fontSize: "14px", lineHeight: "20px", color: "#616161" }}>
@@ -1248,6 +1282,7 @@ function App() {
               </a>
             </p>
             <button
+              data-dialog-close=""
               onClick={() => setShowContactDialog(false)}
               style={{
                 padding: "8px 24px",
