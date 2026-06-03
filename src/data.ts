@@ -197,4 +197,12 @@ export const research: ResearchItem[] = [
     url: "https://adoption.microsoft.com/files/copilot/GettingStartedWithCustomAnalysisInCopilotAnalytics.pptx",
     icon: DocumentBulletList24Regular,
   },
+  {
+    id: "when-ai-met-the-meeting",
+    title: "When AI Met the Meeting",
+    description:
+      "An in-depth exploration of how AI is transforming meetings — from preparation and real-time assistance to post-meeting insights and action items.",
+    url: "https://microsoft.github.io/viva-insights-sample-code/articles/when-ai-met-the-meeting/",
+    icon: DocumentBulletList24Regular,
+  },
 ];

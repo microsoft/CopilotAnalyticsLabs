@@ -150,6 +150,10 @@ const researchTags: Record<string, { text: string; tone: string }[]> = {
     { text: "Impact", tone: "blue" },
     { text: "Advanced", tone: "slate" },
   ],
+  "when-ai-met-the-meeting": [
+    { text: "Research", tone: "teal" },
+    { text: "Org wide", tone: "purple" },
+  ],
 };
 
 
