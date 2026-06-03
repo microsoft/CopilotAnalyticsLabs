@@ -127,6 +127,7 @@ const researchOrder = [
   "work-trend-index-2026",
   "agent-assisted-hours",
   "copilot-advanced-analytics",
+  "when-ai-met-the-meeting",
 ];
 
 const researchTags: Record<string, { text: string; tone: string }[]> = {
