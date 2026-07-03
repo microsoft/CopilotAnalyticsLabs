@@ -58,21 +58,21 @@ export const templates: TemplateItem[] = [
     image: `${base}images/card-github-copilot-org.png`,
   },
   {
+    id: "cowork-value-estimator",
+    title: "Cowork Value Estimator",
+    description:
+      "Your personal Copilot Cowork impact report — research-anchored Time Saved, professional-services-equivalent value, and work mapped to Jobs, Business Processes, and the four Value Pillars.",
+    url: "https://github.com/microsoft/What-I-did-with-Cowork#option-1--let-cowork-install-it-for-you-easiest",
+    icon: Sparkle24Regular,
+    image: `${base}images/card-ai-business-value.png`,
+  },
+  {
     id: "ai-business-value",
     title: "AI Business Value Dashboard",
     description:
       "Quantify business value of AI adoption across your organization with executive-ready visualizations.",
     url: "https://github.com/Keithland89/AI-Business-Value-Dashboard#-ai-business-value-dashboard",
     icon: Sparkle24Regular,
-    image: `${base}images/card-ai-business-value.png`,
-  },
-  {
-    id: "github-copilot-impact-personal",
-    title: "GitHub Copilot Impact (Personal)",
-    description:
-      "Your personal impact report — what you built, the skills augmented, and the ROI delivered with GitHub Copilot.",
-    url: "https://github.com/microsoft/What-I-Did-Copilot#what-i-did--github-copilot-impact-report",
-    icon: PersonBoard24Regular,
     image: `${base}images/card-github-copilot-personal.png`,
   },
   {
@@ -160,11 +160,11 @@ export const resources: ResourceItem[] = [
 
 export const research: ResearchItem[] = [
   {
-    id: "adoption-playbook",
-    title: "Customer Adoption Playbook",
+    id: "cowork-value-methodology",
+    title: "Cowork Value Estimator Methodology",
     description:
-      "Microsoft Viva Insights adoption guide with best practices for rolling out analytics across your organization.",
-    url: "https://adoption.microsoft.com/en-us/viva/insights/",
+      "Explore the methodology behind the Cowork Value Estimator for measuring collaboration impact.",
+    url: "/CopilotAnalyticsLabs/Cowork_Methodology.pdf",
     icon: DocumentBulletList24Regular,
   },
   {

@@ -54,9 +54,9 @@ const heroValues = [
 
 const templateOrder = [
   "aio-dashboard",
-  "ai-business-value",
+  "cowork-value-estimator",
   "github-copilot-impact-org",
-  "github-copilot-impact-personal",
+  "ai-business-value",
   "m365-copilot-personal",
   "superuser-impact",
 ];
@@ -76,6 +76,9 @@ const templateMeta: Record<
       { value: "—", label: "Stars" },
       { value: "—", label: "Watching" },
     ],
+  },
+  "cowork-value-estimator": {
+    badges: [{ text: "Featured", tone: "green" }],
   },
   "m365-copilot-personal": {},
 };
@@ -121,7 +124,7 @@ const resourceMeta: Record<
 };
 
 const researchOrder = [
-  "adoption-playbook",
+  "cowork-value-methodology",
   "causal-impact-copilot-word",
   "work-trend-index-2026",
   "new-future-of-work",
@@ -130,8 +133,8 @@ const researchOrder = [
 ];
 
 const researchTags: Record<string, { text: string; tone: string }[]> = {
-  "adoption-playbook": [
-    { text: "Adoption", tone: "green" },
+  "cowork-value-methodology": [
+    { text: "Impact", tone: "blue" },
     { text: "Org wide", tone: "purple" },
   ],
   "causal-impact-copilot-word": [
