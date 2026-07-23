@@ -325,6 +325,18 @@ export type CodeDomainFilter = (typeof codeDomainFilters)[number];
 
 export const research: ResearchItem[] = [
   {
+    id: "agent-assisted-hours",
+    title: "Agent assisted Hours",
+    description:
+      "Understand agent-assisted hours — how much time agents are helping teams reclaim, with a breakdown of impact across the organization.",
+    url: `${base}agent-assisted-hours.html`,
+    icon: DocumentBulletList24Regular,
+    kind: "Playbook",
+    addedOn: "2026-07-23",
+    domain: ["Business Value", "Productivity", "Agent Analytics"],
+    contentType: ["Org wide", "Framework"],
+  },
+  {
     id: "cowork-value-methodology",
     title: "Cowork Value Estimator Methodology",
     description:
