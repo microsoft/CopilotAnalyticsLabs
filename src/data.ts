@@ -141,7 +141,7 @@ export const templates: TemplateItem[] = [
     url: "https://github.com/microsoft/What-I-did-with-Cowork#option-1--let-cowork-install-it-for-you-easiest",
     icon: Sparkle24Regular,
     image: `${base}images/card-ai-business-value.png`,
-    addedOn: "2026-07-07",
+    addedOn: "2026-07-15",
     type: "Copilot",
     impact: ["AI Impact", "Individual"],
     collections: ["AI Business Value"],
