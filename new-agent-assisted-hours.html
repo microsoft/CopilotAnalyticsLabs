@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Measuring the Additional Work AI Agents Make Possible | Copilot Analytics Lab</title>
+<style>
+  :root{
+    --ink:#1b1b2e;
+    --muted:#5b6072;
+    --faint:#8a8fa3;
+    --accent:#5b5bd6;
+    --accent2:#4b2e83;
+    --plum:#7a2e5d;
+    --teal:#178a7a;
+    --amber:#b26a00;
+    --hair:#e6e6ef;
+    --panel:#f5f5fb;
+    --panel2:#eef0fb;
+    --page:#ffffff;
+    --card:#ffffff;
+    --mono:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;
+    --shadow:0 1px 2px rgba(27,27,46,.05),0 8px 24px rgba(27,27,46,.05);
+    --maxw:760px;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --ink:#e9e9f2;
+      --muted:#a6abbe;
+      --faint:#7f8497;
+      --accent:#9b9bf0;
+      --accent2:#b79cf0;
+      --plum:#e08bbb;
+      --teal:#4fc9b6;
+      --amber:#e0a24d;
+      --hair:#2a2a3c;
+      --panel:#1b1b28;
+      --panel2:#1e1e30;
+      --page:#14141f;
+      --card:#181824;
+      --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.35);
+    }
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--page);color:var(--ink)}
+  body{
+    font-family:-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7;font-size:18px;
+    -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+  }
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+
+  /* Masthead */
+  header.masthead{padding:64px 0 8px}
+  .kicker{font-size:12.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:20px}
+  h1.title{font-size:40px;line-height:1.13;font-weight:800;letter-spacing:-.02em;margin:0 0 20px;color:var(--ink)}
+  .dek{font-size:20px;line-height:1.55;color:var(--muted);margin:0 0 24px;font-weight:400}
+  .byline{font-size:14px;color:var(--faint);border-top:1px solid var(--hair);padding-top:16px;margin-bottom:8px}
+
+  /* Body */
+  main{padding:8px 0 24px}
+  p{margin:0 0 20px}
+  .lead p{font-size:19px}
+  h2{font-size:26px;line-height:1.2;font-weight:800;letter-spacing:-.015em;margin:10px 0 16px;color:var(--ink)}
+  h3{font-size:19px;font-weight:700;margin:26px 0 8px;color:var(--ink)}
+  .eyebrow{font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin:54px 0 6px}
+  section{scroll-margin-top:24px}
+  b{color:var(--ink)}
+  code{font-family:var(--mono);font-size:.9em;background:var(--panel);padding:1px 5px;border-radius:4px}
+
+  /* Summary / note panels */
+  .panel{background:var(--panel);border-inline-start:4px solid var(--accent);border-radius:10px;padding:22px 24px;margin:28px 0;box-shadow:var(--shadow)}
+  .panel h3{margin:0 0 12px;font-size:13px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--accent2)}
+  ul.tight{margin:0;padding-inline-start:20px}
+  ul.tight li{margin:0 0 11px;padding-inline-start:4px}
+  ul.tight li:last-child{margin-bottom:0}
+  .panel-cta{margin:16px 0 0;padding-top:14px;border-top:1px solid var(--hair);font-size:15px;color:var(--muted)}
+  .panel.note{border-inline-start-color:var(--amber);background:var(--panel)}
+  .panel.note h3{color:var(--amber)}
+
+  /* Figure */
+  figure.fig{margin:32px 0;padding:0}
+  .figbox{border:1px solid var(--hair);background:var(--panel);border-radius:12px;padding:24px 22px;box-shadow:var(--shadow)}
+  figcaption{font-size:14px;color:var(--muted);font-style:italic;margin-top:12px;text-align:center}
+
+  /* Layer map */
+  .layermap{display:flex;flex-direction:column;gap:9px}
+  .layer{display:grid;grid-template-columns:38px 1fr auto;gap:14px;align-items:center;border:1px solid var(--hair);border-inline-start:5px solid var(--accent);background:var(--card);border-radius:10px;padding:11px 14px}
+  .layer .lnum{width:30px;height:30px;border-radius:8px;background:var(--accent);color:#fff;font-weight:800;font-size:15px;display:flex;align-items:center;justify-content:center}
+  .layer .ltext{min-width:0}
+  .layer .lname{font-weight:700;font-size:15.5px;color:var(--ink)}
+  .layer .ldesc{font-size:13.5px;color:var(--muted);line-height:1.45}
+  .pill{font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:4px 9px;border-radius:20px;white-space:nowrap}
+  .pill.in{background:rgba(91,91,214,.14);color:var(--accent)}
+  .pill.out{background:rgba(138,143,163,.16);color:var(--faint)}
+  .pill.future{background:rgba(178,106,0,.14);color:var(--amber)}
+  .layer.l3{border-inline-start-color:var(--plum)}
+  .layer.l3 .lnum{background:var(--plum)}
+  .layer.l4,.layer.l5{border-inline-start-color:var(--faint);opacity:.86}
+  .layer.l4 .lnum,.layer.l5 .lnum{background:var(--faint)}
+
+  /* Stage pipeline */
+  .pipe{display:flex;flex-direction:column;gap:0}
+  .pipe-band{font-size:11.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#fff;background:var(--accent2);padding:7px 14px;border-radius:8px 8px 0 0}
+  .pipe-band.b2{background:var(--plum);border-radius:8px}
+  .pipe-group{border:1px solid var(--hair);border-top:none;border-radius:0 0 8px 8px;padding:12px;display:flex;flex-direction:column;gap:9px;margin-bottom:6px}
+  .pipe-arrow{text-align:center;color:var(--faint);font-size:13px;font-weight:700;letter-spacing:.04em;margin:2px 0 8px}
+  .stage{display:grid;grid-template-columns:52px 1fr;gap:12px;align-items:center;border:1px solid var(--hair);background:var(--card);border-radius:9px;padding:10px 13px}
+  .stage .snum{display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--panel2);border-radius:8px;padding:5px 0;color:var(--accent2)}
+  .stage .snum .slab{font-size:8.5px;font-weight:700;letter-spacing:.08em}
+  .stage .snum .sval{font-size:19px;font-weight:800;line-height:1}
+  .stage .sname{font-weight:700;font-size:15px;color:var(--ink)}
+  .stage .smeta{font-size:13px;color:var(--muted);line-height:1.45}
+  .stage .smetric{font-weight:700;color:var(--teal)}
+
+  /* Formula */
+  .formula{font-family:var(--mono);text-align:center;font-size:16px;background:var(--panel);border:1px solid var(--hair);border-radius:10px;padding:16px 18px;margin:20px 0;color:var(--ink);overflow-x:auto}
+  .formula .fnote{display:block;font-family:-apple-system,"Segoe UI",sans-serif;font-size:12.5px;color:var(--muted);margin-top:8px}
+
+  /* Study snapshot */
+  .snap{border:1px solid var(--hair);border-radius:12px;overflow:hidden;margin:24px 0;box-shadow:var(--shadow);background:var(--card)}
+  .snap-head{padding:11px 18px;color:#fff;font-size:12.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase}
+  .snap.s1 .snap-head{background:var(--accent2)}
+  .snap.s2 .snap-head{background:var(--plum)}
+  .snap-sub{padding:11px 18px 3px;font-size:13.5px;color:var(--muted)}
+  table.snap-tbl{width:100%;border-collapse:collapse;margin:6px 0 0;font-size:14.5px}
+  table.snap-tbl th,table.snap-tbl td{padding:8px 18px;text-align:start;border-top:1px solid var(--hair)}
+  table.snap-tbl th{font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--faint);font-weight:700}
+  table.snap-tbl td.num{text-align:end;font-variant-numeric:tabular-nums}
+  table.snap-tbl td.human{text-align:end;font-weight:700;color:var(--accent2);background:var(--panel);font-variant-numeric:tabular-nums}
+  .snap.s2 table.snap-tbl td.human{color:var(--plum)}
+  .snap-foot{padding:10px 18px 14px;font-size:12px;color:var(--faint);line-height:1.5}
+
+  /* Bar charts */
+  .chart{display:flex;flex-direction:column;gap:14px}
+  .crow{display:grid;grid-template-columns:130px 1fr;align-items:center;gap:14px}
+  .clab{font-size:13.5px;color:var(--muted);text-align:end}
+  .ctrack{height:36px;border-radius:8px;position:relative}
+  .cfill{height:36px;border-radius:8px;display:flex;align-items:center;justify-content:flex-end;color:#fff;font-weight:700;font-size:14px;white-space:nowrap;padding-inline-end:12px;min-width:52px}
+  .cfill.a{background:linear-gradient(90deg,#8a8fd6,#5b5bd6)}
+  .cfill.b{background:linear-gradient(90deg,#6a3fa0,#4b2e83)}
+  .cfill.warn{background:linear-gradient(90deg,#d99a3a,#b26a00)}
+  .cfill.good{background:linear-gradient(90deg,#3bb39e,#178a7a)}
+
+  /* Range bar */
+  .rangebar{position:relative;height:56px;margin:8px 0 4px}
+  .rangeaxis{position:absolute;left:0;right:0;top:26px;height:8px;border-radius:6px;background:linear-gradient(90deg,var(--teal),var(--accent),var(--plum))}
+  .rmark{position:absolute;top:0;transform:translateX(-50%);text-align:center;font-size:12px;color:var(--muted);width:120px}
+  .rmark .rdot{width:12px;height:12px;border-radius:50%;background:var(--ink);margin:20px auto 0}
+  .rmark .rval{font-weight:700;color:var(--ink);font-size:13px}
+
+  /* Stat grid */
+  .stats{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+  .stat{border:1px solid var(--hair);border-radius:10px;padding:14px 16px;background:var(--card)}
+  .stat .snumb{font-size:24px;font-weight:800;color:var(--accent2);line-height:1.1;font-variant-numeric:tabular-nums}
+  .stat .sdesc{font-size:13px;color:var(--muted);margin-top:3px;line-height:1.4}
+
+  /* Data table (bins) */
+  table.data{width:100%;border-collapse:collapse;margin:18px 0;font-size:15px}
+  table.data th,table.data td{padding:9px 12px;border-bottom:1px solid var(--hair);text-align:start}
+  table.data thead th{border-bottom:2px solid var(--accent2);font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--faint)}
+  table.data td.num,table.data th.num{text-align:end;font-variant-numeric:tabular-nums}
+
+  /* Prompt excerpt callout */
+  .excerpt{border:1px solid var(--hair);border-inline-start:4px solid var(--slate,#273043);background:var(--panel);border-radius:10px;padding:16px 18px;margin:22px 0}
+  .excerpt .ex-lab{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--accent2);margin-bottom:8px}
+  .excerpt .ex-body{font-family:var(--mono);font-size:13.5px;color:var(--ink);line-height:1.55}
+  .excerpt .ex-map{margin-top:8px;font-size:13px;color:var(--muted)}
+  .excerpt .ex-map b{color:var(--accent2)}
+  .excerpt .ex-link{margin-top:10px;font-size:14px;font-weight:600}
+
+  /* Full prompt card */
+  .promptcard{border:1px solid var(--hair);border-radius:12px;overflow:hidden;margin:22px 0;box-shadow:var(--shadow)}
+  .promptcard .pc-head{background:#273043;color:#fff;font-size:12.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:12px 18px}
+  @media (prefers-color-scheme: dark){.promptcard .pc-head{background:#0f1420}}
+  .promptcard .pc-body{background:var(--panel);padding:18px 20px;font-family:var(--mono);font-size:13.5px;line-height:1.6;color:var(--ink)}
+  .promptcard .pc-body p{margin:0 0 12px}
+  .promptcard .pc-sec{font-family:-apple-system,"Segoe UI",sans-serif;font-weight:700;color:var(--accent2);margin:16px 0 6px;font-size:14px}
+  .promptcard ul.pc-list{margin:0 0 4px;padding-inline-start:20px;list-style:none}
+  .promptcard ul.pc-list li{position:relative;margin:0 0 5px;padding-inline-start:16px}
+  .promptcard ul.pc-list li::before{content:"▪";position:absolute;inset-inline-start:0;color:var(--accent2)}
+  .promptcard .ph{color:var(--amber);font-style:italic}
+  .promptcard .pc-final{font-style:italic;color:var(--muted);margin-top:14px}
+
+  /* Measurement / definition list */
+  ul.defs{margin:16px 0;padding:0;list-style:none}
+  ul.defs li{padding:11px 0;border-top:1px solid var(--hair);font-size:16px}
+  ul.defs li:last-child{border-bottom:1px solid var(--hair)}
+  ul.defs li span{color:var(--muted)}
+
+  /* References */
+  .refs{margin-top:16px}
+  ol.reflist{margin:14px 0 0;padding-inline-start:22px;font-size:13.5px;color:var(--muted);line-height:1.55}
+  ol.reflist li{margin:0 0 8px}
+
+  /* Footer */
+  footer{border-top:1px solid var(--hair);margin-top:56px;padding:26px 0 72px}
+  .foot-nav{font-size:14px;color:var(--muted);font-weight:600}
+  .foot-nav .sep{color:var(--faint);margin:0 10px}
+  .foot-desc{font-size:13.5px;color:var(--faint);margin-top:10px;line-height:1.55;max-width:660px}
+  .legal{font-size:12px;color:var(--faint);line-height:1.6;margin-top:22px;padding-top:16px;border-top:1px solid var(--hair);max-width:660px}
+
+  @media (max-width:560px){
+    h1.title{font-size:32px}
+    .dek{font-size:18px}
+    .crow{grid-template-columns:92px 1fr}
+    .stats{grid-template-columns:1fr}
+    .layer{grid-template-columns:32px 1fr;row-gap:6px}
+    .layer .pill{grid-column:2}
+  }
+  @media print{
+    body{font-size:12pt}
+    .panel,.figbox,.snap,.stat{box-shadow:none}
+  }
+
+  /* Series nav */
+  .series-nav{display:flex;flex-wrap:wrap;gap:9px;margin:18px 0 4px}
+  .series-nav .sn-item{display:inline-flex;align-items:baseline;gap:9px;border:1px solid var(--hair);border-radius:22px;padding:6px 15px;color:var(--muted);background:var(--card);font-size:13.5px;line-height:1.2}
+  .series-nav .sn-item .sn-n{font-weight:800;color:var(--faint);font-size:10.5px;letter-spacing:.09em;text-transform:uppercase}
+  .series-nav .sn-item .sn-t{font-weight:600}
+  .series-nav .sn-item.cur{border-color:var(--accent);background:var(--panel2);color:var(--ink)}
+  .series-nav .sn-item.cur .sn-n{color:var(--accent)}
+  .series-nav a.sn-item:hover{border-color:var(--accent);text-decoration:none;color:var(--ink)}
+  .series-nav .sn-soon{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--amber)}
+
+  /* Next-in-series card */
+  a.nextcard{display:block;border:1px solid var(--hair);border-inline-start:4px solid var(--accent);border-radius:12px;padding:18px 22px;margin:30px 0 8px;background:var(--panel);box-shadow:var(--shadow)}
+  a.nextcard:hover{text-decoration:none;border-inline-start-color:var(--accent2)}
+  .nextcard .nc-lab{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:7px}
+  .nextcard .nc-title{font-size:18.5px;font-weight:800;color:var(--ink);margin-bottom:5px;letter-spacing:-.01em}
+  .nextcard .nc-desc{font-size:14.5px;color:var(--muted);line-height:1.5}
+  .nextcard .nc-soon{display:inline-block;margin-top:9px;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--amber);border:1px solid var(--amber);border-radius:6px;padding:2px 8px}
+
+  /* Driver / tag list */
+  .drivers{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 2px}
+  .drivers .drv{font-size:12.5px;font-weight:600;color:var(--accent2);background:var(--panel2);border-radius:20px;padding:5px 12px}
+  .drivers .drv .d-rank{color:var(--faint);font-weight:800;font-size:10.5px;margin-inline-end:5px}
+  .drivers.b2 .drv{color:var(--plum);background:rgba(122,46,93,.10)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <div class="kicker">Copilot Analytics Lab · Inside the Metrics · Part 2</div>
+    <h1 class="title">Measuring the Additional Work AI Agents Make Possible</h1>
+    <p class="dek">New Assisted Hours (NAH) estimates the human-equivalent work an AI agent performs alongside a person — additional work done in parallel, not time subtracted from a task. This brief walks through the layered architecture, the six research stages behind it, and the calculations that make it auditable.</p>
+    <div class="byline">By the PANDAS team · A Copilot Analytics Lab technical brief · ~15 min read</div>
+    <nav class="series-nav" aria-label="Article series">
+      <a class="sn-item" href="https://microsoft.github.io/CopilotAnalyticsLabs/agent-assisted-hours.html"><span class="sn-n">Part 1</span><span class="sn-t">Agent Assisted Hours — time saved</span></a>
+      <span class="sn-item cur"><span class="sn-n">Part 2</span><span class="sn-t">New Assisted Hours — human-augmented time</span></span>
+    </nav>
+  </header>
+
+  <main>
+    <div class="lead">
+      <p>When an AI agent runs a multi-step workflow — searching, reading, drafting, calling tools, revising, verifying — it performs work a person would otherwise have to do themselves. New Assisted Hours quantifies that work by asking a precise question: <b>if a person had produced the same output, step by step, how long would it have taken them?</b> That human-equivalent time, aggregated across the workflow, is what New Assisted Hours counts.</p>
+      <p>Crucially, this is an <b>additive</b> view of time, not a subtractive one. The agent works in parallel with the person, so its output is best understood as human-equivalent hours <em>added</em> to what the person could do alone, rather than minutes shaved off a task they were already doing. This is why assisted hours can grow even when a task's elapsed time barely moves when completed by an agent — a pattern we observed directly in controlled trials, where AI assistance lowered subjective workload with no change in completion time. Time saved — the <a href="https://microsoft.github.io/CopilotAnalyticsLabs/agent-assisted-hours.html">Agent Assisted Hours metric covered in Part 1</a> — and New Assisted Hours are complementary time-based views: one measures how much faster a shared task finishes, the other measures how much additional human-equivalent work the agent absorbed.</p>
+    </div>
+
+    <div class="panel">
+      <h3>Summary</h3>
+      <ul class="tight">
+        <li><b>What it measures.</b> The human-equivalent time a typical worker would need to reproduce the agent's steps — a proxy for the human-augmented hours the agent added, computed per prompt and aggregated upward.</li>
+        <li><b>Architecture.</b> A five-layer pipeline. Layer 1 reads the agent's steps from telemetry; Layer 2 assigns each step a calibrated human-equivalent time; Layer 3 aggregates with an effort discount. Layers 4–5 (complexity/user adjustment, net capacity) are future work.</li>
+        <li><b>Evidence base.</b> Six linked research stages: two randomized controlled trials, a whole-task PERT estimation study, a microtask decomposition and time estimation stidy, an LLM benchmark with calibration, and an effort-discounting aggregation.</li>
+        <li><b>Calibration.</b> Raw LLM time estimates are strongly biased; prediction-bin calibration reduces mean absolute error from ~11.7 min to ~1.99 min under leave-one-task-out cross-validation.</li>
+        <li><b>Aggregation.</b> A concave, order-aware discount — weight <code>k^α − (k−1)^α</code>, default α = 0.7 — prevents repeated steps from being overcounted, compressing a repetition-heavy worked example by ~58%.</li>
+      </ul>
+      <p class="panel-cta">This brief is the accessible overview. For the complete methodology, statistics, and derivations, see the <a href="https://example.com/REPLACE-WITH-RESEARCH-BRIEF-URL">detailed research brief</a>.</p>
+    </div>
+
+    <section id="architecture">
+      <div class="eyebrow">Architecture</div>
+      <h2>A layered pipeline</h2>
+      <p>New Assisted Hours is organized as a pipeline whose layers answer different measurement questions and feed forward. The agent's raw activity enters at Layer 1; a defensible assisted-hours figure leaves at Layer 3. The two layers beyond that are named but out of scope for this brief — they are where complexity adjustment and net-capacity accounting will eventually live.</p>
+
+      <figure class="fig">
+        <div class="figbox">
+          <div class="layermap">
+            <div class="layer l1">
+              <div class="lnum">1</div>
+              <div class="ltext"><div class="lname">Observed agent steps</div><div class="ldesc">What did the agent actually do? The ordered sequence of searches, reads, tool calls, drafts, and verifications, read from telemetry.</div></div>
+              <div class="pill in">In this brief</div>
+            </div>
+            <div class="layer l2">
+              <div class="lnum">2</div>
+              <div class="ltext"><div class="lname">Human-equivalent time per step</div><div class="ldesc">If a person executed each step, how long would it take? A calibrated lookup, <code>t<sub>cal,i</sub></code>, built by research Stages 1–5.</div></div>
+              <div class="pill in">In this brief</div>
+            </div>
+            <div class="layer l3">
+              <div class="lnum">3</div>
+              <div class="ltext"><div class="lname">Sequence (effort) discounting</div><div class="ldesc">Aggregate the per-step times without overcounting repetition. Research Stage 6. Output = New Assisted Hours for the session.</div></div>
+              <div class="pill in">In this brief</div>
+            </div>
+            <div class="layer l4">
+              <div class="lnum">4</div>
+              <div class="ltext"><div class="lname">Complexity &amp; user adjustment</div><div class="ldesc">Adjusting for task complexity and individual user context.</div></div>
+              <div class="pill out">Out of scope</div>
+            </div>
+            <div class="layer l5">
+              <div class="lnum">5</div>
+              <div class="ltext"><div class="lname">Time saved &amp; net capacity</div><div class="ldesc">Translating human-equivalent work into net organizational capacity.</div></div>
+              <div class="pill future">Future work</div>
+            </div>
+          </div>
+        </div>
+        <figcaption>Figure 1 — The five-layer New Assisted Hours architecture. Layers 1–3 are covered here; the six research stages populate Layers 2 and 3.</figcaption>
+      </figure>
+
+      <p>The architecture is informed by research conducted across these six stages: <b>Layer 2 is produced by Stages 1–5</b>, which together yield the calibrated per-step human-equivalent time <code>t<sub>cal,i</sub></code> stored in a lookup table, and <b>Layer 3 is Stage 6</b>, the effort-discounting rule that aggregates those per-step times into the session-level metric.</p>
+    </section>
+
+    <section id="methodology">
+      <div class="eyebrow">Methodology</div>
+      <h2>The six research stages</h2>
+      <p>The metric is constructed from original research designed to build the human baselines an auditable productivity measure requires. Stages 1–5 produce the calibrated per-step estimate <code>t<sub>cal,i</sub></code>; Stage 6 aggregates it after applying a discounting weight for repeated steps. The pipeline below shows the stages at a glance, and each is described in turn.</p>
+
+      <figure class="fig">
+        <div class="figbox">
+          <div class="pipe">
+            <div class="pipe-band">Stages 1–5 · Producing the calibrated step-time inputs (t<sub>cal,i</sub>)</div>
+            <div class="pipe-group">
+              <div class="stage"><div class="snum"><span class="slab">STAGE</span><span class="sval">1</span></div><div><div class="sname">Observed human time — RCT</div><div class="smeta">Within-subject randomized controlled trial across three knowledge-work tasks. <span class="smetric">197 participants</span></div></div></div>
+              <div class="stage"><div class="snum"><span class="slab">STAGE</span><span class="sval">2</span></div><div><div class="sname">Revised document-review RCT</div><div class="smeta">Re-run on denser, less-searchable documents to force genuine reading. <span class="smetric">133 participants</span></div></div></div>
+              <div class="stage"><div class="snum"><span class="slab">STAGE</span><span class="sval">3</span></div><div><div class="sname">Whole-task PERT time estimation</div><div class="smeta">Three-point human estimation of full-task time across seven task families. <span class="smetric">302 respondents / task</span></div></div></div>
+              <div class="stage"><div class="snum"><span class="slab">STAGE</span><span class="sval">4</span></div><div><div class="sname">Microtask decomposition and time estimation</div><div class="smeta">Workflows mapped to tool-level, effort-bearing units. <span class="smetric">14 tool-primitive microtasks</span></div></div></div>
+              <div class="stage"><div class="snum"><span class="slab">STAGE</span><span class="sval">5</span></div><div><div class="sname">LLM benchmark creation &amp; calibration</div><div class="smeta">Four LLMs benchmarked, then prediction-bin calibrated to observed times. <span class="smetric">MAE 11.7 → 1.99 min</span></div></div></div>
+            </div>
+            <div class="pipe-arrow">↓ produces t<sub>cal,i</sub> ↓</div>
+            <div class="pipe-band b2">Stage 6 · Effective-effort discounting (Layer 3)</div>
+            <div class="pipe-group" style="border-top:none;border-radius:8px;margin-top:6px">
+              <div class="stage"><div class="snum"><span class="slab">STAGE</span><span class="sval">6</span></div><div><div class="sname">Effective-effort discounting</div><div class="smeta">Concave, order-aware aggregation with repetition-sensitive discounting applied across all steps. <span class="smetric">discount paramter α = 0.7 · ~58% compression</span></div></div></div>
+            </div>
+          </div>
+        </div>
+        <figcaption>Figure 2 — The six-stage estimation pipeline. Stages 1–5 build the calibrated per-step time; Stage 6 aggregates it into New Assisted Hours.</figcaption>
+      </figure>
+
+      <h3>Stages 1 &amp; 2 — Observed human time (two RCTs)</h3>
+      <p>The baselines start in the lab. A first within-subject randomized controlled trial measured how long people actually take on three realistic tasks — infographic creation, executive-brief review, and comparison research — each performed both with and without AI assistance, alongside NASA-TLX workload, click-based strain, and abandonment. AI's effect on completion time was task-specific: significant on the infographic and comparison tasks, flat on the executive brief. Notably, subjective effort fell on all three tasks even where time did not — the first direct evidence that capacity and elapsed time are distinct.</p>
+      <p>Because the first document task could be shortcut with keyword search and copy-paste, a revised trial hardened it with longer, denser, less-searchable documents to force genuine reading and synthesis. Across 133 participants, AI produced a statistically significant reduction in completion time, and the robust medians became stronger ground-truth labels for calibration.</p>
+
+      <div class="snap s1">
+        <div class="snap-head">Stage 1 · Study snapshot</div>
+        <div class="snap-sub">Within-subject RCT (Prolific) · 1,111 sign-ups → 197 analyzed · human time = no-AI median</div>
+        <table class="snap-tbl">
+          <thead><tr><th>Task</th><th style="text-align:end">Human, no-AI</th><th style="text-align:end">With Copilot</th><th style="text-align:end">Impact</th></tr></thead>
+          <tbody>
+            <tr><td>Certification comparison</td><td class="human">12.5 min</td><td class="num">5.7 min</td><td class="num">−32% ★</td></tr>
+            <tr><td>Infographic creation</td><td class="human">10.0 min</td><td class="num">7.1 min</td><td class="num">−21% ★</td></tr>
+            <tr><td>Executive brief</td><td class="human">8.4 min</td><td class="num">8.8 min</td><td class="num">+5% n.s.</td></tr>
+          </tbody>
+        </table>
+        <div class="snap-foot">★ statistically significant (p &lt; .05); n.s. = not significant. Subjective effort (NASA-TLX) fell on all three tasks.</div>
+      </div>
+
+      <div class="snap s2">
+        <div class="snap-head">Stage 2 · Study snapshot</div>
+        <div class="snap-sub">Revised document-review RCT (Prolific) · N = 133 · denser, less-searchable documents</div>
+        <table class="snap-tbl">
+          <thead><tr><th>Task</th><th style="text-align:end">Human, no-AI</th><th style="text-align:end">With Copilot</th><th style="text-align:end">Impact</th></tr></thead>
+          <tbody>
+            <tr><td>Business Analysis Snapshot</td><td class="human">7.4 min</td><td class="num">6.0 min</td><td class="num">−19.5% ★</td></tr>
+            <tr><td>Operations Snapshot</td><td class="human">7.3 min</td><td class="num">7.4 min</td><td class="num">+1.6%</td></tr>
+            <tr><td>Overall</td><td class="human">7.4 min</td><td class="num">6.8 min</td><td class="num">≈ −8% ★</td></tr>
+          </tbody>
+        </table>
+        <div class="snap-foot">Human time = control (no-AI) median. On the Operations task the median was flat; the significant gain appeared in the mean (−28 s, −5.9%).</div>
+      </div>
+
+      <h3>Stage 3 — Whole-task PERT time estimation</h3>
+      <p>Controlled trials can only cover a handful of tasks, so coverage is extended with whole-task human estimation using an uncertainty-aware three-point PERT method — optimistic, most-likely, and pessimistic times combined as <code>(O + 4M + P) / 6</code>, with the median PERT as the primary estimator. Independent knowledge workers estimated full manual completion time for standardized whole-task vignettes across seven benchmark-style families (from academic editing to open-ended research), with 302 respondents per task. The resulting medians span roughly <b>92.5 to 700 minutes</b> and are strongly right-skewed (skewness 6.2–17.2) — the long-tailed shape knowledge work characteristically takes.</p>
+
+      <h3>Stage 4 — Microtask decomposition and time estimation</h3>
+      <p>Agent telemetry is expressed as tool calls, not whole tasks, so the whole-task and RCT baselines must be bridged to the level at which agents actually operate. Stage 4 decomposes workflows into <b>14 tool-primitive microtasks</b> — the small, effort-bearing units (search, open/read, extract, summarize, verify, refine, and so on) that compose an agent session. These become the unit at which per-step human-equivalent time is estimated and calibrated.</p>
+
+      <h3>Stage 5 — LLM benchmark and calibration</h3>
+      <p>To scale beyond direct human elicitation, four LLMs were benchmarked against the 14 microtasks, evaluated by mean absolute error (MAE), RMSE, Spearman rank correlation, pairwise concordance, and leave-one-task-out cross-validation. Out of the box the models are not usable as time estimators: <b>raw estimates overestimated 79–86% of the tool-level microtasks</b>, with very weak rank correlation to observed times (ρ ≈ 0.12). A <b>prediction-bin calibration</b> — scaling estimates by predicted-duration bin — corrected the bias and, under leave-one-task-out cross-validation against ground-truth RCT timings, <b>reduced MAE from about 11.7 minutes to about 1.99 minutes</b>, outperforming model-family and complexity-based corrections. The bias direction is level-dependent: models overestimate microtasks but underestimate whole tasks, so calibration against human anchors is not optional.</p>
+
+      <table class="data">
+        <thead><tr><th>Predicted-duration bin</th><th class="num">Calibration multiplier</th></tr></thead>
+        <tbody>
+          <tr><td>≤ 7 min</td><td class="num">× 1.25</td></tr>
+          <tr><td>7–15 min</td><td class="num">× 0.73</td></tr>
+          <tr><td>15–30 min</td><td class="num">× 0.37</td></tr>
+          <tr><td>≥ 30 min</td><td class="num">× 0.24</td></tr>
+        </tbody>
+      </table>
+
+      <div class="excerpt">
+        <div class="ex-lab">Stage 5 · estimation prompt (excerpt)</div>
+        <div class="ex-body">You are an expert evaluator assessing task completion time complexity. Estimate how long it would take a skilled professional with relevant domain expertise (but no task-specific context) to complete this task with 50% success rate.</div>
+        <div class="ex-map"><b>Assessment Criteria</b> · <b>Time Horizon Categories</b> · <b>Output Format</b> — with per-component reasoning and a comparison anchor.</div>
+        <div class="ex-link"><a href="#prompt">▸ See the full prompt</a></div>
+      </div>
+
+      <h3>Stage 6 — Effective-effort discounting</h3>
+      <p>Adding up per-step human-equivalent time overlooks how people actually work: humans exert less effort on a step the more they have already done it. The first search establishes context; later searches build on it. The first draft creates the backbone; later revisions make smaller changes. Stage 6 applies a concave, order-aware discount so repeated occurrences of a step receive progressively less marginal credit. Letting <code>t<sub>cal,i</sub></code> be the calibrated human-equivalent time for the <em>i</em>-th step, the naive baseline and the discounted rule are:</p>
+
+      <div class="formula">
+        effective effort = Σ<sub>i</sub> t<sub>cal,i</sub> × w(occ<sub>i</sub>)
+        <span class="fnote">where the marginal weight of the k-th occurrence of a step is w(k) = k<sup>α</sup> − (k−1)<sup>α</sup></span>
+      </div>
+
+      <p>At <b>α = 1</b> the weights sum to a plain count and the rule reduces to naive addition. At <b>α &lt; 1</b> the function is concave, so the first occurrence keeps full credit while each repeat contributes less than the last. The default is <b>α = 0.7</b> — a governed parameter set mid-range of the effort-discounting literature and stress-tested with sensitivity analysis. Internal agent reasoning steps are excluded from scoring throughout.</p>
+    </section>
+
+    <section id="results">
+      <div class="eyebrow">Results</div>
+      <h2>What the numbers show</h2>
+      <p>The RCT snapshots above are the observed human baselines. The remaining results establish that the estimation scales and that the discounting behaves as intended.</p>
+
+      <h3>Whole-task human time spans an order of magnitude</h3>
+      <p>The PERT medians confirm how wide and skewed real task times are — from short clarifications to multi-hour research workflows.</p>
+      <figure class="fig">
+        <div class="figbox">
+          <div class="rangebar">
+            <div class="rangeaxis"></div>
+            <div class="rmark" style="left:8%"><div class="rval">92.5 min</div><div class="rdot"></div><div>abstract clarification (shortest median)</div></div>
+            <div class="rmark" style="left:88%"><div class="rval">700 min</div><div class="rdot"></div><div>prompting-methods test (longest median)</div></div>
+          </div>
+        </div>
+        <figcaption>Figure 3 — Whole-task human-time medians across seven task families (Stage 3), strongly right-skewed (skewness 6.2–17.2). Trimmed-10 means range from about 119 to 1,103 minutes.</figcaption>
+      </figure>
+
+      <h3>Calibration turns a biased proxy into a usable signal</h3>
+      <p>The single most important result for scaling: prediction-bin calibration cuts per-microtask error by roughly an order of magnitude against ground-truth RCT timings.</p>
+      <figure class="fig">
+        <div class="figbox">
+          <div class="chart">
+            <div class="crow"><div class="clab">Raw LLM estimate</div><div class="ctrack"><div class="cfill warn" style="width:100%">MAE ≈ 11.7 min</div></div></div>
+            <div class="crow"><div class="clab">After calibration</div><div class="ctrack"><div class="cfill good" style="width:17%">≈ 1.99 min</div></div></div>
+          </div>
+        </div>
+        <figcaption>Figure 4 — Mean absolute error against observed human times, under leave-one-task-out cross-validation. Raw estimates overestimate 79–86% of microtasks (ρ ≈ 0.12); calibration outperforms model-family and complexity-based corrections.</figcaption>
+      </figure>
+
+      <h3>Discounting compresses repetition, not the backbone</h3>
+      <p>The discounting layer is grounded in telemetry from 99 Deep Research sessions, which are strongly repetition-heavy. On a worked example, discounting removes credit from late-stage repeats while leaving early backbone steps at full value.</p>
+      <figure class="fig">
+        <div class="figbox">
+          <div class="chart">
+            <div class="crow"><div class="clab">Naive sum</div><div class="ctrack"><div class="cfill a" style="width:100%">≈ 60.5 min</div></div></div>
+            <div class="crow"><div class="clab">Effort-discounted</div><div class="ctrack"><div class="cfill b" style="width:42%">≈ 25.6 units</div></div></div>
+          </div>
+        </div>
+        <figcaption>Figure 5 — A 34-call worked example (2 internal reasoning calls excluded): order-aware discounting compresses ~60.5 calibrated minutes to ~25.6 effective-effort units at α = 0.7 (~58% compression), concentrated on late-stage retries.</figcaption>
+      </figure>
+
+      <div class="stats">
+        <div class="stat"><div class="snumb">31</div><div class="sdesc">median scored tool calls per session (90th percentile 46; max 107)</div></div>
+        <div class="stat"><div class="snumb">27</div><div class="sdesc">of those, median calls that repeat an already-used tool</div></div>
+        <div class="stat"><div class="snumb">10.3 min</div><div class="sdesc">median agent runtime across sessions with a recorded runtime</div></div>
+        <div class="stat"><div class="snumb">99</div><div class="sdesc">Deep Research sessions in the discounting telemetry sample</div></div>
+      </div>
+      <p style="font-size:13.5px;color:var(--faint);margin-top:12px">Figure 6 — Session-level telemetry behind the discounting layer: multi-step, repetition-heavy workflows are the norm, which is exactly the setting the concave discount is designed for.</p>
+    </section>
+
+    <section id="validation">
+      <div class="eyebrow">Validation</div>
+      <h2>Why the signal holds together</h2>
+      <p>Two checks support using the metric. First, <b>external agreement</b>: the calibrated estimates closely match independent human estimates of how long the same tasks would take — the property you want before trusting a New Assisted Hours number. Second, <b>internal validity</b>: the calibration is validated under leave-one-task-out cross-validation against ground-truth trial timings, and it outperforms model-family and complexity-based corrections. Two design choices run through the whole program and explain why the results cohere: task difficulty is anchored in observed human time rather than tokens or model internals, and aggregation is built to be robust to outliers so a few unusually large or small sessions do not distort the picture. The consistent lesson is that raw model estimates cannot substitute for human-grounded baselines — calibration against human anchors is what makes the metric trustworthy.</p>
+
+      <h3>Effort discounting in practice</h3>
+      <p>The discounting layer was exercised on telemetry from 99 Deep Research sessions, including agent runs on tasks similar to those used in the RCTs plus a fully worked-out example. Because the rule is order-aware, the compression a session receives scales with how repetition-heavy it is. A few worked out examples from tasks similar to the RCT tasks make the behaviour concrete (values are agent-session calibrated totals, not the 15-minute-capped RCT times):</p>
+      <table class="data">
+        <thead><tr><th>Agent session </th><th class="num">Naive additive</th><th class="num">Effective effort (α = 0.7)</th><th class="num">Compression</th></tr></thead>
+        <tbody>
+          <tr><td>Infographic task — similar to the RCT infographic task</td><td class="num">≈ 21 min</td><td class="num">≈ 15 min</td><td class="num">≈ 30%</td></tr>
+          <tr><td>Document-review task  — similar to the RCT Biz-snap document task</td><td class="num">≈ 102 min</td><td class="num">≈ 37 min</td><td class="num">≈ 64%</td></tr>
+          <tr><td>Fully worked-out example (34-call Deep Research session)</td><td class="num">≈ 60.5 min</td><td class="num">≈ 25.6 min</td><td class="num">≈ 58%</td></tr>
+        </tbody>
+      </table>
+      <p>The compression depends on the task as seen above. A light, low-repetition session loses little — there is barely any iteration to discount — while a longer, retry-heavy session is compressed substantially. In every case the discount concentrates on late-stage repeats, so the early backbone steps of a workflow retain their full human-equivalent credit and only the redundant later passes are down-weighted.</p>
+    </section>
+
+    <section id="scope">
+      <div class="eyebrow">Scope</div>
+      <h2>What the metric does and does not claim</h2>
+      <p>New Assisted Hours measures the human-equivalent effort represented by the agent's actions — the depth and volume of work performed. It deliberately does not, on its own, assess output quality, whether the user ultimately used the result, or direct economic outcomes such as revenue or ROI; those are necessary complements addressed separately. It is also a modular layer: the discount strength is set by governance rather than learned per user, and complexity/user adjustment (Layer 4) and net-capacity accounting (Layer 5) remain future work.</p>
+      <ul class="defs">
+        <li><b>Human-equivalent time per session</b> — <span>the calibrated, pre-discount estimate summed over steps.</span></li>
+        <li><b>Effective-effort units</b> — <span>the discounted total that becomes the New Assisted Hours figure.</span></li>
+        <li><b>Repetition ratio</b> — <span>repeated tool calls as a share of scored calls; the primary driver of discounting.</span></li>
+        <li><b>Discount factor α</b> — <span>default 0.7; a governed parameter, not a fitted constant.</span></li>
+        <li><b>Calibration error (MAE)</b> — <span>tracked against any available ground-truth timings.</span></li>
+      </ul>
+    </section>
+
+    <section id="appendix-snapshots">
+      <div class="eyebrow">Appendix A</div>
+      <h2>Study snapshots</h2>
+      <p>Full results for the two randomized controlled trials that anchor Stages 1 and 2. Human time is the control (no-AI) median; impact is the change from that baseline.</p>
+      <div class="snap s1">
+        <div class="snap-head">Stage 1 · Study snapshot</div>
+        <div class="snap-sub">Within-subject RCT (Prolific) · 1,111 sign-ups → 197 analyzed · human time = no-AI median</div>
+        <table class="snap-tbl">
+          <thead><tr><th>Task</th><th style="text-align:end">Human, no-AI</th><th style="text-align:end">With Copilot</th><th style="text-align:end">Impact</th></tr></thead>
+          <tbody>
+            <tr><td>Certification comparison</td><td class="human">12.5 min</td><td class="num">5.7 min</td><td class="num">−32% ★</td></tr>
+            <tr><td>Infographic creation</td><td class="human">10.0 min</td><td class="num">7.1 min</td><td class="num">−21% ★</td></tr>
+            <tr><td>Executive brief</td><td class="human">8.4 min</td><td class="num">8.8 min</td><td class="num">+5% n.s.</td></tr>
+          </tbody>
+        </table>
+        <div class="snap-foot">★ statistically significant (p &lt; .05); n.s. = not significant. Subjective effort (NASA-TLX) fell on all three tasks.</div>
+      </div>
+      <div class="snap s2">
+        <div class="snap-head">Stage 2 · Study snapshot</div>
+        <div class="snap-sub">Revised document-review RCT (Prolific) · N = 133 · denser, less-searchable documents</div>
+        <table class="snap-tbl">
+          <thead><tr><th>Task</th><th style="text-align:end">Human, no-AI</th><th style="text-align:end">With Copilot</th><th style="text-align:end">Impact</th></tr></thead>
+          <tbody>
+            <tr><td>Business Analysis Snapshot</td><td class="human">7.4 min</td><td class="num">6.0 min</td><td class="num">−19.5% ★</td></tr>
+            <tr><td>Operations Snapshot</td><td class="human">7.3 min</td><td class="num">7.4 min</td><td class="num">+1.6%</td></tr>
+            <tr><td>Overall</td><td class="human">7.4 min</td><td class="num">6.8 min</td><td class="num">≈ −8% ★</td></tr>
+          </tbody>
+        </table>
+        <div class="snap-foot">Human time = control (no-AI) median. On the Operations task the median was flat; the significant gain appeared in the mean (−28 s, −5.9%).</div>
+      </div>
+    </section>
+
+    <section id="prompt">
+      <div class="eyebrow">Appendix B</div>
+      <h2>The Stage 5 estimation prompt</h2>
+      <p>The exact prompt used in Stage 5 to elicit per-microtask human-time estimates from the benchmarked LLMs. Model outputs from this prompt are the raw estimates that the prediction-bin calibration then corrects against observed human times. Bracketed items are placeholders filled at runtime.</p>
+      <div class="promptcard">
+        <div class="pc-head">Stage 5 · LLM time-estimation prompt</div>
+        <div class="pc-body">
+          <p>You are an expert evaluator assessing task completion time complexity. Estimate how long it would take a skilled professional with relevant domain expertise (but no task-specific context) to complete this task with 50% success rate.</p>
+          <div class="pc-sec">Task to Evaluate</div>
+          <ul class="pc-list">
+            <li><span class="ph">[INSERT TASK DESCRIPTION HERE]</span></li>
+          </ul>
+          <div class="pc-sec">Assessment Criteria</div>
+          <ul class="pc-list">
+            <li><b>Cognitive Steps Required:</b> Count distinct reasoning/action steps</li>
+            <li><b>Information Gathering:</b> How much research/exploration needed?</li>
+            <li><b>Error Recovery:</b> How forgiving of mistakes?</li>
+            <li><b>Verification Burden:</b> How hard to confirm correctness?</li>
+            <li><b>Context Requirements:</b> How much domain knowledge assumed?</li>
+          </ul>
+          <div class="pc-sec">Time Horizon Categories</div>
+          <ul class="pc-list">
+            <li><b>Atomic (&lt; 1 minute):</b> Single-step actions, immediate decisions</li>
+            <li><b>Short (1–10 minutes):</b> Simple multi-step procedures, basic problem-solving</li>
+            <li><b>Medium (10–60 minutes):</b> Complex procedures, requires planning</li>
+            <li><b>Long (1–8 hours):</b> Substantial projects, multiple components</li>
+            <li><b>Very Long (&gt; 8 hours):</b> Major undertakings, extensive coordination</li>
+          </ul>
+          <div class="pc-sec">Output Format</div>
+          <ul class="pc-list">
+            <li><b>Estimated Time:</b> <span class="ph">[X minutes/hours]</span></li>
+            <li><b>Confidence:</b> <span class="ph">[Low/Medium/High]</span></li>
+            <li><b>Primary Time Drivers:</b> <span class="ph">[List 2-3 main factors]</span></li>
+            <li><b>Comparison Anchor:</b> <span class="ph">[Similar to: "writing a bug fix" or "creating a presentation"]</span></li>
+          </ul>
+          <div class="pc-final">Provide reasoning for each assessment component before giving final estimate.</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="references" class="refs">
+      <div class="eyebrow">References</div>
+      <ol class="reflist">
+        <li>Stevens, S. S. (1957). On the psychophysical law. <i>Psychological Review, 64</i>(3), 153–181.</li>
+        <li>Białaszek, W., Marcowski, P., &amp; Ostaszewski, P. (2017). Physical and cognitive effort discounting across different reward magnitudes. <i>PLoS ONE, 12</i>(7), e0182353.</li>
+        <li>Shenhav, A., Botvinick, M. M., &amp; Cohen, J. D. (2013). The expected value of control. <i>Neuron, 79</i>(2), 217–240.</li>
+        <li>Kurzban, R., Duckworth, A., Kable, J. W., &amp; Myers, J. (2013). An opportunity cost model of subjective effort and task performance. <i>Behavioral and Brain Sciences, 36</i>(6), 661–679.</li>
+        <li>Cuevas Rivera, D., Strobel, A., Goschke, T., &amp; Kiebel, S. J. (2020). Modeling dynamic allocation of effort in a sequential task using discounting models. <i>Frontiers in Neuroscience, 14</i>, 242.</li>
+        <li>Donner, Y., &amp; Hardy, J. L. (2015). Piecewise power laws in individual learning curves. <i>Psychonomic Bulletin &amp; Review, 22</i>(5), 1308–1319.</li>
+        <li>Hart, S. G., &amp; Staveland, L. E. (1988). Development of NASA-TLX. In <i>Human Mental Workload</i> (pp. 139–183). North-Holland.</li>
+        <li>Noy, S., &amp; Zhang, W. (2023). Experimental evidence on the productivity effects of generative artificial intelligence. <i>Science, 381</i>(6654), 187–192.</li>
+        <li>Brynjolfsson, E., Li, D., &amp; Raymond, L. R. (2023). Generative AI at work (NBER Working Paper No. 31161).</li>
+        <li>Kwa, T., West, B., Becker, J., et al. (2025). Measuring AI ability to complete long tasks. arXiv:2503.14499.</li>
+      </ol>
+    </section>
+  </main>
+
+  <footer>
+    <div class="foot-nav">← Back to Articles<span class="sep">·</span>Inside the Metrics · Part 2<span class="sep">·</span>Last updated: July 2026</div>
+    <div class="foot-desc">A Copilot Analytics Lab technical brief on how New Assisted Hours is constructed — its layered architecture, the six research stages behind it, the calibration and effort-discounting calculations, and the results that make the metric auditable.</div>
+    <div class="legal">© 2026 Microsoft. All rights reserved. This document is provided "as-is." Information and views expressed in this document, including URL and other Internet Web site references, may change without notice. You bear the risk of using it. This document does not provide you with any legal rights to any intellectual property in any Microsoft product. You may copy and use this document for your internal reference purposes.</div>
+  </footer>
+
+</div>
+</body>
+</html>
