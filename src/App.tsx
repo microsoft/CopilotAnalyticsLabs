@@ -319,6 +319,7 @@ const resourceMeta: Record<
 
 const researchOrder = [
   "agent-assisted-hours",
+  "new-agent-assisted-hours",
   "cowork-value-methodology",
   "causal-impact-copilot-word",
   "work-trend-index-2026",
@@ -329,6 +330,10 @@ const researchOrder = [
 
 const researchTags: Record<string, { text: string; tone: string }[]> = {
   "agent-assisted-hours": [
+    { text: "Business value", tone: "blue" },
+    { text: "Org wide", tone: "purple" },
+  ],
+  "new-agent-assisted-hours": [
     { text: "Business value", tone: "blue" },
     { text: "Org wide", tone: "purple" },
   ],
