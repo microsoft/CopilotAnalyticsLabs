@@ -1,0 +1,2 @@
+Image 0: Illustration | x=-1064 y=415 w=128 h=128 radius=undefined | /section/sample code/cards/card row/Featured card/Cell Dev/Illustration
+Image 1: Illustration | x=-1064 y=661 w=128 h=128 radius=undefined | /section/sample code/cards/cardcrow 2/Featured card/Add Edit Share/Illustration

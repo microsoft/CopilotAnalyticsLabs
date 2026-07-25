@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { makeStyles, mergeClasses, shorthands } from "@fluentui/react-components";
-import { ArrowLeft16Regular, ArrowRight16Regular, DocumentBulletList24Regular } from "@fluentui/react-icons";
-import { MicrosoftLogoWordmark } from "./App";
+import { ChevronLeft20Filled, DocumentBulletList24Regular, Open16Filled } from "@fluentui/react-icons";
 import {
   resources,
   codeDomainFilters,
@@ -11,9 +10,6 @@ import type { CodeDomainFilter, CodeTechFilter } from "./data";
 import { logClick, logPageView, TelemetryEvents } from "./telemetry";
 import { VoteBar } from "./VoteBar";
 
-const TERMS_URL = "https://www.microsoft.com/en-us/legal/terms-of-use";
-const PRIVACY_URL = "https://privacy.microsoft.com/en-us/privacystatement";
-
 const useStyles = makeStyles({
   page: {
     minHeight: "100vh",
@@ -22,33 +18,6 @@ const useStyles = makeStyles({
     backgroundColor: "#F8F9FC",
     fontFamily: '"Segoe UI", system-ui, sans-serif',
     color: "#242424",
-  },
-  nav: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    ...shorthands.padding("16px", "48px"),
-    backgroundColor: "#ffffff",
-    ...shorthands.borderBottom("1px", "solid", "#EDEDED"),
-    '@media (max-width: 600px)': {
-      ...shorthands.padding("14px", "16px"),
-    },
-  },
-  brand: {
-    display: "flex",
-    alignItems: "center",
-    gap: "12px",
-  },
-  separator: {
-    width: "1px",
-    height: "20px",
-    backgroundColor: "#D1D1D1",
-  },
-  brandTitle: {
-    fontSize: "14px",
-    fontWeight: 600,
-    color: "#242424",
-    whiteSpace: "nowrap",
   },
   backLink: {
     display: "inline-flex",
@@ -75,9 +44,29 @@ const useStyles = makeStyles({
   },
   container: {
     width: "100%",
-    maxWidth: "1200px",
+    maxWidth: "1024px",
     marginLeft: "auto",
     marginRight: "auto",
+  },
+  breadcrumb: {
+    margin: 0,
+    display: "flex",
+    alignItems: "center",
+    marginBottom: "0",
+  },
+  breadcrumbLink: {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: "4px",
+    color: "#335CCC",
+    fontSize: "14px",
+    fontWeight: 600,
+    lineHeight: "20px",
+    textDecoration: "none",
+    cursor: "pointer",
+    ':hover': {
+      textDecoration: "underline",
+    },
   },
   eyebrow: {
     margin: 0,
@@ -235,17 +224,30 @@ const useStyles = makeStyles({
   tag: {
     display: "inline-flex",
     alignItems: "center",
-    fontSize: "11px",
+    minHeight: "24px",
+    fontSize: "12px",
     lineHeight: "16px",
     fontWeight: 600,
-    ...shorthands.padding("2px", "8px"),
-    ...shorthands.borderRadius("999px"),
+    ...shorthands.padding("4px", "8px"),
+    ...shorthands.borderRadius("100px"),
     color: "#3B4A66",
     backgroundColor: "#EEF2FF",
   },
-  tagTech: {
-    color: "#7A3EA6",
-    backgroundColor: "#F5EAFE",
+  tagRed: {
+    color: "#B10E1C",
+    backgroundColor: "#FDF3F4",
+  },
+  tagOrange: {
+    color: "#FF5C39",
+    backgroundColor: "#FFF4D8",
+  },
+  tagPurple: {
+    color: "#881798",
+    backgroundColor: "rgba(198, 177, 222, 0.2)",
+  },
+  tagTeal: {
+    color: "#00666D",
+    backgroundColor: "#E5FEFF",
   },
   cardTitle: {
     margin: 0,
@@ -253,6 +255,9 @@ const useStyles = makeStyles({
     lineHeight: "22px",
     fontWeight: 600,
     color: "#0E1726",
+    whiteSpace: "nowrap",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
   },
   cardDescription: {
     margin: 0,
@@ -264,22 +269,31 @@ const useStyles = makeStyles({
   cardButton: {
     display: "inline-flex",
     alignItems: "center",
+    justifyContent: "center",
     gap: "6px",
-    alignSelf: "flex-start",
-    fontSize: "13px",
+    minHeight: "32px",
+    backgroundColor: "#ffffff",
+    color: "#242424",
+    fontSize: "14px",
+    lineHeight: "20px",
     fontWeight: 600,
-    color: "#335CCC",
     textDecorationLine: "none",
-    ...shorthands.padding("8px", "16px"),
-    ...shorthands.borderRadius("8px"),
-    ...shorthands.border("1px", "solid", "#D1D9F0"),
-    backgroundColor: "#F5F8FF",
+    ...shorthands.padding("5px", "12px"),
+    ...shorthands.borderRadius("4px"),
+    ...shorthands.border("1px", "solid", "#D1D1D1"),
     ':hover': {
-      backgroundColor: "#E9F0FF",
+      backgroundColor: "#F7F7F7",
     },
   },
   voteBar: {
     marginTop: "12px",
+  },
+  cardFooter: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: "12px",
+    marginTop: "auto",
   },
   empty: {
     ...shorthands.padding("48px", "0"),
@@ -287,40 +301,7 @@ const useStyles = makeStyles({
     fontSize: "14px",
     color: "#616161",
   },
-  footer: {
-    backgroundColor: "#ffffff",
-    ...shorthands.borderTop("1px", "solid", "#EDEDED"),
-    ...shorthands.padding("32px", "48px"),
-    '@media (max-width: 600px)': {
-      ...shorthands.padding("24px", "16px"),
-    },
-  },
-  footerContent: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "16px",
-    maxWidth: "1200px",
-    marginLeft: "auto",
-    marginRight: "auto",
-  },
-  footerLinks: {
-    display: "flex",
-    gap: "24px",
-  },
-  footerLink: {
-    fontSize: "13px",
-    color: "#616161",
-    textDecorationLine: "none",
-    ':hover': {
-      textDecorationLine: "underline",
-    },
-  },
 });
-
-function goHome() {
-  window.location.hash = "";
-  window.scrollTo({ top: 0 });
-}
 
 export default function CodesPage() {
   const styles = useStyles();
@@ -362,21 +343,14 @@ export default function CodesPage() {
 
   return (
     <div className={styles.page}>
-      <nav className={styles.nav}>
-        <div className={styles.brand}>
-          <MicrosoftLogoWordmark />
-          <div className={styles.separator} />
-          <span className={styles.brandTitle}>Copilot Analytics Labs</span>
-        </div>
-        <button className={styles.backLink} onClick={goHome}>
-          <ArrowLeft16Regular fontSize={16} />
-          Back to Labs
-        </button>
-      </nav>
-
       <header className={styles.hero}>
         <div className={styles.container}>
-          <p className={styles.eyebrow}>Sample code</p>
+          <nav className={styles.breadcrumb}>
+            <a className={styles.breadcrumbLink} href={`${import.meta.env.BASE_URL}#/`}>
+              <ChevronLeft20Filled />
+              Back to Labs
+            </a>
+          </nav>
           <h1 className={styles.title}>Browse all sample code</h1>
           <p className={styles.description}>
             Reusable scripts, prompt libraries, and analytical methods for Python, R, Power BI, and more. Filter
@@ -451,7 +425,16 @@ export default function CodesPage() {
                           <div className={styles.cardContent}>
                             <div className={styles.tagRow}>
                               {item.tech.map((tag) => (
-                                <span key={tag} className={mergeClasses(styles.tag, styles.tagTech)}>
+                                <span
+                                  key={tag}
+                                  className={mergeClasses(
+                                    styles.tag,
+                                    tag === "Python" && styles.tagRed,
+                                    tag === "R" && styles.tagOrange,
+                                    tag === "Power BI" && styles.tagPurple,
+                                    tag === "AI-assisted" && styles.tagTeal,
+                                  )}
+                                >
                                   {tag}
                                 </span>
                               ))}
@@ -463,17 +446,19 @@ export default function CodesPage() {
                             </div>
                             <h3 className={styles.cardTitle}>{item.title}</h3>
                             <p className={styles.cardDescription}>{item.description}</p>
-                            <a
-                              className={styles.cardButton}
-                              href={item.url}
-                              target="_blank"
-                              rel="noreferrer"
-                              onClick={() => logClick(TelemetryEvents.CodeViewClick, { resource: item.id })}
-                            >
-                              View code
-                              <ArrowRight16Regular fontSize={14} />
-                            </a>
-                            <VoteBar cardId={item.id} className={styles.voteBar} />
+                            <div className={styles.cardFooter}>
+                              <a
+                                className={styles.cardButton}
+                                href={item.url}
+                                target="_blank"
+                                rel="noreferrer"
+                                onClick={() => logClick(TelemetryEvents.CodeViewClick, { resource: item.id })}
+                              >
+                                View code
+                                <Open16Filled fontSize={12} />
+                              </a>
+                              <VoteBar cardId={item.id} variant="inline" />
+                            </div>
                           </div>
                         </article>
                       );
@@ -484,24 +469,6 @@ export default function CodesPage() {
           )}
         </div>
       </main>
-
-      <footer className={styles.footer}>
-        <div className={styles.footerContent}>
-          <div className={styles.brand}>
-            <MicrosoftLogoWordmark />
-            <div className={styles.separator} />
-            <span className={styles.brandTitle}>Copilot Analytics Labs</span>
-          </div>
-          <div className={styles.footerLinks}>
-            <a className={styles.footerLink} href={TERMS_URL} target="_blank" rel="noreferrer">
-              Terms and Conditions
-            </a>
-            <a className={styles.footerLink} href={PRIVACY_URL} target="_blank" rel="noreferrer">
-              Privacy Statement
-            </a>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 }

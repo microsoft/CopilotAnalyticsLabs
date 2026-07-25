@@ -4,9 +4,9 @@ import {
   Sparkle24Regular,
   DocumentBulletList24Regular,
   PersonBoard24Regular,
+  AppGeneric24Regular,
   PeopleStar24Regular,
 } from "@fluentui/react-icons";
-import addEditShareIcon from "./assets/add-edit-share.webp";
 
 export interface TemplateItem {
   id: string;
@@ -33,6 +33,7 @@ export interface ResourceItem {
   icon: React.ComponentType;
   category: "Code" | "Prompts";
   image?: string;
+  /** ISO date (YYYY-MM-DD) the item was added. Drives "New and Popular". */
   addedOn?: string;
   /** Technology tags, used by the home Sample Code section + page "Technology" filter. */
   tech: CodeTechTag[];
@@ -60,9 +61,9 @@ export interface ResearchItem {
   description: string;
   url: string;
   icon: React.ComponentType;
-  ctaLabel?: string;
   /** Whether this item is a research report or an adoption/methodology playbook. */
   kind: "Research" | "Playbook";
+  /** ISO date (YYYY-MM-DD) the item was added. Drives the "What's new" section. */
   addedOn?: string;
   /** Domain tags, used by the dedicated Research & Playbooks page "Domain" filter. */
   domain: ResearchDomainTag[];
@@ -109,7 +110,7 @@ const base = import.meta.env.BASE_URL;
 export const templates: TemplateItem[] = [
   {
     id: "aio-dashboard",
-    title: "AI in One Dashboard",
+    title: "All in One Dashboard",
     description:
       "Comprehensive Copilot and Agent analytics covering adoption, usage, impact, and ROI — all in a single Power BI dashboard.",
     url: "https://github.com/microsoft/AI-in-One-Dashboard#-dashboard-preview",
@@ -128,7 +129,7 @@ export const templates: TemplateItem[] = [
     url: "https://github.com/microsoft/GitHubCopilotImpact#-github-copilot-impact",
     icon: DataTrending24Regular,
     image: `${base}images/card-github-copilot-org.png`,
-    addedOn: "2026-06-23",
+    addedOn: "2026-06-15",
     type: "GitHub",
     impact: ["AI Impact", "Org wide"],
     collections: ["AI Business Value"],
@@ -173,14 +174,27 @@ export const templates: TemplateItem[] = [
     collections: ["Microsoft 365"],
   },
   {
-    id: "superuser-impact",
-    title: "Super User Impact Report",
+    id: "m365-app-usage",
+    title: "Microsoft 365 App Usage Analytics",
     description:
-      "Analyze the work and productivity impact of super users across your organization with detailed pattern analysis.",
+      "Microsoft 365 app usage analytics and Copilot license recommendations across your tenant.",
+    url: "https://github.com/microsoft/M365UsageAnalytics#m365-usage-dashboard",
+    icon: AppGeneric24Regular,
+    image: `${base}images/card-m365-app-usage.png`,
+    addedOn: "2026-04-15",
+    type: "Business",
+    impact: ["Org wide"],
+    collections: ["Microsoft 365"],
+  },
+  {
+    id: "superuser-impact",
+    title: "SuperUser Impact Report",
+    description:
+      "Analyze the work and productivity impact of superusers across your organization with detailed pattern analysis.",
     url: "https://github.com/microsoft/superuserimpact#superuser-impact-report",
     icon: PeopleStar24Regular,
     image: `${base}images/card-superuser-impact.png`,
-    addedOn: "2026-04-15",
+    addedOn: "2026-03-30",
     type: "Business",
     impact: ["Team", "Org wide"],
     collections: ["AI Business Value"],
@@ -195,27 +209,29 @@ export type TemplateImpactFilter = (typeof templateImpactFilters)[number];
 export const templateTypeFilters = ["All", "Copilot", "Business", "GitHub"] as const;
 export type TemplateTypeFilter = (typeof templateTypeFilters)[number];
 
-// "Impact" filter tags for the dedicated Template Library page ("All" shows all).
-export const templatePageImpactFilters = ["All", "AI Impact", "Org wide", "Team", "Individual"] as const;
+// "Impact" filter tags for the dedicated Template Library page. "team wide" is the
+// display label for the canonical "Team" impact tag; "All" shows all.
+export const templatePageImpactFilters = ["All", "AI Impact", "Org wide", "team wide", "Individual"] as const;
 export type TemplatePageImpactFilter = (typeof templatePageImpactFilters)[number];
 
 // Maps a page "Impact" filter label to the canonical impact tag stored on templates.
 export function pageImpactToTag(filter: TemplatePageImpactFilter): TemplateItem["impact"][number] | null {
   if (filter === "All") return null;
+  if (filter === "team wide") return "Team";
   return filter;
 }
 
 export const resources: ResourceItem[] = [
   {
     id: "viva-insights-essentials",
-    title: "Insights Analysis - Essentials",
+    title: "Viva Insights Analysis - Essentials",
     description:
-      "Get started with R & Python utility scripts — exploratory data analysis, standard visualizations (bar charts, trend lines, network diagrams), and custom KPI generation from Insights data.",
+      "Get started with R & Python utility scripts — exploratory data analysis, standard visualisations (bar charts, trend lines, network diagrams), and custom KPI generation from Viva Insights data.",
     url: "https://microsoft.github.io/viva-insights-sample-code/essentials/",
     icon: DocumentBulletList24Regular,
     category: "Code",
     image: `${base}images/code-essentials.png`,
-    addedOn: "2026-05-25",
+    addedOn: "2026-04-20",
     tech: ["Python", "R"],
     domain: ["Adoption & Usage"],
     collections: ["Analytics"],
@@ -229,7 +245,7 @@ export const resources: ResourceItem[] = [
     icon: DocumentBulletList24Regular,
     category: "Code",
     image: `${base}images/code-advanced-analytics.png`,
-    addedOn: "2026-06-08",
+    addedOn: "2026-05-12",
     tech: ["Python", "R"],
     domain: ["Impact & ROI", "Advanced / ML"],
     collections: ["Analytics"],
@@ -243,7 +259,7 @@ export const resources: ResourceItem[] = [
     icon: DocumentBulletList24Regular,
     category: "Code",
     image: `${base}images/code-copilot-analytics.png`,
-    addedOn: "2026-06-25",
+    addedOn: "2026-07-01",
     tech: ["Python", "R"],
     domain: ["Adoption & Usage", "Copilot & Agents"],
     collections: ["Analytics"],
@@ -257,9 +273,23 @@ export const resources: ResourceItem[] = [
     icon: DocumentBulletList24Regular,
     category: "Code",
     image: `${base}images/code-frontier-analytics.png`,
-    addedOn: "2026-07-03",
+    addedOn: "2026-06-18",
     tech: ["Power BI", "AI-assisted"],
     domain: ["Impact & ROI", "Copilot & Agents", "Advanced / ML"],
+    collections: ["Export"],
+  },
+  {
+    id: "portable-audit-exporter",
+    title: "Portable Audit Exporter",
+    description:
+      "Portable exporter utilities for Purview audit data - parse, normalize, and prepare audit logs for downstream analytics and dashboarding.",
+    url: "https://microsoft.github.io/viva-insights-sample-code/frontier-analytics-prompt-audit-parsing/",
+    icon: DocumentBulletList24Regular,
+    category: "Code",
+    image: `${base}images/code-portable-audit-exporter.png`,
+    addedOn: "2026-06-22",
+    tech: ["Power BI", "AI-assisted"],
+    domain: ["Copilot & Agents", "Impact & ROI"],
     collections: ["Export"],
   },
   {
@@ -271,24 +301,10 @@ export const resources: ResourceItem[] = [
     icon: DocumentBulletList24Regular,
     category: "Code",
     image: `${base}images/code-network-analysis.png`,
-    addedOn: "2026-06-12",
+    addedOn: "2026-06-05",
     tech: ["Python", "R", "Power BI"],
     domain: ["Adoption & Usage", "Impact & ROI"],
     collections: ["Analytics"],
-  },
-  {
-    id: "portable-audit-exporter",
-    title: "Portable Audit eXporter (PAX)",
-    description:
-      "Export and analyze Microsoft 365 audit logs with a portable, ready-to-run toolkit for compliance and usage insights.",
-    url: "https://microsoft.github.io/PAX-Cookbook/",
-    icon: DocumentBulletList24Regular,
-    category: "Code",
-    image: addEditShareIcon,
-    addedOn: "2026-06-30",
-    tech: ["AI-assisted"],
-    domain: ["Adoption & Usage", "Impact & ROI"],
-    collections: ["Export"],
   },
 ];
 
@@ -349,16 +365,64 @@ export const research: ResearchItem[] = [
     contentType: ["Org wide", "Framework"],
   },
   {
-    id: "cowork-value-methodology",
+    id: "adoption-playbook",
+    title: "Customer Adoption Playbook",
+    description:
+      "Microsoft Viva Insights adoption guide with best practices for rolling out analytics across your organization.",
+    url: "https://adoption.microsoft.com/en-us/viva/insights/",
+    icon: DocumentBulletList24Regular,
+    kind: "Playbook",
+    addedOn: "2026-06-30",
+    domain: ["Copilot Adoption", "Productivity", "AI Transformation"],
+    contentType: ["Org wide", "Framework"],
+  },
+  {
+    id: "cowork-value-estimator",
     title: "Cowork Value Estimator Methodology",
     description:
       "Explore the methodology behind the Cowork Value Estimator for measuring collaboration impact.",
     url: "/CopilotAnalyticsLabs/Cowork_Methodology.pdf",
     icon: DocumentBulletList24Regular,
-    kind: "Playbook",
-    addedOn: "2026-06-20",
+    kind: "Research",
+    addedOn: "2026-05-15",
     domain: ["Business Value", "Productivity", "AI Transformation"],
     contentType: ["Framework", "Benchmark"],
+  },
+  {
+    id: "work-trend-index-2026",
+    title: "Microsoft Work Trend Index Report 2026",
+    description:
+      "The latest annual Work Trend Index report — data-driven insights on how AI is reshaping work, productivity, and the future of organizations.",
+    url: "https://assets-c4akfrf5b4d3f4b7.z01.azurefd.net/assets/2026/05/2026_Work_Trend_Index_Annual_Report_050526-7_69fc5b1c4e265.pdf",
+    icon: DocumentBulletList24Regular,
+    kind: "Research",
+    addedOn: "2026-07-02",
+    domain: ["AI Transformation", "Productivity"],
+    contentType: ["Industry wide", "Benchmark"],
+  },
+  {
+    id: "copilot-advanced-analytics",
+    title: "Advanced Analysis Examples with Copilot Analytics",
+    description:
+      "A recipe book of analysis and visualisation examples for measuring Copilot adoption and impact — built for analytics leaders and data scientists.",
+    url: "https://aka.ms/CopilotAdvancedAnalytics",
+    icon: DocumentBulletList24Regular,
+    kind: "Research",
+    addedOn: "2026-06-20",
+    domain: ["Copilot Adoption", "Agent Analytics", "Business Value"],
+    contentType: ["Org wide", "Framework"],
+  },
+  {
+    id: "getting-started-custom-analysis",
+    title: "Getting Started with Custom Analysis in Copilot Analytics",
+    description:
+      "A tactical playbook for custom analysis — from planning your measurement programme and setting up Viva Insights to running queries and building an analysis playbook.",
+    url: "https://adoption.microsoft.com/files/copilot/GettingStartedWithCustomAnalysisInCopilotAnalytics.pptx",
+    icon: DocumentBulletList24Regular,
+    kind: "Playbook",
+    addedOn: "2026-06-10",
+    domain: ["Copilot Adoption", "Productivity"],
+    contentType: ["Org wide", "Framework"],
   },
   {
     id: "new-future-of-work",
@@ -371,31 +435,6 @@ export const research: ResearchItem[] = [
     addedOn: "2026-05-15",
     domain: ["AI Transformation", "Productivity"],
     contentType: ["Industry wide"],
-  },
-  {
-    id: "work-trend-index-2026",
-    title: "Microsoft Work Trend Index Report 2026",
-    description:
-      "The latest annual Work Trend Index report — data-driven insights on how AI is reshaping work, productivity, and the future of organizations.",
-    url: "https://assets-c4akfrf5b4d3f4b7.z01.azurefd.net/assets/2026/05/2026_Work_Trend_Index_Annual_Report_050526-7_69fc5b1c4e265.pdf",
-    icon: DocumentBulletList24Regular,
-    kind: "Research",
-    addedOn: "2026-05-05",
-    domain: ["AI Transformation", "Productivity"],
-    contentType: ["Industry wide", "Benchmark"],
-  },
-  {
-    id: "copilot-advanced-analytics",
-    title: "Advanced Analysis Examples with Copilot Analytics",
-    description:
-      "A recipe book of analysis and visualization examples for measuring Copilot adoption and impact — built for analytics leaders and data scientists.",
-    url: "https://aka.ms/CopilotAdvancedAnalytics",
-    icon: DocumentBulletList24Regular,
-    ctaLabel: "Download report",
-    kind: "Playbook",
-    addedOn: "2026-07-02",
-    domain: ["Copilot Adoption", "Agent Analytics", "Business Value"],
-    contentType: ["Org wide", "Framework"],
   },
   {
     id: "causal-impact-copilot-word",

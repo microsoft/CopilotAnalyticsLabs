@@ -7,7 +7,7 @@
 }
 
 html {
-  scroll-behavior: smooth;
+  scroll-behavior: auto;
 }
 
 body {
@@ -32,4 +32,9 @@ a {
 ::-webkit-scrollbar-thumb {
   background: #c4c4c4;
   border-radius: 4px;
+}
+
+/* Roadmap card "Flow Sparkle" icon: blue→purple gradient fill (def lives in App roadmap section). */
+.roadmap-flow-icon path {
+  fill: url(#roadmapFlowGradient);
 }
