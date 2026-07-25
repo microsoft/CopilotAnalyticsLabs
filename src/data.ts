@@ -354,7 +354,7 @@ export const research: ResearchItem[] = [
   },
   {
     id: "new-agent-assisted-hours",
-    title: "New Agent assisted hours",
+    title: "New Assisted Hours",
     description:
       "The refreshed agent-assisted hours view — an updated breakdown of the time agents are helping teams reclaim across the organization.",
     url: `${base}new-agent-assisted-hours.html`,

@@ -460,8 +460,8 @@ const roadmapItems: RoadmapItem[] = [
     iconActive: PersonGuest20Filled,
     details: [
       "Identified user-level export",
-      "Programmatic export via Fabric",
-      "Scoped CDB/ADB partitions, flexible time ranges, tenant metric customization and GM/CXO access fixes",
+      "Programmatic export enhancements",
+      "Flexible time ranges, tenant metric customization and GM/CXO access fixes",
     ],
   },
 ];
