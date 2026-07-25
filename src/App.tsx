@@ -1,44 +1,41 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import { makeStyles, mergeClasses, shorthands } from "@fluentui/react-components";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { makeStyles, mergeClasses, shorthands, Tooltip } from "@fluentui/react-components";
 import {
   ArrowRight16Regular,
+  ArrowTrendingText20Filled,
+  ArrowTrendingText20Regular,
   Book20Filled,
-  BookOpen20Filled,
   BookTemplate20Filled,
+  BookCompass20Filled,
+  ChartMultiple20Filled,
+  ChartMultiple20Regular,
   ChevronLeft20Regular,
+  ChevronRight20Filled,
   ChevronRight20Regular,
   Code20Filled,
-  DataBarVerticalAscending24Regular,
-  DataTrending24Regular,
-  DocumentBulletList24Regular,
-  DismissRegular,
   Eye16Regular,
-  Info20Regular,
+  FlowSparkle20Regular,
   Microscope20Filled,
-  MountainLocationTop20Filled,
+  Open16Filled,
   Open16Regular,
-  PersonFeedback20Regular,
-  Sparkle24Regular,
+  PersonGuest20Filled,
+  PersonGuest20Regular,
+  Sparkle20Filled,
+  Sparkle20Regular,
   Star16Filled,
   WrenchScrewdriver20Filled,
+  MountainLocationTop20Filled,
 } from "@fluentui/react-icons";
-import heroBg from "./assets/bg-group.svg";
 import { research, resources, templates, templateImpactFilters, codeHomeTechFilters } from "./data";
 import type { TemplateImpactFilter, CodeHomeTechFilter } from "./data";
 import { logClick, logPageView, TelemetryEvents } from "./telemetry";
 import { VoteBar } from "./VoteBar";
 
-const VIVA_INSIGHTS_URL = "https://analysis.insights.cloud.microsoft/";
-const WHATS_COMING_URL = "https://www.microsoft.com/en-us/microsoft-365/roadmap?filters=Microsoft%20Viva";
-const FEEDBACK_URL = "https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=v4j5cvGGr0GRqy180BHbR0To00bktq1Ilw6hJ9BCmj5UNTg1QzM4UUs1SzNFM08yUFhVTlJDSDlWUC4u";
-const TERMS_URL = "https://www.microsoft.com/en-us/legal/terms-of-use";
-const PRIVACY_URL = "https://privacy.microsoft.com/en-us/privacystatement";
-
 
 const sectionTabs = [
   { id: "whats-new", label: "What's new" },
   { id: "templates", label: "Templates" },
-  { id: "sample-code", label: "Sample Code" },
+  { id: "sample-code", label: "Sample code" },
   { id: "research", label: "Research & Playbooks" },
   { id: "product-roadmap", label: "Roadmap" },
 ] as const;
@@ -46,14 +43,11 @@ const sectionTabs = [
 // "New" window (in days) per content type. Items added within this many days
 // of today are considered "new" and surface in the "What's new" section.
 const NEW_WINDOW_DAYS: Record<FeaturedKind, number> = {
-  Template: 30,
+  Template: 22,
   Code: 30,
   Research: 15,
   Playbook: 15,
 };
-
-// Always show this item first in the "What's new" carousel (by sourceId).
-const FEATURED_PINNED_FIRST = "cowork-value-estimator";
 
 type FeaturedKind = "Template" | "Code" | "Research" | "Playbook";
 
@@ -79,7 +73,7 @@ const featuredChipByKind: Record<
 const featuredKindOrder: FeaturedKind[] = ["Template", "Code", "Research", "Playbook"];
 const featuredPillLabel: Record<FeaturedKind, string> = {
   Template: "Templates",
-  Code: "Sample code",
+  Code: "Sample codes",
   Research: "Research",
   Playbook: "Playbooks",
 };
@@ -124,8 +118,7 @@ function formatRelativeDate(iso?: string): string {
   return months === 1 ? "1 month ago" : `${months} months ago`;
 }
 
-// New items grouped by type, newest first — only those within each kind's
-// window. The pinned item (if new) is always placed first.
+// New items grouped by type, newest first — only those within each kind's window.
 function buildFeaturedItems(): FeaturedItem[] {
   const byDateDesc = (a: { addedOn?: string }, b: { addedOn?: string }) =>
     (b.addedOn ?? "").localeCompare(a.addedOn ?? "");
@@ -137,7 +130,7 @@ function buildFeaturedItems(): FeaturedItem[] {
     { kind: "Playbook", items: research.filter((item) => item.kind === "Playbook") },
   ];
 
-  const items = groups
+  return groups
     .flatMap(({ kind, items }) =>
       [...items]
         .filter((item) => isNewForKind(item.addedOn, kind))
@@ -154,95 +147,26 @@ function buildFeaturedItems(): FeaturedItem[] {
         })),
     )
     .sort(byDateDesc);
-
-  const pinnedIdx = items.findIndex((item) => item.sourceId === FEATURED_PINNED_FIRST);
-  if (pinnedIdx > 0) {
-    const [pinned] = items.splice(pinnedIdx, 1);
-    items.unshift(pinned);
-  }
-
-  return items;
 }
-
-interface RoadmapItem {
-  id: string;
-  title: string;
-  description: string;
-  icon: React.ComponentType;
-  details?: string[];
-}
-
-const roadmapItems: RoadmapItem[] = [
-  {
-    id: "agent-analytics",
-    title: "Agent Analytics",
-    description:
-      "Comprehensive analytics for AI agents — dashboards, metrics, lifecycle management, and augmented capacity insights.",
-    icon: DataTrending24Regular,
-    details: [
-      "Agent 365 Dashboard",
-      "Agent metrics in advanced reporting",
-      "Lifecycle, sharing & promotion",
-      "Augmented capacity & AI teammates",
-    ],
-  },
-  {
-    id: "value-and-roi",
-    title: "Value and ROI",
-    description:
-      "Quantify and communicate the business value and return on investment of AI across your organization.",
-    icon: DataBarVerticalAscending24Regular,
-    details: [
-      "Copilot credits & consumption metrics",
-      "Task & intent analytics",
-      "Inferred satisfaction & impact",
-      "Deeper Cowork & Work IQ measurement",
-    ],
-  },
-  {
-    id: "insights-agent",
-    title: "Insights Agent",
-    description:
-      "AI-powered agent that surfaces proactive insights and recommendations from your analytics data.",
-    icon: Sparkle24Regular,
-    details: [
-      "Insights Agent — General Availability",
-      "Intelligent summaries",
-      "Build-your-own custom dashboards",
-    ],
-  },
-  {
-    id: "trust-access-foundation",
-    title: "Trust, Access and Foundation",
-    description:
-      "Foundational capabilities for security, governance, access control, and trust across the analytics platform.",
-    icon: DocumentBulletList24Regular,
-    details: [
-      "Identified user-level export",
-      "Programmatic export enhancements",
-      "Flexible time ranges, tenant metric customization",
-    ],
-  },
-];
 
 const heroValues = [
   {
     label: "Build",
+    title: "Build with ready-to-use assets",
+    description: "Templates, code, and prompts to plug into your own data.",
     Icon: WrenchScrewdriver20Filled,
-    heading: "Build with ready-to-use assets",
-    caption: "Templates, code, and prompts to plug into your own data.",
   },
   {
     label: "Learn",
-    Icon: BookOpen20Filled,
-    heading: "Learn from proven deployments",
-    caption: "Playbooks, research, and demos from real customer rollouts.",
+    title: "Learn from proven deployments",
+    description: "Playbooks, research, and demos from real customer rollouts.",
+    Icon: BookCompass20Filled,
   },
   {
     label: "Explore",
+    title: "See what's new and next",
+    description: "A preview of latest drops and upcoming capabilities.",
     Icon: MountainLocationTop20Filled,
-    heading: "See what's new and next",
-    caption: "A preview of latest drops and upcoming capabilities.",
   },
 ];
 
@@ -250,81 +174,167 @@ const templateOrder = [
   "aio-dashboard",
   "cowork-value-estimator",
   "github-copilot-impact-org",
-  "ai-business-value",
   "m365-copilot-personal",
   "superuser-impact",
 ];
+
+const templateFilterLabelHome: Record<TemplateImpactFilter, string> = {
+  Featured: "Featured",
+  "AI Impact": "AI impact",
+  "Org wide": "Org-wide",
+  Individual: "Individual",
+  Team: "Team",
+};
 
 const templateMeta: Record<
   string,
   {
     featured?: boolean;
-    badges?: { text: string; tone: "green" | "rose" }[];
+    badges?: { text: string; tone: "green" | "teal" | "purple" | "orange" | "red" }[];
     stats?: { value: string; label: string }[];
   }
 > = {
   "aio-dashboard": {
     featured: true,
-    badges: [{ text: "Featured", tone: "green" }],
+    badges: [
+      { text: "Featured", tone: "green" },
+      { text: "AI-impact", tone: "teal" },
+      { text: "Org wide", tone: "purple" },
+    ],
     stats: [
-      { value: "—", label: "Stars" },
-      { value: "—", label: "Watching" },
+      { value: "12", label: "KPI views" },
+      { value: "7", label: "Cohorts" },
+      { value: "<10 min", label: "Setup" },
     ],
   },
   "cowork-value-estimator": {
-    badges: [{ text: "Featured", tone: "green" }],
+    badges: [
+      { text: "Featured", tone: "green" },
+      { text: "AI-impact", tone: "teal" },
+      { text: "Individual", tone: "orange" },
+    ],
   },
-  "m365-copilot-personal": {},
+  "github-copilot-impact-org": {
+    badges: [
+      { text: "AI-impact", tone: "teal" },
+      { text: "Org wide", tone: "purple" },
+    ],
+  },
+  "m365-copilot-personal": {
+    badges: [{ text: "Individual", tone: "orange" }],
+  },
+  "superuser-impact": {
+    badges: [{ text: "Team", tone: "red" }],
+  },
 };
+
+const templateHomeCopyOverrides: Record<string, { title?: string; description?: string }> = {
+  "github-copilot-impact-org": {
+    title: "GitHub Copilot Impact (Org Level)",
+  },
+  "m365-copilot-personal": {
+    title: "M365 Copilot Personal Insights",
+    description:
+      "Personal adoption & engagement dashboard tracking your M365 Copilot usage journey and productivity gains.",
+  },
+  "superuser-impact": {
+    title: "Super-user Impact Report",
+    description:
+      "Analyze the work and productivity impact of super-users across your org with detailed pattern analysis.",
+  },
+};
+
+const codeHomeOrder = [
+  "viva-insights-essentials",
+  "advanced-analytics",
+  "network-analysis",
+  "portable-audit-exporter",
+  "frontier-analytics",
+  "copilot-analytics",
+];
 
 const resourceMeta: Record<
   string,
   {
     featured?: boolean;
-    badges?: { text: string; tone: "green" | "blue" }[];
-    accent: string;
-    color: string;
+    wide?: boolean;
+    badges?: { text: string; tone: "green" | "purple" | "red" | "orange" | "teal" }[];
   }
 > = {
   "viva-insights-essentials": {
     featured: true,
+    wide: true,
     badges: [
       { text: "Featured", tone: "green" },
-      { text: "Starter kit", tone: "blue" },
+      { text: "Python", tone: "red" },
+      { text: "R", tone: "orange" },
     ],
-    accent: "linear-gradient(135deg, #FFF2D8 0%, #EAE6FF 100%)",
-    color: "#7A4CE3",
   },
   "advanced-analytics": {
-    accent: "linear-gradient(135deg, #F2EAFF 0%, #FFF3DA 100%)",
-    color: "#7A4CE3",
-  },
-  "copilot-analytics": {
-    accent: "linear-gradient(135deg, #FFF1F7 0%, #EAF8FF 100%)",
-    color: "#E35BA3",
+    badges: [
+      { text: "Python", tone: "red" },
+      { text: "R", tone: "orange" },
+    ],
   },
   "frontier-analytics": {
-    accent: "linear-gradient(135deg, #EAF5FF 0%, #FFF0D6 100%)",
-    color: "#3F6CE9",
-  },
-  "network-analysis": {
-    accent: "linear-gradient(135deg, #FFF7DF 0%, #E8F5FF 100%)",
-    color: "#2976A8",
+    badges: [
+      { text: "AI-assisted", tone: "teal" },
+      { text: "Power BI", tone: "purple" },
+    ],
   },
   "portable-audit-exporter": {
-    accent: "linear-gradient(135deg, #E8F5E9 0%, #E3F2FD 100%)",
-    color: "#2E7D32",
+    wide: true,
+    badges: [{ text: "AI-assisted", tone: "teal" }],
+  },
+  "network-analysis": {
+    badges: [
+      { text: "Power BI", tone: "purple" },
+      { text: "Python", tone: "red" },
+      { text: "R", tone: "orange" },
+    ],
+  },
+  "copilot-analytics": {
+    badges: [
+      { text: "Python", tone: "red" },
+      { text: "R", tone: "orange" },
+    ],
+  },
+};
+
+const codeHomeCopyOverrides: Record<string, { description?: string }> = {
+  "viva-insights-essentials": {
+    description:
+      "Get started with R & Python utility scripts — exploratory data analysis, standard visualisations, and custom KPI generation from Insights data.",
+  },
+  "advanced-analytics": {
+    description: "Advanced analytical techniques and methods for deeper Viva Insights data.",
+  },
+  "network-analysis": {
+    description:
+      "Organizational network analysis techniques to understand collaboration patterns and connectivity.",
+  },
+  "frontier-analytics": {
+    description: "Cutting-edge analytical approaches and frontier methods for workplace intelligence.",
+  },
+  "portable-audit-exporter": {
+    description:
+      "Export and analyze Microsoft 365 audit logs with a portable, ready-to-run toolkit for compliance and usage insights.",
+  },
+  "copilot-analytics": {
+    description: "Sample code and examples for analyzing Microsoft Copilot usage and impact data.",
   },
 };
 
 const researchOrder = [
   "agent-assisted-hours",
   "new-agent-assisted-hours",
-  "cowork-value-methodology",
-  "causal-impact-copilot-word",
+  "adoption-playbook",
+  "getting-started-custom-analysis",
   "work-trend-index-2026",
-  "new-future-of-work",
+  "cowork-value-estimator",
   "copilot-advanced-analytics",
+  "new-future-of-work",
+  "causal-impact-copilot-word",
   "when-ai-met-the-meeting",
 ];
 
@@ -337,46 +347,122 @@ const researchTags: Record<string, { text: string; tone: string }[]> = {
     { text: "Business value", tone: "blue" },
     { text: "Org wide", tone: "purple" },
   ],
-  "cowork-value-methodology": [
-    { text: "Impact", tone: "blue" },
-    { text: "Org wide", tone: "purple" },
-  ],
-  "causal-impact-copilot-word": [
+  "new-future-of-work": [
     { text: "Research", tone: "teal" },
     { text: "Industry wide", tone: "amber" },
+  ],
+  "causal-impact-copilot-word": [
+    { text: "Impact", tone: "blue" },
+    { text: "Benchmark", tone: "slate" },
+  ],
+  "when-ai-met-the-meeting": [
+    { text: "Research", tone: "teal" },
+    { text: "Industry wide", tone: "amber" },
+  ],
+  "adoption-playbook": [
+    { text: "Adoption", tone: "green" },
+    { text: "Org wide", tone: "purple" },
+  ],
+  "getting-started-custom-analysis": [
+    { text: "Methodology", tone: "rose" },
+    { text: "Org wide", tone: "purple" },
   ],
   "work-trend-index-2026": [
     { text: "Research", tone: "teal" },
     { text: "Industry wide", tone: "amber" },
   ],
-  "new-future-of-work": [
-    { text: "Research", tone: "teal" },
-    { text: "Industry wide", tone: "amber" },
+  "cowork-value-estimator": [
+    { text: "Methodology", tone: "rose" },
+    { text: "Cowork", tone: "teal" },
   ],
   "copilot-advanced-analytics": [
     { text: "Impact", tone: "blue" },
     { text: "Advanced", tone: "slate" },
-  ],
-  "when-ai-met-the-meeting": [
-    { text: "Research", tone: "teal" },
-    { text: "Org wide", tone: "purple" },
   ],
 };
 
 const researchPanels = [
   {
     kind: "Research" as const,
-    title: "Research",
+    label: "RESEARCH",
+    subtitle: "Insights from orgs leading AI adoption",
     body:
       "Adoption playbooks, methodology guides, and research from real enterprise rollouts, so you don't start from scratch.",
     linkLabel: "View all research reports",
   },
   {
     kind: "Playbook" as const,
-    title: "Playbooks",
+    label: "PLAYBOOKS",
+    subtitle: "Strategies already in play",
     body:
       "Proven approaches and tactical guides drawn from real enterprise Copilot deployments.",
     linkLabel: "View all playbooks",
+  },
+];
+
+interface RoadmapItem {
+  id: string;
+  title: string;
+  description: string;
+  icon: React.ComponentType<{ fontSize?: number; className?: string; style?: React.CSSProperties }>;
+  iconActive: React.ComponentType<{ fontSize?: number; className?: string; style?: React.CSSProperties }>;
+  details?: string[];
+}
+
+const roadmapItems: RoadmapItem[] = [
+  {
+    id: "agent-analytics",
+    title: "Agent Analytics",
+    description:
+      "Comprehensive analytics for AI agents — dashboards, metrics, lifecycle management, and augmented capacity insights.",
+    icon: ChartMultiple20Regular,
+    iconActive: ChartMultiple20Filled,
+    details: [
+      "Agent 365 Dashboard",
+      "Agent metrics in advanced reporting",
+      "Lifecycle, sharing & promotion",
+      "Augmented capacity & AI teammates",
+    ],
+  },
+  {
+    id: "value-and-roi",
+    title: "Value and ROI",
+    description:
+      "Quantify and communicate the business value and return on investment of AI across your organization.",
+    icon: ArrowTrendingText20Regular,
+    iconActive: ArrowTrendingText20Filled,
+    details: [
+      "Copilot credits & consumption metrics",
+      "Task & intent analytics",
+      "Inferred satisfaction & impact",
+      "Deeper Cowork & Work IQ measurement",
+    ],
+  },
+  {
+    id: "insights-agent",
+    title: "Insights agent",
+    description:
+      "AI-powered agent that surfaces proactive insights and recommendations from your analytics data.",
+    icon: Sparkle20Regular,
+    iconActive: Sparkle20Filled,
+    details: [
+      "Insights Agent — General Availability",
+      "Intelligent summaries",
+      "Build-your-own custom dashboards",
+    ],
+  },
+  {
+    id: "trust-access-foundation",
+    title: "Trust, Access and Foundation",
+    description:
+      "Foundational capabilities for security, governance, access control, and trust across the analytics platform.",
+    icon: PersonGuest20Regular,
+    iconActive: PersonGuest20Filled,
+    details: [
+      "Identified user-level export",
+      "Programmatic export via Fabric",
+      "Scoped CDB/ADB partitions, flexible time ranges, tenant metric customization and GM/CXO access fixes",
+    ],
   },
 ];
 
@@ -384,154 +470,17 @@ const researchPanels = [
 const useStyles = makeStyles({
   page: {
     minHeight: "100vh",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "stretch",
+    width: "100%",
     backgroundColor: "#ffffff",
     color: "#242424",
     fontFamily: '"Segoe UI", "Segoe UI Web (West European)", system-ui, sans-serif',
   },
-  disclaimerBar: {
-    boxSizing: "border-box",
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    gap: "8px",
-    minHeight: "48px",
-    ...shorthands.padding("4px", "36px"),
-    backgroundColor: "#F5F5F5",
-    ...shorthands.borderTop("1px", "solid", "#D1D1D1"),
-    '@media (max-width: 600px)': {
-      ...shorthands.padding("8px", "16px"),
-    },
-  },
-  disclaimerIcon: {
-    flexShrink: 0,
-    color: "#616161",
-    fontSize: "20px",
-  },
-  disclaimerTextWrap: {
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-    gap: "4px",
-    flexGrow: 1,
-    flexWrap: "wrap",
-  },
-  disclaimerText: {
-    fontSize: "14px",
-    lineHeight: "20px",
-    fontWeight: 400,
-    color: "#000000",
-  },
-  disclaimerLink: {
-    fontSize: "12px",
-    lineHeight: "16px",
-    fontWeight: 400,
-    color: "#335CCC",
-    textDecorationLine: "underline",
-    whiteSpace: "nowrap",
-    ':hover': {
-      color: "#2A4CB0",
-    },
-  },
-  disclaimerDismiss: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    flexShrink: 0,
-    width: "24px",
-    height: "24px",
-    ...shorthands.padding("2px"),
-    ...shorthands.border("none"),
-    ...shorthands.borderRadius("4px"),
-    backgroundColor: "transparent",
-    color: "#424242",
-    cursor: "pointer",
-    ':hover': {
-      backgroundColor: "#EBEBEB",
-    },
-  },
-  nav: {
-    position: "sticky",
-    top: "0",
-    zIndex: 100,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    height: "48px",
-    backgroundColor: "#ffffff",
-    ...shorthands.padding("0", "56px"),
-    boxShadow: "0 1px 0 rgba(0, 0, 0, 0.08)",
-    '@media (max-width: 1200px)': {
-      ...shorthands.padding("0", "80px"),
-    },
-    '@media (max-width: 600px)': {
-      height: "auto",
-      flexDirection: "column",
-      alignItems: "stretch",
-      ...shorthands.padding("8px", "16px"),
-      gap: "4px",
-    },
-  },
-  brand: {
-    display: "flex",
-    alignItems: "center",
-    gap: "12px",
-    minHeight: "48px",
-    color: "#424242",
-    ...shorthands.padding("0", "8px", "1px"),
-  },
-  separator: {
-    width: "1px",
-    height: "16px",
-    backgroundColor: "#C8C8C8",
-    flexShrink: 0,
-  },
-  brandTitle: {
-    fontSize: "14px",
-    lineHeight: "20px",
-    fontWeight: 600,
-    color: "#424242",
-    whiteSpace: "nowrap",
-  },
-  navLinks: {
-    display: "flex",
-    alignItems: "center",
-    gap: "16px",
-    minHeight: "48px",
-    ...shorthands.padding("0", "40px"),
-    '@media (max-width: 600px)': {
-      ...shorthands.padding("0"),
-      justifyContent: "flex-start",
-      overflowX: "auto",
-      gap: "16px",
-      minHeight: "36px",
-    },
-  },
-  navLink: {
-    display: "inline-flex",
-    alignItems: "center",
-    gap: "6px",
-    color: "#242424",
-    fontSize: "14px",
-    lineHeight: "20px",
-    textDecorationLine: "none",
-    whiteSpace: "nowrap",
-    ':hover': {
-      color: "#0E1726",
-    },
-  },
-  navIconOnly: {
-    width: "28px",
-    height: "28px",
-    justifyContent: "center",
-    ...shorthands.borderRadius("999px"),
-    ':hover': {
-      backgroundColor: "#F5F5F5",
-    },
-  },
   hero: {
     position: "relative",
-    minHeight: "520px",
+    minHeight: "auto",
     overflow: "hidden",
     backgroundColor: "#ffffff",
     '@media (max-width: 600px)': {
@@ -545,29 +494,28 @@ const useStyles = makeStyles({
     width: "100%",
     height: "100%",
     pointerEvents: "none",
-    backgroundImage: `url("${heroBg}")`,
+    backgroundImage: `url(${import.meta.env.BASE_URL}images/hero-bg.svg)`,
     backgroundSize: "cover",
-    backgroundPosition: "center",
+    backgroundPosition: "center top",
     backgroundRepeat: "no-repeat",
     '@media (max-width: 600px)': {
-      opacity: 0.7,
+      opacity: 0.5,
     },
   },
   heroContent: {
     position: "relative",
     zIndex: 1,
     width: "100%",
-    maxWidth: "928px",
+    maxWidth: "1024px",
     marginLeft: "auto",
     marginRight: "auto",
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    gap: "32px",
-    ...shorthands.padding("64px", "0", "56px"),
+    gap: "40px",
+    ...shorthands.padding("48px", "24px", "56px"),
     '@media (max-width: 1200px)': {
-      maxWidth: "100%",
-      ...shorthands.padding("64px", "80px", "56px"),
+      ...shorthands.padding("48px", "24px", "56px"),
     },
     '@media (max-width: 600px)': {
       ...shorthands.padding("40px", "16px", "36px"),
@@ -579,16 +527,15 @@ const useStyles = makeStyles({
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    gap: "8px",
+    gap: "4px",
     textAlign: "center",
   },
   heroTitle: {
     margin: 0,
-    maxWidth: "760px",
+    maxWidth: "730px",
     fontSize: "40px",
     lineHeight: "56px",
     fontWeight: 600,
-    letterSpacing: "-0.02em",
     color: "#0E1726",
     whiteSpace: "nowrap",
     '@media (max-width: 600px)': {
@@ -599,11 +546,14 @@ const useStyles = makeStyles({
   },
   heroSubtitle: {
     margin: 0,
-    maxWidth: "760px",
-    fontSize: "16px",
-    lineHeight: "22px",
+    maxWidth: "686px",
+    fontWeight: 400,
+    fontSize: "18px",
+    lineHeight: "28px",
     color: "#424242",
+    whiteSpace: "nowrap",
     '@media (max-width: 600px)': {
+      maxWidth: "100%",
       fontSize: "14px",
       lineHeight: "20px",
       whiteSpace: "normal",
@@ -615,38 +565,35 @@ const useStyles = makeStyles({
     justifyContent: "center",
     ...shorthands.borderRadius("24px"),
     backgroundColor: "rgba(210, 225, 255, 0.5)",
-    ...shorthands.padding("16px"),
+    ...shorthands.padding("10px"),
     boxSizing: "border-box",
     '@media (max-width: 600px)': {
       ...shorthands.borderRadius("16px"),
-      ...shorthands.padding("10px"),
+      ...shorthands.padding("8px"),
     },
   },
   valuesPanel: {
     width: "100%",
     maxWidth: "896px",
-    minHeight: "256px",
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    justifyContent: "center",
     gap: "24px",
-    backgroundColor: "rgba(255,255,255,0.7)",
+    backgroundColor: "rgba(255,255,255,0.72)",
     backdropFilter: "blur(10px)",
     ...shorthands.borderRadius("16px"),
-    ...shorthands.padding("40px", "24px"),
+    ...shorthands.padding("24px"),
     boxSizing: "border-box",
     overflow: "hidden",
     '@media (max-width: 600px)': {
-      minHeight: "0",
-      ...shorthands.padding("24px", "16px"),
+      ...shorthands.padding("16px"),
       gap: "16px",
     },
   },
   valuesGrid: {
     width: "100%",
     display: "grid",
-    gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
+    gridTemplateColumns: "repeat(4, minmax(0, 1fr))",
     gap: "24px",
     '@media (max-width: 900px)': {
       gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
@@ -663,35 +610,31 @@ const useStyles = makeStyles({
     gap: "8px",
     textAlign: "center",
   },
-  valuePill: {
-    display: "inline-flex",
-    flexDirection: "row",
-    justifyContent: "center",
+  valueIcon: {
+    width: "64px",
+    height: "64px",
+    display: "flex",
     alignItems: "center",
-    gap: "8px",
-    ...shorthands.padding("8px", "16px"),
-    backgroundColor: "#FFFFFF",
-    ...shorthands.borderRadius("24px"),
-    boxShadow: "0px 1px 2px rgba(0,0,0,0.08), 0px 0px 2px rgba(0,0,0,0.10)",
-  },
-  valuePillIcon: {
-    fontSize: "20px",
-    color: "#1764E7",
-    flexShrink: 0,
-  },
-  valuePillLabel: {
-    fontSize: "16px",
-    lineHeight: "22px",
-    fontWeight: 600,
-    color: "#242424",
+    justifyContent: "center",
+    ...shorthands.borderRadius("20px"),
+    boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.5)",
+    '@media (max-width: 600px)': {
+      width: "48px",
+      height: "48px",
+      ...shorthands.borderRadius("14px"),
+    },
   },
   valueTitle: {
     margin: 0,
-    fontSize: "14px",
-    lineHeight: "20px",
+    fontSize: "16px",
+    lineHeight: "24px",
     fontWeight: 600,
     color: "#000000",
     whiteSpace: "normal",
+    '@media (max-width: 600px)': {
+      fontSize: "14px",
+      lineHeight: "20px",
+    },
   },
   valueDescription: {
     margin: 0,
@@ -757,10 +700,9 @@ const useStyles = makeStyles({
     position: "sticky",
     top: "48px",
     zIndex: 90,
+    background: "linear-gradient(96.15deg, rgba(118, 79, 245, 0.1) 12.38%, rgba(63, 108, 233, 0.1) 39.4%, rgba(32, 187, 198, 0.1) 96.13%)",
     backgroundColor: "#ffffff",
-    backgroundImage:
-      "linear-gradient(96.15deg, rgba(118, 79, 245, 0.1) 12.38%, rgba(63, 108, 233, 0.1) 39.4%, rgba(32, 187, 198, 0.1) 96.13%)",
-    boxShadow: "0px 1px 2px rgba(0,0,0,0.14), 0px 0px 2px rgba(0,0,0,0.12)",
+    boxShadow: "0px 0px 2px rgba(0,0,0,0.12), 0px 1px 2px rgba(0,0,0,0.14)",
     '@media (max-width: 600px)': {
       top: "96px",
     },
@@ -771,14 +713,14 @@ const useStyles = makeStyles({
   tabsList: {
     display: "flex",
     alignItems: "center",
-    gap: "16px",
-    maxWidth: "928px",
+    gap: "9px",
+    width: "100%",
+    maxWidth: "1024px",
     marginLeft: "auto",
     marginRight: "auto",
     ...shorthands.padding("4px", "0", "0"),
     '@media (max-width: 1200px)': {
-      ...shorthands.padding("4px", "80px", "0"),
-      maxWidth: "100%",
+      ...shorthands.padding("4px", "0", "0"),
     },
     '@media (max-width: 600px)': {
       ...shorthands.padding("4px", "16px", "0"),
@@ -817,19 +759,24 @@ const useStyles = makeStyles({
     },
   },
   section: {
-    ...shorthands.padding("64px", "256px"),
-    scrollMarginTop: "96px",
+    ...shorthands.padding("64px", "24px"),
+    scrollMarginTop: "64px",
     '@media (max-width: 1200px)': {
-      ...shorthands.padding("64px", "80px"),
+      ...shorthands.padding("64px", "24px"),
+      scrollMarginTop: "64px",
     },
     '@media (max-width: 600px)': {
       ...shorthands.padding("36px", "16px"),
-      scrollMarginTop: "144px",
+      scrollMarginTop: "36px",
     },
   },
   sectionTemplateBg: {
+    // Figma: white base with Viva OverlayShape (blue→purple, 0.12) + Blue_accent (0.16) ambient blobs, heavily blurred.
     background:
-      "linear-gradient(113deg, rgba(240,231,255,0.7) 0%, rgba(255,255,255,1) 40%, rgba(228,243,255,0.9) 100%)",
+      "radial-gradient(1100px 720px at 8% -6%, rgba(74,164,217,0.12) 0%, rgba(30,85,202,0.10) 34%, rgba(93,68,205,0.07) 60%, rgba(255,255,255,0) 82%), " +
+      "radial-gradient(980px 640px at 98% -8%, rgba(103,149,255,0.14) 0%, rgba(19,66,176,0.08) 40%, rgba(82,117,197,0) 70%), " +
+      "linear-gradient(82.58deg, rgba(74,164,217,0.05) 12%, rgba(30,85,202,0.05) 42%, rgba(93,68,205,0.04) 66%, rgba(255,255,255,0) 100%), " +
+      "#FFFFFF",
   },
   sectionCodeBg: {
     background:
@@ -841,7 +788,7 @@ const useStyles = makeStyles({
   },
   sectionContent: {
     width: "100%",
-    maxWidth: "928px",
+    maxWidth: "1024px",
     marginLeft: "auto",
     marginRight: "auto",
     display: "flex",
@@ -851,6 +798,29 @@ const useStyles = makeStyles({
       gap: "32px",
     },
   },
+  templateSectionContent: {
+    gap: "24px",
+  },
+  templateSectionDescription: {
+    maxWidth: "1024px",
+    whiteSpace: "nowrap",
+    '@media (max-width: 900px)': {
+      whiteSpace: "normal",
+    },
+  },
+  codeSectionDescription: {
+    maxWidth: "1024px",
+    whiteSpace: "nowrap",
+    '@media (max-width: 900px)': {
+      whiteSpace: "normal",
+    },
+  },
+  featuredSectionContent: {
+    gap: "24px",
+  },
+  codeSectionContent: {
+    gap: "24px",
+  },
   sectionTitleArea: {
     display: "flex",
     flexDirection: "column",
@@ -859,18 +829,19 @@ const useStyles = makeStyles({
   eyebrow: {
     width: "fit-content",
     margin: 0,
+    fontFamily: '"Segoe UI", "Segoe UI Web (West European)", system-ui, sans-serif',
     fontSize: "14px",
     lineHeight: "20px",
     fontWeight: 600,
-    letterSpacing: "0.02em",
+    letterSpacing: 0,
     textTransform: "uppercase",
-    backgroundImage: "linear-gradient(96.15deg, #764FF5 12.38%, #3F6CE9 39.4%, #20BBC6 96.13%)",
+    backgroundImage: "linear-gradient(137.22deg, #764FF5 14.49%, #3F6CE9 42.08%, #20BBC6 100%)",
     color: "transparent",
     backgroundClip: "text",
     WebkitBackgroundClip: "text",
     WebkitTextFillColor: "transparent",
   },
-  eyebrowWarm: {
+  eyebrowFeatured: {
     backgroundImage: "linear-gradient(96.15deg, #E76633 -1.08%, #9D68E3 14.88%, #20BBC6 96.13%)",
   },
   sectionHeadingRow: {
@@ -885,11 +856,12 @@ const useStyles = makeStyles({
   },
   sectionHeading: {
     margin: 0,
+    fontFamily: '"Segoe UI", "Segoe UI Web (West European)", system-ui, sans-serif',
     fontSize: "32px",
     lineHeight: "40px",
     fontWeight: 600,
     color: "#0E1726",
-    letterSpacing: "-0.02em",
+    letterSpacing: 0,
     '@media (max-width: 600px)': {
       fontSize: "28px",
       lineHeight: "34px",
@@ -908,22 +880,26 @@ const useStyles = makeStyles({
   },
   templateGrid: {
     display: "grid",
-    gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
-    gap: "24px",
+    gridTemplateColumns: "320px repeat(2, minmax(0, 1fr))",
+    gridTemplateRows: "repeat(2, 256px)",
+    gap: "20px",
     '@media (max-width: 900px)': {
       gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+      gridTemplateRows: "auto",
     },
     '@media (max-width: 600px)': {
       gridTemplateColumns: "1fr",
+      gridTemplateRows: "auto",
     },
   },
   templateCard: {
-    minHeight: "300px",
+    minHeight: "256px",
     display: "flex",
     flexDirection: "column",
-    gap: "24px",
+    justifyContent: "space-between",
+    gap: "16px",
     backgroundColor: "#ffffff",
-    boxShadow: "0 0 2px rgba(0,0,0,0.12), 0 4px 16px rgba(0,0,0,0.08)",
+    boxShadow: "0 0 2px rgba(0,0,0,0.12), 0 4px 16px rgba(0,0,0,0.06)",
     ...shorthands.borderRadius("16px"),
     ...shorthands.padding("24px"),
     boxSizing: "border-box",
@@ -934,47 +910,36 @@ const useStyles = makeStyles({
     },
   },
   templateCardFeatured: {
-    gridColumn: "span 2",
-    flexDirection: "row",
-    alignItems: "stretch",
+    gridRow: "span 2",
+    minHeight: "532px",
+    gap: "16px",
     '@media (max-width: 900px)': {
-      gridColumn: "span 2",
+      gridRow: "span 1",
+      minHeight: "auto",
     },
     '@media (max-width: 600px)': {
-      gridColumn: "span 1",
-      flexDirection: "column",
+      minHeight: "auto",
     },
   },
   templateCardContent: {
     display: "flex",
     flexDirection: "column",
-    gap: "16px",
+    gap: "4px",
     flex: 1,
     minWidth: 0,
   },
   templateCardImage: {
     width: "100%",
-    height: "92px",
+    height: "235px",
     objectFit: "cover",
     display: "block",
     backgroundColor: "#F5F5F5",
     ...shorthands.borderRadius("12px"),
   },
-  templateCardImageFeatured: {
-    width: "42%",
-    height: "auto",
-    minHeight: "268px",
-    alignSelf: "stretch",
-    '@media (max-width: 600px)': {
-      width: "100%",
-      minHeight: "180px",
-    },
-  },
   templateBody: {
     display: "flex",
     flexDirection: "column",
-    justifyContent: "space-between",
-    gap: "16px",
+    gap: "22px",
     flex: 1,
   },
   statsDivider: {
@@ -993,24 +958,40 @@ const useStyles = makeStyles({
   badge: {
     display: "inline-flex",
     alignItems: "center",
-    gap: "6px",
-    fontSize: "14px",
-    lineHeight: "20px",
-    fontWeight: 400,
-    ...shorthands.padding("6px", "12px"),
-    ...shorthands.borderRadius("9999px"),
+    minHeight: "24px",
+    fontSize: "12px",
+    lineHeight: "16px",
+    fontWeight: 600,
+    ...shorthands.padding("4px", "8px"),
+    ...shorthands.borderRadius("100px"),
   },
   badgeGreen: {
     color: "#0E700E",
     backgroundColor: "#F1FAF1",
   },
   badgeRose: {
-    color: "#B33A55",
-    backgroundColor: "#FDEBF1",
+    color: "#C50F1F",
+    backgroundColor: "#FDF3F4",
   },
   badgeBlue: {
-    color: "#0F6CBD",
-    backgroundColor: "#EBF3FC",
+    color: "#335CCC",
+    backgroundColor: "#E5EEFF",
+  },
+  badgeTeal: {
+    color: "#00666D",
+    backgroundColor: "#E5FEFF",
+  },
+  badgePurple: {
+    color: "#881798",
+    backgroundColor: "rgba(198, 177, 222, 0.2)",
+  },
+  badgeOrange: {
+    color: "#FF5C39",
+    backgroundColor: "#FFF4D8",
+  },
+  badgeRed: {
+    color: "#B10E1C",
+    backgroundColor: "#FDF3F4",
   },
   templateTitle: {
     margin: 0,
@@ -1018,12 +999,26 @@ const useStyles = makeStyles({
     lineHeight: "24px",
     fontWeight: 600,
     color: "#000000",
+    whiteSpace: "nowrap",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
   },
   templateDescription: {
     margin: 0,
     fontSize: "14px",
     lineHeight: "18px",
     color: "#616161",
+    display: "-webkit-box",
+    WebkitLineClamp: "3",
+    WebkitBoxOrient: "vertical",
+    overflow: "hidden",
+  },
+  templateActionsRow: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: "16px",
+    marginTop: "auto",
   },
   statsRow: {
     display: "flex",
@@ -1036,83 +1031,90 @@ const useStyles = makeStyles({
     gap: "2px",
   },
   statValue: {
-    fontSize: "20px",
+    fontSize: "16px",
     lineHeight: "24px",
     fontWeight: 600,
-    color: "#0E1726",
+    color: "#000000",
   },
   statLabel: {
     fontSize: "12px",
     lineHeight: "16px",
-    color: "#616161",
+    color: "#707070",
   },
   codeGrid: {
     display: "grid",
-    gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
-    gridTemplateRows: "1fr 1fr 1fr",
+    gridTemplateColumns: "repeat(4, minmax(0, 1fr))",
+    gridAutoRows: "226px",
     gap: "20px",
+    '@media (max-width: 900px)': {
+      gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+      gridAutoRows: "auto",
+    },
     '@media (max-width: 600px)': {
       gridTemplateColumns: "1fr",
-      gridTemplateRows: "auto",
+      gridAutoRows: "auto",
     },
   },
   codeCard: {
     display: "flex",
-    alignItems: "center",
+    flexDirection: "column",
+    justifyContent: "flex-start",
     gap: "16px",
+    minHeight: "100%",
     backgroundColor: "#ffffff",
-    boxShadow: "0 0 2px rgba(0,0,0,0.12), 0 4px 16px rgba(0,0,0,0.08)",
+    boxShadow: "0 0 2px rgba(0,0,0,0.12), 0 4px 16px rgba(0,0,0,0.06)",
     ...shorthands.borderRadius("16px"),
-    ...shorthands.padding("24px"),
+    ...shorthands.padding("20px"),
     boxSizing: "border-box",
     '@media (max-width: 600px)': {
-      flexDirection: "column",
-      alignItems: "flex-start",
+      minHeight: "auto",
       ...shorthands.padding("16px"),
       gap: "12px",
     },
   },
-  codeCardFeatured: {
-    gridRow: "span 2",
-    flexDirection: "column",
+  codeCardWide: {
+    gridColumn: "span 2",
+    flexDirection: "row",
+    gap: "8px",
+    padding: "20px",
     alignItems: "flex-start",
-    ...shorthands.padding("24px"),
-    gap: "16px",
+    '@media (max-width: 900px)': {
+      gridColumn: "span 2",
+      flexDirection: "row",
+    },
     '@media (max-width: 600px)': {
-      height: "auto",
+      gridColumn: "span 1",
+      flexDirection: "column",
+      gap: "16px",
+      padding: "16px",
+      alignItems: "stretch",
     },
   },
-  codeArt: {
+  codeCardSquare: {
+    gridColumn: "span 1",
+  },
+  codeCardImage: {
+    width: "100%",
+    height: "92px",
+    objectFit: "cover",
+    display: "block",
+    ...shorthands.borderRadius("12px"),
     flexShrink: 0,
-    width: "128px",
-    height: "128px",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    ...shorthands.borderRadius("14px"),
-    '@media (max-width: 600px)': {
-      width: "80px",
-      height: "80px",
-    },
   },
-  codeArtFeatured: {
+  codeCardWideImage: {
     width: "128px",
     height: "128px",
-    '@media (max-width: 600px)': {
-      width: "96px",
-      height: "96px",
-    },
+    objectFit: "cover",
+    display: "block",
+    ...shorthands.borderRadius("12px"),
+    flexShrink: 0,
   },
   codeCardBody: {
     display: "flex",
     flexDirection: "column",
-    justifyContent: "space-between",
-    gap: "12px",
+    gap: "8px",
     flex: 1,
     alignSelf: "stretch",
-  },
-  codeCardBodyFeatured: {
-    gap: "16px",
   },
   codeTitle: {
     margin: 0,
@@ -1120,12 +1122,45 @@ const useStyles = makeStyles({
     lineHeight: "24px",
     fontWeight: 600,
     color: "#000000",
+    whiteSpace: "nowrap",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
   },
   codeDescription: {
     margin: 0,
     fontSize: "14px",
     lineHeight: "18px",
     color: "#616161",
+  },
+  codeActionsRow: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: "8px",
+    marginTop: "auto",
+  },
+  codeCardButton: {
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: "6px",
+    minHeight: "32px",
+    backgroundColor: "#ffffff",
+    color: "#242424",
+    fontSize: "14px",
+    lineHeight: "20px",
+    fontWeight: 600,
+    textDecorationLine: "none",
+    ...shorthands.padding("5px", "12px"),
+    ...shorthands.borderRadius("4px"),
+    ...shorthands.border("1px", "solid", "#D1D1D1"),
+    ':hover': {
+      backgroundColor: "#F7F7F7",
+    },
+  },
+  codeVoteBar: {
+    marginTop: "0",
+    flexShrink: 0,
   },
   researchGrid: {
     display: "grid",
@@ -1187,23 +1222,23 @@ const useStyles = makeStyles({
     backgroundColor: "#F4EAFD",
   },
   tagRose: {
-    color: "#b4465e",
+    color: "#BE4A63",
     backgroundColor: "#FDECEF",
   },
   tagTeal: {
-    color: "#1F6B73",
+    color: "#2A7D86",
     backgroundColor: "#E8F8FA",
   },
   tagAmber: {
-    color: "#8F5A18",
+    color: "#A86A1E",
     backgroundColor: "#FFF2DE",
   },
   tagBlue: {
-    color: "#2A5AC8",
+    color: "#2F69E8",
     backgroundColor: "#EAF2FF",
   },
   tagOrange: {
-    color: "#A84B0F",
+    color: "#D56A16",
     backgroundColor: "#FFF0E2",
   },
   tagSlate: {
@@ -1212,7 +1247,7 @@ const useStyles = makeStyles({
   },
   sectionRoadmapBg: {
     background:
-      "linear-gradient(113deg, rgba(228,243,255,0.7) 0%, rgba(255,255,255,1) 40%, rgba(240,231,255,0.9) 100%)",
+      "linear-gradient(137.22deg, rgba(118,79,245,0.04) 14.49%, rgba(63,108,233,0.04) 42.08%, rgba(32,187,198,0.04) 100%)",
   },
   roadmapGrid: {
     display: "grid",
@@ -1260,7 +1295,7 @@ const useStyles = makeStyles({
     margin: 0,
     fontSize: "16px",
     lineHeight: "24px",
-    fontWeight: 600,
+    fontWeight: 400,
     color: "#000000",
   },
   roadmapDescription: {
@@ -1273,13 +1308,19 @@ const useStyles = makeStyles({
     display: "flex",
     gap: "24px",
     flexWrap: "wrap",
-    justifyContent: "center",
+    justifyContent: "flex-end",
+    '@media (max-width: 600px)': {
+      justifyContent: "flex-start",
+    },
   },
   roadmapLink: {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: "6px",
     color: "#335CCC",
     fontSize: "14px",
     lineHeight: "20px",
-    fontWeight: 500,
+    fontWeight: 600,
     textDecorationLine: "none",
     ':hover': {
       textDecorationLine: "underline",
@@ -1344,49 +1385,504 @@ const useStyles = makeStyles({
     lineHeight: "20px",
     color: "#424242",
   },
-  eyebrowFeatured: {
-    backgroundImage: "linear-gradient(96.15deg, #E76633 -1.08%, #9D68E3 14.88%, #20BBC6 96.13%)",
-  },
-  roadmapTabs: {
+  heroValuesRow: {
+    width: "100%",
+    maxWidth: "812px",
     display: "flex",
-    flexWrap: "wrap",
-    gap: "4px",
-    ...shorthands.borderBottom("1px", "solid", "#E0E0E0"),
-  },
-  roadmapTab: {
-    display: "inline-flex",
-    alignItems: "center",
-    gap: "8px",
-    backgroundColor: "transparent",
-    color: "#424242",
-    fontSize: "14px",
-    lineHeight: "20px",
-    fontFamily: '"Segoe UI", "Segoe UI Web (West European)", system-ui, sans-serif',
-    cursor: "pointer",
-    ...shorthands.padding("10px", "14px"),
-    ...shorthands.border("none"),
-    ...shorthands.borderBottom("2px", "solid", "transparent"),
-    marginBottom: "-1px",
-    ':hover': {
-      color: "#0E1726",
+    justifyContent: "center",
+    gap: "24px",
+    '@media (max-width: 700px)': {
+      flexDirection: "column",
+      gap: "24px",
+      alignItems: "center",
     },
   },
-  roadmapTabActive: {
-    color: "#0E1726",
-    fontWeight: 600,
-    ...shorthands.borderBottom("2px", "solid", "#335CCC"),
+  heroValueItem: {
+    flex: "1 1 0",
+    minWidth: 0,
+    maxWidth: "254.67px",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    gap: "8px",
+    textAlign: "center",
   },
-  roadmapTabDescription: {
+  heroValueLabelRow: {
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    minWidth: "120px",
+    ...shorthands.padding("8px", "19px"),
+    ...shorthands.borderRadius("24px"),
+    backgroundColor: "#FFFFFF",
+    gap: "8px",
+  },
+  heroValueIcon: {
+    width: "20px",
+    height: "20px",
+    color: "#335CCC",
+  },
+  heroValueLabel: {
+    fontSize: "16px",
+    lineHeight: "22px",
+    fontWeight: 600,
+    letterSpacing: 0,
+    color: "#242424",
+  },
+  heroValueTitle: {
     margin: 0,
     fontSize: "14px",
     lineHeight: "20px",
-    color: "#424242",
-    maxWidth: "760px",
+    fontWeight: 600,
+    color: "#000000",
+  },
+  heroValueDescription: {
+    margin: 0,
+    fontSize: "12px",
+    lineHeight: "16px",
+    color: "#616161",
+  },
+  viewAllLink: {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: "8px",
+    color: "#335CCC",
+    fontSize: "14px",
+    lineHeight: "20px",
+    fontWeight: 600,
+    textDecorationLine: "none",
+    whiteSpace: "nowrap",
+    ':hover': {
+      textDecorationLine: "none",
+    },
+    ':hover .viewAllArrow': {
+      backgroundColor: "#2A4CB0",
+    },
+  },
+  viewAllArrow: {
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    width: "23px",
+    height: "23px",
+    color: "#ffffff",
+    backgroundColor: "#335CCC",
+    boxShadow: "0px 1px 2px rgba(0,0,0,0.14), 0px 0px 2px rgba(0,0,0,0.12)",
+    ...shorthands.borderRadius("18px"),
+    flexShrink: 0,
+  },
+  templateViewAllLink: {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: "6px",
+    color: "#335CCC",
+    fontSize: "14px",
+    lineHeight: "20px",
+    fontWeight: 600,
+    textDecorationLine: "none",
+    whiteSpace: "nowrap",
+    ':hover': {
+      textDecorationLine: "none",
+    },
+  },
+  templateViewAllIcon: {
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    color: "#335CCC",
+    width: "20px",
+    height: "20px",
+    flexShrink: 0,
+  },
+  templateCardButton: {
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: "6px",
+    minHeight: "32px",
+    backgroundColor: "#ffffff",
+    color: "#242424",
+    fontSize: "14px",
+    lineHeight: "20px",
+    fontWeight: 600,
+    textDecorationLine: "none",
+    ...shorthands.padding("5px", "12px"),
+    ...shorthands.borderRadius("4px"),
+    ...shorthands.border("1px", "solid", "#D1D1D1"),
+    ':hover': {
+      backgroundColor: "#F7F7F7",
+    },
+  },
+  templateVoteBar: {
+    marginTop: "0",
+    flexShrink: 0,
+  },
+  chipRow: {
+    display: "flex",
+    flexWrap: "wrap",
+    gap: "8px",
+  },
+  chip: {
+    display: "inline-flex",
+    alignItems: "center",
+    fontSize: "14px",
+    lineHeight: "20px",
+    fontWeight: 400,
+    color: "#242424",
+    backgroundColor: "#ffffff",
+    cursor: "pointer",
+    ...shorthands.padding("4px", "12px"),
+    ...shorthands.borderRadius("100px"),
+    ...shorthands.border("1px", "solid", "#D1D1D1"),
+    ':hover': {
+      backgroundColor: "#F5F5F5",
+    },
+  },
+  chipActive: {
+    color: "#ffffff",
+    backgroundColor: "#335CCC",
+    ...shorthands.border("1px", "solid", "#335CCC"),
+    ':hover': {
+      backgroundColor: "#294DAE",
+    },
+  },
+  emptyState: {
+    ...shorthands.padding("40px", "0"),
+    textAlign: "center",
+    fontSize: "14px",
+    lineHeight: "20px",
+    color: "#616161",
+  },
+  researchLayout: {
+    display: "grid",
+    gridTemplateColumns: "minmax(260px, 340px) 1fr",
+    gap: "48px",
+    '@media (max-width: 900px)': {
+      gridTemplateColumns: "1fr",
+      gap: "24px",
+    },
+  },
+  researchIntro: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "28px",
+  },
+  researchIntroBlock: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "8px",
+    ...shorthands.borderLeft("2px", "solid", "#E0E0E0"),
+    ...shorthands.padding("0", "0", "0", "16px"),
+  },
+  researchIntroLabel: {
+    fontSize: "12px",
+    lineHeight: "16px",
+    fontWeight: 700,
+    letterSpacing: "0.06em",
+    textTransform: "uppercase",
+    color: "#0E1726",
+  },
+  researchIntroText: {
+    margin: 0,
+    fontSize: "14px",
+    lineHeight: "20px",
+    color: "#616161",
+  },
+  researchList: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "16px",
+  },
+  // --- Figma "Research & playbooks" two-pane layout ---
+  researchTwoPane: {
+    display: "flex",
+    alignItems: "stretch",
+    width: "100%",
+    maxWidth: "1024px",
+    marginLeft: "auto",
+    marginRight: "auto",
+    '@media (max-width: 900px)': {
+      flexDirection: "column",
+    },
+  },
+  researchLeftPane: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "24px",
+    flex: 1,
+    minWidth: 0,
+    ...shorthands.padding("0", "0"),
+    '@media (max-width: 900px)': {
+      width: "100%",
+    },
+  },
+  researchHeadingBlock: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "12px",
+  },
+  researchEyebrowGradient: {
+    margin: 0,
+    fontSize: "14px",
+    lineHeight: "20px",
+    fontWeight: 600,
+    background: "linear-gradient(96.16deg, #E76633 -1.08%, #9D68E3 14.88%, #20BBC6 96.17%)",
+    WebkitBackgroundClip: "text",
+    WebkitTextFillColor: "transparent",
+    backgroundClip: "text",
+  },
+  researchMainHeading: {
+    margin: 0,
+    fontSize: "32px",
+    lineHeight: "40px",
+    fontWeight: 600,
+    color: "#0E1726",
+  },
+  researchAccordions: {
+    display: "flex",
+    flexDirection: "column",
+  },
+  researchAccordionHeader: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "stretch",
+    gap: "12px",
+    ...shorthands.padding("20px", "0px", "20px", "16px"),
+    ...shorthands.border("none"),
+    backgroundColor: "transparent",
+    cursor: "pointer",
+    width: "100%",
+    textAlign: "left",
+    fontFamily: '"Segoe UI", system-ui, sans-serif',
+    transitionProperty: "background-color",
+    transitionDuration: "150ms",
+    transitionTimingFunction: "ease",
+  },
+  researchAccordionHeaderSelected: {
+    backgroundColor: "#FFFFFF",
+  },
+  researchAccordionHeaderUnselected: {
+    ':hover': {
+      backgroundColor: "rgba(255, 255, 255, 0.5)",
+    },
+  },
+  researchAccordionAccent: {
+    width: "3px",
+    flexShrink: 0,
+    alignSelf: "stretch",
+    backgroundColor: "#335CCC",
+    ...shorthands.borderRadius("2px"),
+  },
+  researchAccordionItemContent: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "8px",
+    minWidth: 0,
+  },
+  researchAccordionTitle: {
+    fontSize: "16px",
+    lineHeight: "24px",
+    fontWeight: 600,
+  },
+  researchAccordionTitleLabel: {
+    fontWeight: 700,
+    color: "#242424",
+  },
+  researchAccordionTitleSubtitle: {
+    fontWeight: 400,
+    color: "#616161",
+  },
+  researchAccordionBodyText: {
+    margin: 0,
+    fontSize: "14px",
+    lineHeight: "20px",
+    color: "#616161",
+  },
+  researchAccordionLink: {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: "4px",
+    alignSelf: "flex-start",
+    fontSize: "14px",
+    lineHeight: "20px",
+    fontWeight: 600,
+    color: "#335CCC",
+    textDecorationLine: "none",
+    ':hover': {
+      textDecorationLine: "underline",
+    },
+  },
+  researchRightPane: {
+    display: "flex",
+    flexDirection: "column",
+    flex: 1,
+    minWidth: 0,
+    minHeight: "559px",
+    backgroundColor: "#FFFFFF",
+    ...shorthands.padding("24px", "40px"),
+    ...shorthands.borderRadius("12px"),
+    boxShadow: "0 0 2px rgba(0,0,0,0.10), 0 6px 20px rgba(0,0,0,0.05)",
+    '@media (max-width: 900px)': {
+      ...shorthands.padding("24px", "24px"),
+    },
+  },
+  researchItem: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "stretch",
+    gap: "16px",
+    ...shorthands.padding("24px", "0"),
+    ...shorthands.borderBottom("1px", "solid", "#E0E0E0"),
+  },
+  researchItemMain: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "8px",
+    flexGrow: 1,
+    minWidth: 0,
+  },
+  researchItemChips: {
+    display: "flex",
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: "8px",
+  },
+  researchItemChip: {
+    display: "inline-flex",
+    alignItems: "center",
+    fontSize: "12px",
+    lineHeight: "16px",
+    fontWeight: 600,
+    ...shorthands.padding("4px", "8px"),
+    ...shorthands.borderRadius("100px"),
+    minHeight: "24px",
+  },
+  researchItemTitleLink: {
+    display: "block",
+    textDecorationLine: "none",
+    ':hover .research-item-title': {
+      textDecorationLine: "underline",
+    },
+  },
+  researchItemTitle: {
+    margin: 0,
+    fontSize: "16px",
+    lineHeight: "24px",
+    fontWeight: 600,
+    color: "#000000",
+    whiteSpace: "nowrap",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+  },
+  researchItemFooter: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: "16px",
+  },
+  researchCardButton: {
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: "6px",
+    minHeight: "32px",
+    backgroundColor: "#ffffff",
+    color: "#242424",
+    fontSize: "14px",
+    lineHeight: "20px",
+    fontWeight: 600,
+    textDecorationLine: "none",
+    ...shorthands.padding("5px", "12px"),
+    ...shorthands.borderRadius("4px"),
+    ...shorthands.border("1px", "solid", "#D1D1D1"),
+    ':hover': {
+      backgroundColor: "#F7F7F7",
+    },
+  },
+  researchViewAllLink: {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: "8px",
+    alignSelf: "flex-start",
+    marginTop: "auto",
+    paddingTop: "24px",
+    fontSize: "14px",
+    lineHeight: "20px",
+    fontWeight: 600,
+    color: "#335CCC",
+    textDecorationLine: "none",
+    ':hover': {
+      textDecorationLine: "underline",
+    },
+  },
+  researchItemSubtext: {
+    margin: 0,
+    fontSize: "12px",
+    lineHeight: "16px",
+    color: "#616161",
+  },
+  roadmapSectionContent: {
+    gap: "24px",
+  },
+  roadmapTabBar: {
+    display: "flex",
+    alignItems: "stretch",
+    backgroundColor: "#ffffff",
+    ...shorthands.borderRadius("8px"),
+    overflowX: "auto",
+    scrollbarWidth: "none",
+    '::-webkit-scrollbar': {
+      display: "none",
+    },
+  },
+  roadmapTab: {
+    position: "relative",
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: "8px",
+    flexShrink: 0,
+    whiteSpace: "nowrap",
+    backgroundColor: "transparent",
+    color: "#242424",
+    fontSize: "14px",
+    lineHeight: "20px",
+    fontWeight: 400,
+    fontFamily: '"Segoe UI", "Segoe UI Web (West European)", system-ui, sans-serif',
+    cursor: "pointer",
+    ...shorthands.padding("12px", "16px"),
+    ...shorthands.border("none"),
+    ':hover': {
+      color: "#0E1726",
+    },
+    '::after': {
+      content: '""',
+      position: "absolute",
+      left: "12px",
+      right: "12px",
+      bottom: 0,
+      height: "3px",
+      ...shorthands.borderRadius("9999px"),
+      backgroundColor: "transparent",
+    },
+  },
+  roadmapTabActive: {
+    color: "#242424",
+    fontWeight: 600,
+    '::after': {
+      backgroundColor: "#335CCC",
+    },
+  },
+  roadmapTabDescription: {
+    margin: 0,
+    fontSize: "16px",
+    lineHeight: "22px",
+    color: "#242424",
   },
   roadmapDetailGrid: {
     display: "grid",
     gridTemplateColumns: "repeat(4, minmax(0, 1fr))",
-    gap: "16px",
+    gap: "24px",
     '@media (max-width: 900px)': {
       gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
     },
@@ -1397,11 +1893,29 @@ const useStyles = makeStyles({
   roadmapDetailCard: {
     display: "flex",
     flexDirection: "column",
-    gap: "12px",
+    gap: "16px",
+    minHeight: "148px",
     backgroundColor: "#ffffff",
     boxShadow: "0 0 2px rgba(0,0,0,0.12), 0 4px 16px rgba(0,0,0,0.06)",
     ...shorthands.borderRadius("16px"),
-    ...shorthands.padding("20px"),
+    ...shorthands.padding("24px"),
+    boxSizing: "border-box",
+  },
+  roadmapDetailCardWide: {
+    gridColumn: "span 2",
+    '@media (max-width: 600px)': {
+      gridColumn: "auto",
+    },
+  },
+  roadmapCardIconBox: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    width: "36px",
+    height: "36px",
+    backgroundColor: "#ffffff",
+    ...shorthands.border("1px", "solid", "#E0E0E0"),
+    ...shorthands.borderRadius("5px"),
     boxSizing: "border-box",
   },
   sectionWhatsNewBg: {
@@ -1415,20 +1929,45 @@ const useStyles = makeStyles({
     display: "flex",
     gap: "20px",
     overflowX: "auto",
-    scrollSnapType: "x mandatory",
-    scrollPaddingInline: "2px",
-    ...shorthands.padding("16px", "24px", "20px", "2px"),
+    scrollSnapType: "none",
+    scrollPaddingInline: "0",
+    marginLeft: "0",
+    marginRight: "0",
+    paddingTop: "12px",
+    paddingBottom: "24px",
+    paddingLeft: "0",
+    paddingRight: "24px",
     scrollbarWidth: "none",
     '::-webkit-scrollbar': {
       display: "none",
     },
+    '@media (min-width: 1025px)': {
+      marginLeft: "calc(50% - 50vw)",
+      marginRight: "calc(50% - 50vw)",
+      paddingRight: "calc((100vw - 1024px) / 2 + 24px)",
+    },
+    '@media (max-width: 600px)': {
+      marginLeft: "0",
+      marginRight: "0",
+      ...shorthands.padding("4px", "4px"),
+    },
+  },
+  featuredEdgeSpacer: {
+    flex: "0 0 max(0px, calc((100vw - 1024px) / 2))",
+    marginRight: "-20px",
+    pointerEvents: "none",
+    '@media (max-width: 1024px)': {
+      flexBasis: "0",
+      marginRight: "0",
+    },
   },
   featuredCard: {
     flex: "0 0 336px",
+    minHeight: "212px",
     scrollSnapAlign: "start",
     display: "flex",
     flexDirection: "column",
-    gap: "12px",
+    gap: "8px",
     backgroundColor: "#ffffff",
     boxShadow: "0px 2px 4px rgba(0,0,0,0.14), 0px 0px 2px rgba(0,0,0,0.12)",
     ...shorthands.borderRadius("16px"),
@@ -1457,18 +1996,23 @@ const useStyles = makeStyles({
     ...shorthands.borderRadius("100px"),
     boxSizing: "border-box",
   },
-  featuredOpen: {
+  featuredCardButton: {
     display: "inline-flex",
     alignItems: "center",
     justifyContent: "center",
-    width: "20px",
-    height: "20px",
-    flexShrink: 0,
-    color: "#335CCC",
+    gap: "6px",
+    minHeight: "32px",
+    backgroundColor: "#ffffff",
+    color: "#242424",
+    fontSize: "14px",
+    lineHeight: "20px",
+    fontWeight: 600,
     textDecorationLine: "none",
-    cursor: "pointer",
+    ...shorthands.padding("5px", "12px"),
+    ...shorthands.borderRadius("4px"),
+    ...shorthands.border("1px", "solid", "#D1D1D1"),
     ':hover': {
-      color: "#2A4CB0",
+      backgroundColor: "#F7F7F7",
     },
   },
   filterGroup: {
@@ -1476,7 +2020,7 @@ const useStyles = makeStyles({
     alignItems: "center",
     flexWrap: "wrap",
     gap: "8px",
-    marginTop: "4px",
+    marginTop: "0",
   },
   filterPill: {
     display: "inline-flex",
@@ -1549,14 +2093,17 @@ const useStyles = makeStyles({
     lineHeight: "24px",
     fontWeight: 600,
     color: "#000000",
+    whiteSpace: "nowrap",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
   },
   featuredDescription: {
     margin: 0,
     fontSize: "14px",
     lineHeight: "20px",
-    color: "#242424",
+    color: "#424242",
     display: "-webkit-box",
-    WebkitLineClamp: "2",
+    WebkitLineClamp: "3",
     WebkitBoxOrient: "vertical",
     overflow: "hidden",
     flex: 1,
@@ -1565,12 +2112,14 @@ const useStyles = makeStyles({
     display: "flex",
     alignItems: "center",
     justifyContent: "space-between",
-    marginTop: "4px",
+    marginTop: "auto",
+    paddingTop: "16px",
   },
   featuredDate: {
-    fontSize: "14px",
-    lineHeight: "20px",
+    fontSize: "12px",
+    lineHeight: "16px",
     color: "#707070",
+    whiteSpace: "nowrap",
   },
   featuredArrow: {
     display: "inline-flex",
@@ -1592,264 +2141,11 @@ const useStyles = makeStyles({
   featuredNav: {
     display: "flex",
     gap: "8px",
-  },
-  chipRow: {
-    display: "flex",
-    flexWrap: "wrap",
-    gap: "8px",
-    marginBottom: "24px",
-  },
-  chip: {
-    display: "inline-flex",
-    alignItems: "center",
-    fontSize: "14px",
-    lineHeight: "20px",
-    fontWeight: 400,
-    color: "#242424",
-    backgroundColor: "#ffffff",
-    cursor: "pointer",
-    ...shorthands.padding("4px", "12px"),
-    ...shorthands.borderRadius("100px"),
-    ...shorthands.border("1px", "solid", "#D1D1D1"),
-    ':hover': {
-      backgroundColor: "#F5F5F5",
-    },
-  },
-  chipActive: {
-    color: "#ffffff",
-    backgroundColor: "#335CCC",
-    ...shorthands.border("1px", "solid", "#335CCC"),
-    ':hover': {
-      backgroundColor: "#294DAE",
-    },
-  },
-  viewAllLink: {
-    display: "inline-flex",
-    alignItems: "center",
-    gap: "8px",
-    color: "#335CCC",
-    fontSize: "14px",
-    lineHeight: "20px",
-    fontWeight: 600,
-    textDecorationLine: "none",
-    whiteSpace: "nowrap",
-    ':hover .viewAllArrow': {
-      backgroundColor: "#2A4CB0",
-    },
-  },
-  viewAllArrow: {
-    display: "inline-flex",
-    alignItems: "center",
-    justifyContent: "center",
-    width: "23px",
-    height: "23px",
-    color: "#ffffff",
-    backgroundColor: "#335CCC",
-    boxShadow: "0px 1px 2px rgba(0,0,0,0.14), 0px 0px 2px rgba(0,0,0,0.12)",
-    ...shorthands.borderRadius("18px"),
-    flexShrink: 0,
-  },
-  emptyState: {
-    ...shorthands.padding("40px", "0"),
-    textAlign: "center",
-    fontSize: "14px",
-    lineHeight: "20px",
-    color: "#616161",
-  },
-  researchTwoPane: {
-    display: "flex",
-    alignItems: "stretch",
+    justifyContent: "flex-end",
     width: "100%",
-    maxWidth: "928px",
-    marginLeft: "auto",
-    marginRight: "auto",
-    '@media (max-width: 900px)': {
-      flexDirection: "column",
-    },
-  },
-  researchLeftPane: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "40px",
-    width: "420px",
-    flexShrink: 0,
-    ...shorthands.padding("8px", "0"),
-    '@media (max-width: 900px)': {
+    '@media (max-width: 600px)': {
       width: "100%",
     },
-  },
-  researchHeadingBlock: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "12px",
-  },
-  researchEyebrowGradient: {
-    margin: 0,
-    fontSize: "14px",
-    lineHeight: "20px",
-    fontWeight: 600,
-    background: "linear-gradient(96.16deg, #E76633 -1.08%, #9D68E3 14.88%, #20BBC6 96.17%)",
-    WebkitBackgroundClip: "text",
-    WebkitTextFillColor: "transparent",
-    backgroundClip: "text",
-  },
-  researchMainHeading: {
-    margin: 0,
-    fontSize: "32px",
-    lineHeight: "40px",
-    fontWeight: 600,
-    color: "#0E1726",
-  },
-  researchAccordions: {
-    display: "flex",
-    flexDirection: "column",
-  },
-  researchAccordion: {
-    display: "flex",
-    flexDirection: "column",
-    ...shorthands.borderTop("1px", "solid", "#E0E0E0"),
-    ':last-child': {
-      ...shorthands.borderBottom("1px", "solid", "#E0E0E0"),
-    },
-  },
-  researchAccordionHeader: {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    ...shorthands.padding("20px", "16px"),
-    ...shorthands.border("none"),
-    backgroundColor: "transparent",
-    cursor: "pointer",
-    width: "100%",
-    textAlign: "left",
-    fontFamily: '"Segoe UI", system-ui, sans-serif',
-    ':hover': {
-      backgroundColor: "rgba(0,0,0,0.02)",
-    },
-  },
-  researchAccordionTitle: {
-    fontSize: "16px",
-    lineHeight: "24px",
-    fontWeight: 600,
-    color: "#242424",
-  },
-  researchAccordionBody: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "16px",
-    ...shorthands.padding("0", "16px", "20px", "16px"),
-  },
-  researchAccordionCopyRow: {
-    display: "flex",
-    flexDirection: "row",
-    gap: "12px",
-  },
-  researchAccordionAccent: {
-    width: "3px",
-    flexShrink: 0,
-    alignSelf: "stretch",
-    backgroundColor: "#335CCC",
-    ...shorthands.borderRadius("2px"),
-  },
-  researchAccordionBodyText: {
-    margin: 0,
-    fontSize: "14px",
-    lineHeight: "20px",
-    color: "#424242",
-  },
-  researchAccordionLink: {
-    display: "inline-flex",
-    alignItems: "center",
-    gap: "4px",
-    alignSelf: "flex-start",
-    fontSize: "14px",
-    lineHeight: "20px",
-    fontWeight: 600,
-    color: "#335CCC",
-    textDecorationLine: "none",
-    ':hover': {
-      textDecorationLine: "underline",
-    },
-  },
-  researchRightPane: {
-    display: "flex",
-    flexDirection: "column",
-    flexGrow: 1,
-    minWidth: 0,
-    backgroundColor: "#FFFFFF",
-    ...shorthands.padding("8px", "48px"),
-    ...shorthands.borderRadius("12px"),
-    boxShadow: "0 0 2px rgba(0,0,0,0.10), 0 6px 20px rgba(0,0,0,0.05)",
-    '@media (max-width: 900px)': {
-      ...shorthands.padding("8px", "24px"),
-    },
-  },
-  researchItem: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "11px",
-    ...shorthands.padding("24px", "0"),
-    ...shorthands.borderBottom("1px", "solid", "#E0E0E0"),
-    ':last-child': {
-      ...shorthands.borderBottom("none"),
-    },
-  },
-  researchItemHeader: {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    gap: "16px",
-  },
-  researchItemChips: {
-    display: "flex",
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: "8px",
-  },
-  researchItemChip: {
-    display: "inline-flex",
-    alignItems: "center",
-    fontSize: "10px",
-    lineHeight: "14px",
-    fontWeight: 400,
-    ...shorthands.padding("4px", "8px"),
-    ...shorthands.borderRadius("100px"),
-  },
-  researchItemCopy: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "8px",
-  },
-  researchItemTitleRow: {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    gap: "8px",
-    textDecorationLine: "none",
-    ':hover .research-item-title': {
-      textDecorationLine: "underline",
-    },
-  },
-  researchItemTitle: {
-    margin: 0,
-    fontSize: "16px",
-    lineHeight: "24px",
-    fontWeight: 600,
-    color: "#000000",
-  },
-  researchItemArrow: {
-    display: "inline-flex",
-    color: "#335CCC",
-    flexShrink: 0,
-  },
-  researchItemSubtext: {
-    margin: 0,
-    fontSize: "12px",
-    lineHeight: "16px",
-    color: "#616161",
   },
   featuredNavButton: {
     display: "inline-flex",
@@ -1865,53 +2161,6 @@ const useStyles = makeStyles({
     ...shorthands.border("none"),
     ':hover': {
       backgroundColor: "#F5F5F5",
-    },
-  },
-  footer: {
-    backgroundColor: "#ffffff",
-    boxShadow: "0 -1px 0 rgba(0,0,0,0.08)",
-    ...shorthands.padding("24px", "256px"),
-    '@media (max-width: 1200px)': {
-      ...shorthands.padding("24px", "80px"),
-    },
-    '@media (max-width: 600px)': {
-      ...shorthands.padding("24px", "16px"),
-    },
-  },
-  footerContent: {
-    maxWidth: "928px",
-    marginLeft: "auto",
-    marginRight: "auto",
-    display: "flex",
-    flexDirection: "column",
-    gap: "12px",
-  },
-  footerBrand: {
-    display: "flex",
-    alignItems: "center",
-    gap: "12px",
-    color: "#424242",
-    flexWrap: "wrap",
-  },
-  footerDisclaimer: {
-    margin: 0,
-    fontSize: "12px",
-    lineHeight: "16px",
-    color: "#616161",
-    maxWidth: "1120px",
-  },
-  footerLinks: {
-    display: "flex",
-    gap: "16px",
-    flexWrap: "wrap",
-  },
-  footerLink: {
-    color: "#335CCC",
-    fontSize: "12px",
-    lineHeight: "16px",
-    textDecorationLine: "none",
-    ':hover': {
-      textDecorationLine: "underline",
     },
   },
 });
@@ -1932,12 +2181,55 @@ export function MicrosoftLogoWordmark() {
   );
 }
 
+function FeaturedDescription({ text, className }: { text: string; className: string }) {
+  const nodeRef = useRef<HTMLParagraphElement | null>(null);
+  const [isTruncated, setIsTruncated] = useState(false);
+
+  const measure = useCallback(() => {
+    const el = nodeRef.current;
+    if (el) {
+      setIsTruncated(el.scrollHeight - el.clientHeight > 1);
+    }
+  }, []);
+
+  const setRef = useCallback(
+    (el: HTMLParagraphElement | null) => {
+      nodeRef.current = el;
+      if (el) measure();
+    },
+    [measure],
+  );
+
+  useEffect(() => {
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, [measure]);
+
+  const paragraph = (
+    <p ref={setRef} className={className}>
+      {text}
+    </p>
+  );
+
+  if (!isTruncated) {
+    return paragraph;
+  }
+
+  return (
+    <Tooltip content={text} relationship="description" showDelay={2000} withArrow>
+      {paragraph}
+    </Tooltip>
+  );
+}
+
 function App() {
   const styles = useStyles();
   const [activeTab, setActiveTab] = useState<(typeof sectionTabs)[number]["id"]>("whats-new");
   const [ghStats, setGhStats] = useState<{ stars: string; forks: string; watchers: string }>({ stars: "—", forks: "—", watchers: "—" });
-  const [showContactDialog, setShowContactDialog] = useState(false);
-  const [showDisclaimer, setShowDisclaimer] = useState(true);
+  const [templateFilter, setTemplateFilter] = useState<TemplateImpactFilter>("Featured");
+  const [codeFilter, setCodeFilter] = useState<CodeHomeTechFilter>("Featured");
+  const [activeRoadmapTab, setActiveRoadmapTab] = useState<string>(roadmapItems[0].id);
+  const [openResearchPanel, setOpenResearchPanel] = useState<"Research" | "Playbook" | null>("Research");
 
   useEffect(() => {
     logPageView();
@@ -1963,7 +2255,22 @@ function App() {
     return templateOrder.map((id) => map.get(id)).filter(Boolean) as typeof templates;
   }, []);
 
-  const [templateFilter, setTemplateFilter] = useState<TemplateImpactFilter>("Featured");
+  const orderedResearch = useMemo(() => {
+    const map = new Map(research.map((item) => [item.id, item]));
+    return researchOrder.map((id) => map.get(id)).filter(Boolean) as typeof research;
+  }, []);
+
+  const orderedCodeResources = useMemo(() => {
+    const map = new Map(resources.map((item) => [item.id, item]));
+    return codeHomeOrder.map((id) => map.get(id)).filter(Boolean) as typeof resources;
+  }, []);
+
+  const visibleResearchItems = useMemo(
+    () => orderedResearch.filter((item) => item.kind === openResearchPanel).slice(0, 3),
+    [orderedResearch, openResearchPanel],
+  );
+  const activeResearchPanel = researchPanels.find((panel) => panel.kind === openResearchPanel);
+
   const visibleTemplates = useMemo(
     () =>
       templateFilter === "Featured"
@@ -1972,25 +2279,15 @@ function App() {
     [orderedTemplates, templateFilter],
   );
 
-  const [codeFilter, setCodeFilter] = useState<CodeHomeTechFilter>("Featured");
   const visibleResources = useMemo(
     () =>
       codeFilter === "Featured"
-        ? resources
-        : resources.filter((item) => item.tech.includes(codeFilter)),
-    [codeFilter],
+        ? orderedCodeResources
+        : orderedCodeResources.filter((item) => item.tech.includes(codeFilter)),
+    [codeFilter, orderedCodeResources],
   );
 
-  const orderedResearch = useMemo(() => {
-    const map = new Map(research.map((item) => [item.id, item]));
-    return researchOrder.map((id) => map.get(id)).filter(Boolean) as typeof research;
-  }, []);
-
-  const [openResearchPanel, setOpenResearchPanel] = useState<"Research" | "Playbook" | null>("Research");
-  const visibleResearchItems = useMemo(
-    () => orderedResearch.filter((item) => item.kind === openResearchPanel).slice(0, 3),
-    [orderedResearch, openResearchPanel],
-  );
+  const activeRoadmap = roadmapItems.find((item) => item.id === activeRoadmapTab) ?? roadmapItems[0];
 
   const featuredItems = useMemo(() => buildFeaturedItems(), []);
 
@@ -2018,245 +2315,128 @@ function App() {
     featuredRowRef.current?.scrollBy({ left: dir * 340, behavior: "smooth" });
   };
 
-  const [activeRoadmapTab, setActiveRoadmapTab] = useState<string>(roadmapItems[0].id);
-  const activeRoadmap = roadmapItems.find((item) => item.id === activeRoadmapTab) ?? roadmapItems[0];
+  const tabsShellRef = useRef<HTMLDivElement>(null);
+  const activeSectionRef = useRef<(typeof sectionTabs)[number]["id"]>("whats-new");
+  const suppressSpyRef = useRef(false);
+  const suppressTimerRef = useRef<number | undefined>(undefined);
+  const settleTimerRef = useRef<number | undefined>(undefined);
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => {
-            // Prefer the element closer to the top of the viewport
-            return a.boundingClientRect.top - b.boundingClientRect.top;
-          })[0];
+    const ids = sectionTabs.map((tab) => tab.id);
+    let ticking = false;
 
-        if (visible?.target.id) {
-          setActiveTab(visible.target.id as (typeof sectionTabs)[number]["id"]);
-          logClick(TelemetryEvents.SectionView, { section: visible.target.id });
+    const computeActive = () => {
+      ticking = false;
+      if (suppressSpyRef.current) return;
+
+      const tabsEl = tabsShellRef.current;
+      const stickyTop = tabsEl ? parseFloat(getComputedStyle(tabsEl).top) || 48 : 48;
+      const barHeight = tabsEl?.offsetHeight ?? 48;
+      // Reference line sits just below the sticky header + tabs bar. A section
+      // is "active" once its top has scrolled above this line.
+      const line = stickyTop + barHeight + 12;
+
+      const doc = document.documentElement;
+      const atBottom = window.innerHeight + window.scrollY >= doc.scrollHeight - 2;
+
+      let currentId: (typeof sectionTabs)[number]["id"] = ids[0];
+      if (atBottom) {
+        // Ensure the final section can activate even if it is too short to
+        // reach the reference line.
+        currentId = ids[ids.length - 1];
+      } else {
+        // Sections are in document order, so the last one whose top is above
+        // the line is the current section. This is monotonic and never
+        // flip-flops between neighbours.
+        for (const id of ids) {
+          const element = document.getElementById(id);
+          if (!element) continue;
+          if (element.getBoundingClientRect().top <= line) {
+            currentId = id;
+          } else {
+            break;
+          }
         }
-      },
-      {
-        rootMargin: "-10% 0px -60% 0px",
-        threshold: [0.05, 0.2, 0.35, 0.5],
-      },
-    );
-
-    sectionTabs.forEach(({ id }) => {
-      const element = document.getElementById(id);
-      if (element) {
-        observer.observe(element);
       }
-    });
 
-    return () => observer.disconnect();
+      if (currentId !== activeSectionRef.current) {
+        activeSectionRef.current = currentId;
+        setActiveTab(currentId);
+        logClick(TelemetryEvents.SectionView, { section: currentId });
+      }
+    };
+
+    const onScroll = () => {
+      // While a click-driven smooth scroll is in flight, keep the clicked tab
+      // active and release the spy only once the scroll settles.
+      if (suppressSpyRef.current) {
+        window.clearTimeout(settleTimerRef.current);
+        settleTimerRef.current = window.setTimeout(() => {
+          suppressSpyRef.current = false;
+        }, 120);
+      }
+      if (!ticking) {
+        ticking = true;
+        window.requestAnimationFrame(computeActive);
+      }
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    computeActive();
+
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
   }, []);
 
-  const smoothScrollTo = (target: HTMLElement) => {
-    const start = window.scrollY;
-    const headerOffset = 96;
-    const end = target.getBoundingClientRect().top + window.scrollY - headerOffset;
-    const distance = end - start;
-    const duration = Math.min(800, Math.max(400, Math.abs(distance) * 0.5));
-    let startTime: number | null = null;
-
-    const easeInOutCubic = (t: number) =>
-      t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-
-    const step = (timestamp: number) => {
-      if (!startTime) startTime = timestamp;
-      const elapsed = timestamp - startTime;
-      const progress = Math.min(elapsed / duration, 1);
-      window.scrollTo(0, start + distance * easeInOutCubic(progress));
-      if (progress < 1) requestAnimationFrame(step);
-    };
-    requestAnimationFrame(step);
-  };
-
   const scrollToSection = (sectionId: (typeof sectionTabs)[number]["id"]) => {
+    activeSectionRef.current = sectionId;
     setActiveTab(sectionId);
     logClick(TelemetryEvents.TabClick, { tab: sectionId });
-    const el = document.getElementById(sectionId);
-    if (el) smoothScrollTo(el);
+    // Suppress scroll-spy so the clicked tab stays active through the smooth
+    // scroll instead of flickering across intermediate sections. Suppression is
+    // lifted when the scroll settles (see onScroll); this timer is only a cap
+    // in case no scroll movement occurs (e.g. the target is already in view).
+    suppressSpyRef.current = true;
+    window.clearTimeout(suppressTimerRef.current);
+    suppressTimerRef.current = window.setTimeout(() => {
+      suppressSpyRef.current = false;
+    }, 2000);
+    document.getElementById(sectionId)?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
   return (
     <div className={styles.page}>
-      {showDisclaimer && (
-        <div className={styles.disclaimerBar} role="status">
-          <Info20Regular className={styles.disclaimerIcon} aria-hidden="true" />
-          <div className={styles.disclaimerTextWrap}>
-            <span className={styles.disclaimerText}>
-              The materials on this page are provided as-is, without warranty of any kind, including merchantability or fitness for a particular purpose. Microsoft will not provide any support for these materials.
-            </span>
-            <a
-              className={styles.disclaimerLink}
-              href={TERMS_URL}
-              target="_blank"
-              rel="noreferrer"
-            >
-              Learn more
-            </a>
-          </div>
-          <button
-            type="button"
-            className={styles.disclaimerDismiss}
-            onClick={() => setShowDisclaimer(false)}
-            aria-label="Dismiss disclaimer"
-          >
-            <DismissRegular fontSize={16} />
-          </button>
-        </div>
-      )}
-      <nav className={styles.nav}>
-        <div className={styles.brand}>
-          <MicrosoftLogoWordmark />
-          <div className={styles.separator} />
-          <span className={styles.brandTitle}>Copilot Analytics Labs</span>
-        </div>
-
-        <div className={styles.navLinks}>
-          <a className={styles.navLink} href={VIVA_INSIGHTS_URL} target="_blank" rel="noreferrer">
-            <img src={`${import.meta.env.BASE_URL}images/VI.svg`} alt="" width="20" height="20" aria-hidden="true" />
-            <span>Insights</span>
-          </a>
-          <a className={styles.navLink} href={FEEDBACK_URL} target="_blank" rel="noreferrer">
-            <span>Feedback</span>
-          </a>
-          <button
-            className={mergeClasses(styles.navLink, styles.navIconOnly)}
-            onClick={() => setShowContactDialog(true)}
-            aria-label="Contact us"
-            style={{ border: "none", background: "none", cursor: "pointer" }}
-          >
-            <PersonFeedback20Regular fontSize={16} />
-          </button>
-        </div>
-      </nav>
-
-      {showContactDialog && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="contact-dialog-title"
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%",
-            backgroundColor: "rgba(0,0,0,0.4)",
-            zIndex: 1000,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-          onClick={() => setShowContactDialog(false)}
-          onKeyDown={(e) => {
-            if (e.key === "Escape") setShowContactDialog(false);
-            if (e.key === "Tab") {
-              const dialog = e.currentTarget.querySelector<HTMLElement>('[data-dialog-panel]');
-              if (!dialog) return;
-              const focusable = dialog.querySelectorAll<HTMLElement>(
-                'a[href], button, textarea, input, select, [tabindex]:not([tabindex="-1"])'
-              );
-              if (focusable.length === 0) return;
-              const first = focusable[0];
-              const last = focusable[focusable.length - 1];
-              if (e.shiftKey) {
-                if (document.activeElement === first) {
-                  e.preventDefault();
-                  last.focus();
-                }
-              } else {
-                if (document.activeElement === last) {
-                  e.preventDefault();
-                  first.focus();
-                }
-              }
-            }
-          }}
-          ref={(el) => {
-            if (el) {
-              const close = el.querySelector<HTMLElement>('[data-dialog-close]');
-              if (close) close.focus();
-            }
-          }}
-        >
-          <div
-            data-dialog-panel=""
-            style={{
-              backgroundColor: "#ffffff",
-              borderRadius: "12px",
-              padding: "32px",
-              maxWidth: "420px",
-              width: "90%",
-              boxShadow: "0 8px 32px rgba(0,0,0,0.18)",
-              textAlign: "center",
-              fontFamily: '"Segoe UI", system-ui, sans-serif',
-            }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <PersonFeedback20Regular style={{ fontSize: "32px", color: "#6264A7", marginBottom: "12px" }} />
-            <h3 id="contact-dialog-title" style={{ margin: "0 0 12px", fontSize: "18px", fontWeight: 600, color: "#242424" }}>
-              Contact Us
-            </h3>
-            <p style={{ margin: "0 0 20px", fontSize: "14px", lineHeight: "20px", color: "#616161" }}>
-              For further questions and doubts — Please drop a mail to{" "}
-              <a href="mailto:CopilotAnalyticsLabs@microsoft.com" style={{ color: "#0078D4", textDecoration: "none" }}>
-                CopilotAnalyticsLabs@microsoft.com
-              </a>
-            </p>
-            <button
-              data-dialog-close=""
-              onClick={() => setShowContactDialog(false)}
-              style={{
-                padding: "8px 24px",
-                fontSize: "14px",
-                fontWeight: 600,
-                color: "#ffffff",
-                backgroundColor: "#0078D4",
-                border: "none",
-                borderRadius: "6px",
-                cursor: "pointer",
-              }}
-            >
-              Close
-            </button>
-          </div>
-        </div>
-      )}
-
       <header className={styles.hero}>
         <div className={styles.heroRibbon} />
         <div className={styles.heroContent}>
           <div className={styles.heroHeader}>
             <h1 className={styles.heroTitle}>Frontier analytics for Copilot and agents</h1>
             <p className={styles.heroSubtitle}>
-              Guided templates, sample code, and playbooks grounded in real customer deployments to help you design and deploy analytics beyond what's available in Insights today.
+              A hands-on hub to build with, learn from, and preview what's next in Copilot Analytics.
             </p>
           </div>
 
-          <div className={styles.valuesShell}>
-            <div className={styles.valuesPanel}>
-              <div className={styles.valuesGrid}>
-                {heroValues.map(({ label, heading, caption, Icon }) => (
-                  <div key={label} className={styles.valueCard}>
-                    <div className={styles.valuePill}>
-                      <Icon className={styles.valuePillIcon} aria-hidden="true" />
-                      <span className={styles.valuePillLabel}>{label}</span>
-                    </div>
-                    <h2 className={styles.valueTitle}>{heading}</h2>
-                    <p className={styles.valueDescription}>{caption}</p>
+          <div className={styles.heroValuesRow}>
+            {heroValues.map(({ label, title, description, Icon }) => {
+              return (
+                <div key={label} className={styles.heroValueItem}>
+                  <div className={styles.heroValueLabelRow}>
+                    <Icon fontSize={20} className={styles.heroValueIcon} />
+                    <span className={styles.heroValueLabel}>{label}</span>
                   </div>
-                ))}
-              </div>
-            </div>
+                  <h2 className={styles.heroValueTitle}>{title}</h2>
+                  <p className={styles.heroValueDescription}>{description}</p>
+                </div>
+              );
+            })}
           </div>
         </div>
       </header>
 
-      <div className={styles.tabsShell}>
+      <div className={styles.tabsShell} ref={tabsShellRef}>
         <div className={styles.tabsList} role="tablist" aria-label="Sections">
           {sectionTabs.map((tab) => (
             <button
@@ -2275,7 +2455,7 @@ function App() {
       </div>
 
       <section id="whats-new" className={mergeClasses(styles.section, styles.sectionWhatsNewBg)}>
-        <div className={styles.sectionContent}>
+        <div className={mergeClasses(styles.sectionContent, styles.featuredSectionContent)}>
           <div className={styles.sectionTitleArea}>
             <p className={mergeClasses(styles.eyebrow, styles.eyebrowFeatured)}>Featured</p>
             <div className={styles.sectionHeadingRow}>
@@ -2309,7 +2489,7 @@ function App() {
                     {featuredPillLabel[kind]}
                     <span className={mergeClasses(styles.filterPillDot, active && styles.filterPillDotActive)} />
                     <span className={mergeClasses(styles.filterPillCount, active && styles.filterPillCountActive)}>
-                      {featuredCounts.get(kind)}
+                      {(featuredCounts.get(kind) ?? 0) > 0 ? `${featuredCounts.get(kind)} new` : "0 new"}
                     </span>
                   </button>
                 );
@@ -2320,8 +2500,15 @@ function App() {
           {visibleFeatured.length > 0 ? (
             <>
               <div className={styles.featuredRow} ref={featuredRowRef}>
+                <div className={styles.featuredEdgeSpacer} aria-hidden="true" />
                 {visibleFeatured.map((item) => {
                   const chip = featuredChipByKind[item.kind];
+                  const ctaLabel = {
+                    Template: "View template",
+                    Code: "View code",
+                    Research: "View report",
+                    Playbook: "View playbook",
+                  }[item.kind];
                   return (
                     <article key={item.id} className={styles.featuredCard}>
                       <div className={styles.featuredChips}>
@@ -2329,22 +2516,22 @@ function App() {
                           <chip.Icon fontSize={16} style={{ color: chip.iconColor }} />
                           {chip.label}
                         </span>
+                        <span className={styles.featuredDate}>{formatRelativeDate(item.addedOn)}</span>
+                      </div>
+                      <h3 className={styles.featuredTitle}>{item.title}</h3>
+                      <FeaturedDescription text={item.description} className={styles.featuredDescription} />
+                      <div className={styles.featuredFooter}>
                         <a
-                          className={styles.featuredOpen}
+                          className={styles.featuredCardButton}
                           href={item.url}
                           target="_blank"
                           rel="noreferrer"
-                          aria-label={`Open ${item.title}`}
                           onClick={() => logClick(TelemetryEvents.TemplateViewClick, { template: item.sourceId })}
                         >
-                          <Open16Regular fontSize={16} />
+                          {ctaLabel}
+                          <Open16Filled fontSize={12} />
                         </a>
-                      </div>
-                      <h3 className={styles.featuredTitle}>{item.title}</h3>
-                      <p className={styles.featuredDescription}>{item.description}</p>
-                      <div className={styles.featuredFooter}>
-                        <span className={styles.featuredDate}>{formatRelativeDate(item.addedOn)}</span>
-                        <VoteBar cardId={item.sourceId} />
+                        <VoteBar cardId={item.sourceId} variant="inline" />
                       </div>
                     </article>
                   );
@@ -2367,22 +2554,25 @@ function App() {
       </section>
 
       <section id="templates" className={mergeClasses(styles.section, styles.sectionTemplateBg)}>
-        <div className={styles.sectionContent}>
+        <div className={mergeClasses(styles.sectionContent, styles.templateSectionContent)}>
           <div className={styles.sectionTitleArea}>
             <p className={styles.eyebrow}>Template library</p>
             <div className={styles.sectionHeadingRow}>
-              <h2 className={styles.sectionHeading}>Pick a template, build a dashboard</h2>
-              <a
-                className={styles.viewAllLink}
-                href={`${import.meta.env.BASE_URL}#/templates`}
-                onClick={() => logClick(TelemetryEvents.TabClick, { tab: "view-all-templates" })}
+              <h2 className={styles.sectionHeading}>Pick a template, start building</h2>
+              <button
+                className={styles.templateViewAllLink}
+                onClick={() => {
+                  logClick(TelemetryEvents.TabClick, { tab: "view-all-templates" });
+                  window.location.hash = "#/templates";
+                }}
+                style={{ background: "none", border: "none", cursor: "pointer" }}
               >
                 View all templates
-                <span className={`${styles.viewAllArrow} viewAllArrow`}><ArrowRight16Regular fontSize={12} /></span>
-              </a>
+                <span className={styles.templateViewAllIcon}><ChevronRight20Filled fontSize={20} /></span>
+              </button>
             </div>
-            <p className={styles.sectionDescription}>
-              Production-ready dashboard templates for adoption, usage, impact, and business value that combine Insights data with broader organizational signals.
+            <p className={mergeClasses(styles.sectionDescription, styles.templateSectionDescription)}>
+              Step-by-step templates to build dashboards across adoption, usage, impact, and business value, using data sources beyond Viva.
             </p>
           </div>
 
@@ -2395,7 +2585,7 @@ function App() {
                 aria-pressed={templateFilter === cat}
                 onClick={() => setTemplateFilter(cat)}
               >
-                {cat}
+                {templateFilterLabelHome[cat]}
               </button>
             ))}
           </div>
@@ -2407,15 +2597,16 @@ function App() {
             {visibleTemplates.map((item) => {
               const meta = templateMeta[item.id] ?? {};
               const isFeatured = Boolean(meta.featured);
+              const copyOverride = templateHomeCopyOverrides[item.id] ?? {};
+              const templateTitle = copyOverride.title ?? item.title;
+              const templateDescription = copyOverride.description ?? item.description;
 
               return (
                 <article
                   key={item.id}
                   className={mergeClasses(styles.templateCard, isFeatured && styles.templateCardFeatured)}
                 >
-                  {!isFeatured && item.image ? (
-                    <img className={styles.templateCardImage} src={item.image} alt="" loading="lazy" decoding="async" />
-                  ) : null}
+                  {isFeatured && item.image ? <img className={styles.templateCardImage} src={item.image} alt="" /> : null}
 
                   <div className={styles.templateCardContent}>
                     {meta.badges?.length ? (
@@ -2425,7 +2616,11 @@ function App() {
                             key={badge.text}
                             className={mergeClasses(
                               styles.badge,
-                              badge.tone === "green" ? styles.badgeGreen : styles.badgeRose,
+                              badge.tone === "green" && styles.badgeGreen,
+                              badge.tone === "teal" && styles.badgeTeal,
+                              badge.tone === "purple" && styles.badgePurple,
+                              badge.tone === "orange" && styles.badgeOrange,
+                              badge.tone === "red" && styles.badgeRed,
                             )}
                           >
                             {badge.text}
@@ -2436,13 +2631,12 @@ function App() {
 
                     <div className={styles.templateBody}>
                       <div className={styles.templateCardContent}>
-                        <h3 className={styles.templateTitle}>{item.title}</h3>
-                        <p className={styles.templateDescription}>{item.description}</p>
+                        <h3 className={styles.templateTitle}>{templateTitle}</h3>
+                        <p className={styles.templateDescription}>{templateDescription}</p>
                       </div>
 
                       {meta.stats?.length ? (
                         <>
-                          <div className={styles.statsDivider} />
                           <div className={styles.statsRow}>
                             {meta.stats.map((stat) => {
                               let value = stat.value;
@@ -2465,24 +2659,16 @@ function App() {
                         </>
                       ) : null}
 
-                      <div>
-                        <a className={styles.secondaryButton} href={item.url} target="_blank" rel="noreferrer" aria-label={`View template: ${item.title}`} onClick={() => logClick(TelemetryEvents.TemplateViewClick, { template: item.id })}>
+                      <div className={styles.templateActionsRow}>
+                        <a className={styles.templateCardButton} href={item.url} target="_blank" rel="noreferrer" onClick={() => logClick(TelemetryEvents.TemplateViewClick, { template: item.id })}>
                           View template
+                          <Open16Filled fontSize={12} />
                         </a>
+                        <VoteBar cardId={item.id} variant="inline" className={styles.templateVoteBar} />
                       </div>
-                      <VoteBar cardId={item.id} />
                     </div>
                   </div>
 
-                  {isFeatured && item.image ? (
-                    <img
-                      className={mergeClasses(styles.templateCardImage, styles.templateCardImageFeatured)}
-                      src={item.image}
-                      alt=""
-                      loading="lazy"
-                      decoding="async"
-                    />
-                  ) : null}
                 </article>
               );
             })}
@@ -2492,18 +2678,25 @@ function App() {
       </section>
 
       <section id="sample-code" className={mergeClasses(styles.section, styles.sectionCodeBg)}>
-        <div className={styles.sectionContent}>
+        <div className={mergeClasses(styles.sectionContent, styles.codeSectionContent)}>
           <div className={styles.sectionTitleArea}>
             <p className={styles.eyebrow}>Sample code</p>
             <div className={styles.sectionHeadingRow}>
               <h2 className={styles.sectionHeading}>Grab the code, make it yours</h2>
-              <a className={styles.viewAllLink} href={`${import.meta.env.BASE_URL}#/codes`} onClick={() => logClick(TelemetryEvents.TabClick, { tab: "view-all-codes" })}>
-                View all code samples
-                <span className={`${styles.viewAllArrow} viewAllArrow`}><ArrowRight16Regular fontSize={12} /></span>
-              </a>
+              <button
+                className={styles.templateViewAllLink}
+                onClick={() => {
+                  logClick(TelemetryEvents.TabClick, { tab: "view-all-codes" });
+                  window.location.hash = "#/codes";
+                }}
+                style={{ background: "none", border: "none", cursor: "pointer" }}
+              >
+                View all codes
+                <ChevronRight20Filled fontSize={20} />
+              </button>
             </div>
-            <p className={styles.sectionDescription}>
-              Reusable scripts, prompt libraries, and analytical methods for Python, R, and Power BI - adaptable to your organization's data.
+            <p className={mergeClasses(styles.sectionDescription, styles.codeSectionDescription)}>
+              Runnable scripts, prompt libraries, and analytical methods in Python, R, and Power BI, adapt them to your org's data.
             </p>
           </div>
 
@@ -2526,31 +2719,27 @@ function App() {
           ) : (
           <div className={styles.codeGrid}>
             {visibleResources.map((item) => {
-              const Icon = item.icon ?? DocumentBulletList24Regular;
               const meta = resourceMeta[item.id];
-              const isFeatured = Boolean(meta?.featured);
+              const isWide = Boolean(meta?.wide);
+              const description = codeHomeCopyOverrides[item.id]?.description ?? item.description;
 
               return (
-                <article key={item.id} className={mergeClasses(styles.codeCard, isFeatured && styles.codeCardFeatured)}>
-                  <div
-                    className={mergeClasses(styles.codeArt, isFeatured && styles.codeArtFeatured)}
-                  >
-                    {item.image ? (
-                      <img src={item.image} alt="" style={{ width: "100%", height: "100%", objectFit: "contain" }} />
-                    ) : (
-                      <Icon />
-                    )}
-                  </div>
+                <article key={item.id} className={mergeClasses(styles.codeCard, isWide ? styles.codeCardWide : styles.codeCardSquare)}>
+                  {isWide && item.image ? <img src={item.image} alt="" className={styles.codeCardWideImage} /> : null}
 
-                  <div className={mergeClasses(styles.codeCardBody, isFeatured && styles.codeCardBodyFeatured)}>
+                  <div className={styles.codeCardBody}>
                     {meta?.badges?.length ? (
-                      <div className={mergeClasses(styles.badgeRow, isFeatured && styles.badgeRowFeatured)}>
+                      <div className={styles.badgeRow}>
                         {meta.badges.map((badge) => (
                           <span
                             key={badge.text}
                             className={mergeClasses(
                               styles.badge,
-                              badge.tone === "green" ? styles.badgeGreen : styles.badgeBlue,
+                              badge.tone === "green" && styles.badgeGreen,
+                              badge.tone === "teal" && styles.badgeTeal,
+                              badge.tone === "purple" && styles.badgePurple,
+                              badge.tone === "orange" && styles.badgeOrange,
+                              badge.tone === "red" && styles.badgeRed,
                             )}
                           >
                             {badge.text}
@@ -2561,15 +2750,16 @@ function App() {
 
                     <div className={styles.templateCardContent}>
                       <h3 className={styles.codeTitle}>{item.title}</h3>
-                      <p className={styles.codeDescription}>{item.description}</p>
+                      <p className={styles.codeDescription}>{description}</p>
                     </div>
 
-                    <div>
-                      <a className={styles.secondaryButton} href={item.url} target="_blank" rel="noreferrer" onClick={() => logClick(TelemetryEvents.CodeViewClick, { resource: item.id })}>
+                    <div className={styles.codeActionsRow}>
+                      <a className={styles.codeCardButton} href={item.url} target="_blank" rel="noreferrer" onClick={() => logClick(TelemetryEvents.CodeViewClick, { resource: item.id })}>
                         View code
+                        <Open16Filled fontSize={12} />
                       </a>
+                      <VoteBar cardId={item.id} variant="inline" className={styles.codeVoteBar} />
                     </div>
-                    <VoteBar cardId={item.id} />
                   </div>
                 </article>
               );
@@ -2590,34 +2780,31 @@ function App() {
 
               <div className={styles.researchAccordions}>
                 {researchPanels.map((panel) => {
-                  const isOpen = openResearchPanel === panel.kind;
+                  const isSelected = openResearchPanel === panel.kind;
                   return (
-                    <div key={panel.kind} className={styles.researchAccordion}>
-                      <button
-                        type="button"
-                        className={styles.researchAccordionHeader}
-                        aria-expanded={isOpen}
-                        onClick={() => setOpenResearchPanel(isOpen ? null : panel.kind)}
-                      >
-                        <span className={styles.researchAccordionTitle}>{panel.title}</span>
-                      </button>
-                      {isOpen ? (
-                        <div className={styles.researchAccordionBody}>
-                          <div className={styles.researchAccordionCopyRow}>
-                            <span className={styles.researchAccordionAccent} aria-hidden="true" />
-                            <p className={styles.researchAccordionBodyText}>{panel.body}</p>
-                          </div>
-                          <a
-                            className={styles.researchAccordionLink}
-                            href={`${import.meta.env.BASE_URL}#/research`}
-                            onClick={() => logClick(TelemetryEvents.TabClick, { tab: `research-${panel.kind.toLowerCase()}-view-all` })}
-                          >
-                            {panel.linkLabel}
-                            <ArrowRight16Regular fontSize={14} />
-                          </a>
-                        </div>
-                      ) : null}
-                    </div>
+                    <button
+                      key={panel.kind}
+                      type="button"
+                      className={mergeClasses(
+                        styles.researchAccordionHeader,
+                        isSelected
+                          ? styles.researchAccordionHeaderSelected
+                          : styles.researchAccordionHeaderUnselected,
+                      )}
+                      aria-pressed={isSelected}
+                      onClick={() => setOpenResearchPanel(panel.kind)}
+                    >
+                      {isSelected && (
+                        <span className={styles.researchAccordionAccent} aria-hidden="true" />
+                      )}
+                      <span className={styles.researchAccordionItemContent}>
+                        <span className={styles.researchAccordionTitle}>
+                          <span className={styles.researchAccordionTitleLabel}>{panel.label}</span>
+                          <span className={styles.researchAccordionTitleSubtitle}> / {panel.subtitle}</span>
+                        </span>
+                        <span className={styles.researchAccordionBodyText}>{panel.body}</span>
+                      </span>
+                    </button>
                   );
                 })}
               </div>
@@ -2626,7 +2813,7 @@ function App() {
             <div className={styles.researchRightPane}>
               {visibleResearchItems.map((item) => (
                 <article key={item.id} className={styles.researchItem}>
-                  <div className={styles.researchItemHeader}>
+                  <div className={styles.researchItemMain}>
                     <div className={styles.researchItemChips}>
                       {(researchTags[item.id] ?? []).map((tag) => (
                         <span
@@ -2647,65 +2834,91 @@ function App() {
                         </span>
                       ))}
                     </div>
-                    <VoteBar cardId={item.id} variant="inline" />
-                  </div>
-                  <div className={styles.researchItemCopy}>
                     <a
-                      className={styles.researchItemTitleRow}
+                      className={styles.researchItemTitleLink}
                       href={item.url}
                       target="_blank"
                       rel="noreferrer"
                       onClick={() => logClick(TelemetryEvents.ResearchViewClick, { research: item.id })}
                     >
                       <h3 className={mergeClasses(styles.researchItemTitle, "research-item-title")}>{item.title}</h3>
-                      <span className={styles.researchItemArrow}>
-                        <ArrowRight16Regular fontSize={16} />
-                      </span>
                     </a>
                     <p className={styles.researchItemSubtext}>{item.description}</p>
                   </div>
+                  <div className={styles.researchItemFooter}>
+                    <a
+                      className={styles.researchCardButton}
+                      href={item.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      onClick={() => logClick(TelemetryEvents.ResearchViewClick, { research: item.id })}
+                    >
+                      {item.kind === "Playbook" ? "View playbook" : "View report"}
+                      <Open16Filled fontSize={12} />
+                    </a>
+                    <VoteBar cardId={item.id} variant="inline" />
+                  </div>
                 </article>
               ))}
+              {activeResearchPanel && (
+                <a
+                  className={styles.researchViewAllLink}
+                  href="#/research"
+                  onClick={() => logClick(TelemetryEvents.ResearchViewClick, { research: `view-all-${openResearchPanel}` })}
+                >
+                  {activeResearchPanel.linkLabel}
+                  <ArrowRight16Regular fontSize={16} />
+                </a>
+              )}
             </div>
           </div>
         </div>
       </section>
 
       <section id="product-roadmap" className={mergeClasses(styles.section, styles.sectionRoadmapBg)}>
-        <div className={styles.sectionContent}>
+        <svg width="0" height="0" aria-hidden="true" focusable="false" style={{ position: "absolute" }}>
+          <defs>
+            <linearGradient id="roadmapFlowGradient" x1="0%" y1="100%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="#3F6CE9" />
+              <stop offset="100%" stopColor="#764FF5" />
+            </linearGradient>
+          </defs>
+        </svg>
+        <div className={mergeClasses(styles.sectionContent, styles.roadmapSectionContent)}>
           <div className={styles.sectionTitleArea}>
-            <p className={styles.eyebrow}>Product roadmap</p>
+            <p className={mergeClasses(styles.eyebrow, styles.eyebrowFeatured)}>Product roadmap</p>
             <div className={styles.sectionHeadingRow}>
               <h2 className={styles.sectionHeading}>What's next for Copilot Analytics</h2>
             </div>
-            <p className={styles.sectionDescription}>
-              Upcoming capabilities and investments shaping the future of AI-powered analytics.
-            </p>
           </div>
 
-          <div className={styles.roadmapTabs} role="tablist" aria-label="Roadmap categories">
-            {roadmapItems.map((item) => (
-              <button
-                key={item.id}
-                type="button"
-                role="tab"
-                aria-selected={activeRoadmapTab === item.id}
-                className={mergeClasses(styles.roadmapTab, activeRoadmapTab === item.id && styles.roadmapTabActive)}
-                onClick={() => { setActiveRoadmapTab(item.id); logClick(TelemetryEvents.TabClick, { tab: `roadmap-${item.id}` }); }}
-              >
-                <item.icon />
-                {item.title}
-              </button>
-            ))}
+          <div className={styles.roadmapTabBar} role="tablist" aria-label="Roadmap categories">
+            {roadmapItems.map((item) => {
+              const active = activeRoadmapTab === item.id;
+              const TabIcon = active ? item.iconActive : item.icon;
+              return (
+                <button
+                  key={item.id}
+                  type="button"
+                  role="tab"
+                  aria-selected={active}
+                  className={mergeClasses(styles.roadmapTab, active && styles.roadmapTabActive)}
+                  onClick={() => { setActiveRoadmapTab(item.id); logClick(TelemetryEvents.TabClick, { tab: `roadmap-${item.id}` }); }}
+                >
+                  <TabIcon fontSize={20} style={active ? { color: "#335CCC" } : undefined} />
+                  {item.title}
+                </button>
+              );
+            })}
           </div>
 
           <p className={styles.roadmapTabDescription}>{activeRoadmap.description}</p>
 
           <div className={styles.roadmapDetailGrid}>
             {(activeRoadmap.details ?? []).map((detail) => (
-              <article key={detail} className={styles.roadmapDetailCard}>
-                <div className={styles.roadmapCardIcon}>
-                  <activeRoadmap.icon />
+              <article key={detail} className={mergeClasses(styles.roadmapDetailCard, detail.length > 60 && styles.roadmapDetailCardWide)}>
+                <div className={styles.roadmapCardIconBox}>
+                  <FlowSparkle20Regular className="roadmap-flow-icon" fontSize={20} />
                 </div>
                 <h3 className={styles.roadmapTitle}>{detail}</h3>
               </article>
@@ -2713,38 +2926,17 @@ function App() {
           </div>
 
           <div className={styles.roadmapLinks}>
-            <a className={styles.roadmapLink} href={WHATS_COMING_URL} target="_blank" rel="noreferrer">
-              For detailed roadmap — click here ↗
+            <a className={styles.roadmapLink} href="https://www.microsoft.com/en-us/microsoft-365/roadmap?filters=Microsoft%20Viva" target="_blank" rel="noreferrer">
+              See detailed roadmap
+              <Open16Regular fontSize={16} />
             </a>
-            <a className={styles.roadmapLink} href={FEEDBACK_URL} target="_blank" rel="noreferrer">
-              Product roadmap feedback ↗
+            <a className={styles.roadmapLink} href="https://forms.microsoft.com/Pages/ResponsePage.aspx?id=v4j5cvGGr0GRqy180BHbR0To00bktq1Ilw6hJ9BCmj5UODhQNTBPUkI2NUlRQU9VUzI0WkNPUTJSSi4u" target="_blank" rel="noreferrer">
+              Share feedback
+              <Open16Regular fontSize={16} />
             </a>
           </div>
         </div>
       </section>
-
-      <footer className={styles.footer}>
-        <div className={styles.footerContent}>
-          <div className={styles.footerBrand}>
-            <MicrosoftLogoWordmark />
-            <div className={styles.separator} />
-            <span className={styles.brandTitle}>Copilot Analytics Labs</span>
-          </div>
-
-          <p className={styles.footerDisclaimer}>
-            Disclaimer: The materials on this page are provided as-is, without warranty of any kind, including merchantability or fitness for a particular purpose. Microsoft will not provide any support for these materials.
-          </p>
-
-          <div className={styles.footerLinks}>
-            <a className={styles.footerLink} href={TERMS_URL} target="_blank" rel="noreferrer">
-              Terms and Conditions
-            </a>
-            <a className={styles.footerLink} href={PRIVACY_URL} target="_blank" rel="noreferrer">
-              Privacy Statement
-            </a>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 }

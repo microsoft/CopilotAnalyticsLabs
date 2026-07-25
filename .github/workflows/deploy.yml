@@ -21,20 +21,14 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 20
           cache: 'npm'
       - run: npm ci
       - run: npm run build
         env:
-          # Injected at build time so the deployed bundle talks to the shared
-          # Supabase table (global vote counts). Without these, votes.ts falls
-          # back to per-browser localStorage and each visitor only sees their
-          # own counts. Configure them as repository *Variables* (Settings ->
-          # Secrets and variables -> Actions -> Variables). The anon key is
-          # public by design; writes are constrained by row-level security.
           VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ vars.VITE_SUPABASE_ANON_KEY }}
-      - uses: actions/upload-pages-artifact@v4
+      - uses: actions/upload-pages-artifact@v3
         with:
           path: ./dist
 
@@ -46,4 +40,4 @@ jobs:
     needs: build
     steps:
       - id: deployment
-        uses: actions/deploy-pages@v5
+        uses: actions/deploy-pages@v4

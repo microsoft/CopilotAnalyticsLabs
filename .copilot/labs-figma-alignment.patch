@@ -1,0 +1,322 @@
+diff --git a/src/App.tsx b/src/App.tsx
+index d75d4c5..ddc724e 100644
+--- a/src/App.tsx
++++ b/src/App.tsx
+@@ -4,9 +4,9 @@ import {
+   ArrowRight16Regular,
+   Book20Filled,
+   BookTemplate20Filled,
++  BookCompass20Filled,
+   ChevronLeft20Regular,
+   ChevronRight20Regular,
+-  CompassNorthwest24Regular,
+   DataBarVerticalAscending24Regular,
+   DataTrending24Regular,
+   DismissRegular,
+@@ -18,7 +18,8 @@ import {
+   PersonFeedback20Regular,
+   Sparkle24Regular,
+   Star16Filled,
+-  Toolbox24Regular,
++  WrenchScrewdriver20Filled,
++  MountainLocationTop20Filled,
+ } from "@fluentui/react-icons";
+ import { research, resources, templates, templateImpactFilters, codeHomeTechFilters } from "./data";
+ import type { TemplateImpactFilter, CodeHomeTechFilter } from "./data";
+@@ -122,25 +123,19 @@ const heroValues = [
+     label: "Build",
+     title: "Build with ready-to-use assets",
+     description: "Templates, code, and prompts to plug into your own data.",
+-    Icon: Toolbox24Regular,
+-    color: "#3F6CE9",
+-    gradient: "linear-gradient(96.15deg, #764FF5 12.38%, #3F6CE9 39.4%, #20BBC6 96.13%)",
++    Icon: WrenchScrewdriver20Filled,
+   },
+   {
+     label: "Learn",
+     title: "Learn from proven deployments",
+     description: "Playbooks, research, and demos from real customer rollouts.",
+-    Icon: HatGraduation24Regular,
+-    color: "#C8641E",
+-    gradient: "linear-gradient(94.04deg, #FFB900 -54.86%, #F4364B 94.97%)",
++    Icon: BookCompass20Filled,
+   },
+   {
+     label: "Explore",
+     title: "See what's new and next",
+     description: "A preview of latest drops and upcoming capabilities.",
+-    Icon: CompassNorthwest24Regular,
+-    color: "#7A49BB",
+-    gradient: "linear-gradient(90.37deg, #FFB3BA -94.19%, #8560C5 99.51%)",
++    Icon: MountainLocationTop20Filled,
+   },
+ ];
+ 
+@@ -329,8 +324,6 @@ const useStyles = makeStyles({
+     flexDirection: "column",
+     alignItems: "stretch",
+     width: "100%",
+-    maxWidth: "1440px",
+-    ...shorthands.margin("0", "auto"),
+     backgroundColor: "#ffffff",
+     color: "#242424",
+     fontFamily: '"Segoe UI", "Segoe UI Web (West European)", system-ui, sans-serif',
+@@ -356,26 +349,26 @@ const useStyles = makeStyles({
+     fontSize: "20px",
+   },
+   disclaimerTextWrap: {
+-    display: "flex",
+-    flexDirection: "row",
+-    alignItems: "center",
+-    gap: "4px",
++    display: "block",
+     flexGrow: 1,
+-    flexWrap: "wrap",
++    minWidth: 0,
+   },
+   disclaimerText: {
++    display: "inline",
+     fontSize: "14px",
+     lineHeight: "20px",
+     fontWeight: 400,
+     color: "#000000",
+   },
+   disclaimerLink: {
+-    fontSize: "12px",
+-    lineHeight: "16px",
++    display: "inline",
++    marginLeft: "4px",
++    fontSize: "14px",
++    lineHeight: "20px",
+     fontWeight: 400,
+     color: "#335CCC",
+     textDecorationLine: "underline",
+-    whiteSpace: "nowrap",
++    whiteSpace: "normal",
+     ':hover': {
+       color: "#2A4CB0",
+     },
+@@ -504,17 +497,16 @@ const useStyles = makeStyles({
+     position: "relative",
+     zIndex: 1,
+     width: "100%",
+-    maxWidth: "812px",
++    maxWidth: "1008px",
+     marginLeft: "auto",
+     marginRight: "auto",
+     display: "flex",
+     flexDirection: "column",
+     alignItems: "center",
+     gap: "40px",
+-    ...shorthands.padding("48px", "0", "56px"),
++    ...shorthands.padding("48px", "24px", "56px"),
+     '@media (max-width: 1200px)': {
+-      maxWidth: "100%",
+-      ...shorthands.padding("48px", "80px", "56px"),
++      ...shorthands.padding("48px", "24px", "56px"),
+     },
+     '@media (max-width: 600px)': {
+       ...shorthands.padding("40px", "16px", "36px"),
+@@ -545,11 +537,14 @@ const useStyles = makeStyles({
+   },
+   heroSubtitle: {
+     margin: 0,
+-    maxWidth: "610px",
+-    fontSize: "16px",
+-    lineHeight: "22px",
++    maxWidth: "686px",
++    fontWeight: 400,
++    fontSize: "18px",
++    lineHeight: "28px",
+     color: "#424242",
++    whiteSpace: "nowrap",
+     '@media (max-width: 600px)': {
++      maxWidth: "100%",
+       fontSize: "14px",
+       lineHeight: "20px",
+       whiteSpace: "normal",
+@@ -710,13 +705,13 @@ const useStyles = makeStyles({
+     display: "flex",
+     alignItems: "center",
+     gap: "9px",
+-    maxWidth: "928px",
++    width: "100%",
++    maxWidth: "1008px",
+     marginLeft: "auto",
+     marginRight: "auto",
+     ...shorthands.padding("4px", "0", "0"),
+     '@media (max-width: 1200px)': {
+-      ...shorthands.padding("4px", "80px", "0"),
+-      maxWidth: "100%",
++      ...shorthands.padding("4px", "0", "0"),
+     },
+     '@media (max-width: 600px)': {
+       ...shorthands.padding("4px", "16px", "0"),
+@@ -755,9 +750,9 @@ const useStyles = makeStyles({
+     },
+   },
+   section: {
+-    ...shorthands.padding("64px", "256px"),
++    ...shorthands.padding("64px", "24px"),
+     '@media (max-width: 1200px)': {
+-      ...shorthands.padding("64px", "80px"),
++      ...shorthands.padding("64px", "24px"),
+     },
+     '@media (max-width: 600px)': {
+       ...shorthands.padding("36px", "16px"),
+@@ -781,7 +776,7 @@ const useStyles = makeStyles({
+   },
+   sectionContent: {
+     width: "100%",
+-    maxWidth: "928px",
++    maxWidth: "1008px",
+     marginLeft: "auto",
+     marginRight: "auto",
+     display: "flex",
+@@ -1287,16 +1282,17 @@ const useStyles = makeStyles({
+   footer: {
+     backgroundColor: "#ffffff",
+     boxShadow: "0 -1px 0 rgba(0,0,0,0.08)",
+-    ...shorthands.padding("24px", "256px"),
++    ...shorthands.padding("24px", "24px"),
+     '@media (max-width: 1200px)': {
+-      ...shorthands.padding("24px", "80px"),
++      ...shorthands.padding("24px", "24px"),
+     },
+     '@media (max-width: 600px)': {
+       ...shorthands.padding("24px", "16px"),
+     },
+   },
+   footerContent: {
+-    maxWidth: "928px",
++    width: "100%",
++    maxWidth: "1008px",
+     marginLeft: "auto",
+     marginRight: "auto",
+     display: "flex",
+@@ -1356,29 +1352,24 @@ const useStyles = makeStyles({
+   heroValueLabelRow: {
+     display: "inline-flex",
+     alignItems: "center",
++    justifyContent: "center",
++    minWidth: "120px",
++    ...shorthands.padding("8px", "19px"),
++    ...shorthands.borderRadius("24px"),
++    backgroundColor: "#FFFFFF",
+     gap: "8px",
+   },
+-  heroIconBuild: {
+-    '& path': {
+-      fill: "url(#heroGradBuild)",
+-    },
+-  },
+-  heroIconLearn: {
+-    '& path': {
+-      fill: "url(#heroGradLearn)",
+-    },
+-  },
+-  heroIconExplore: {
+-    '& path': {
+-      fill: "url(#heroGradExplore)",
+-    },
++  heroValueIcon: {
++    width: "20px",
++    height: "20px",
++    color: "#335CCC",
+   },
+   heroValueLabel: {
+-    fontSize: "14px",
+-    lineHeight: "20px",
++    fontSize: "16px",
++    lineHeight: "22px",
+     fontWeight: 600,
+-    letterSpacing: "0.12em",
+-    textTransform: "uppercase",
++    letterSpacing: 0,
++    color: "#242424",
+   },
+   heroValueTitle: {
+     margin: 0,
+@@ -1391,7 +1382,7 @@ const useStyles = makeStyles({
+     margin: 0,
+     fontSize: "12px",
+     lineHeight: "16px",
+-    color: "#242424",
++    color: "#616161",
+   },
+   viewAllLink: {
+     display: "inline-flex",
+@@ -1763,10 +1754,8 @@ const useStyles = makeStyles({
+     gap: "20px",
+     overflowX: "auto",
+     scrollSnapType: "x mandatory",
+-    scrollPaddingInline: "2px",
+-    // Vertical padding keeps card shadows from being clipped by the scroll overflow;
+-    // trailing inline padding lets the final card scroll fully into view.
+-    ...shorthands.padding("16px", "24px", "20px", "2px"),
++    scrollPaddingInline: "0",
++    ...shorthands.padding("0", "0", "20px", "0"),
+     scrollbarWidth: "none",
+     '::-webkit-scrollbar': {
+       display: "none",
+@@ -2124,50 +2113,17 @@ function App() {
+           <div className={styles.heroHeader}>
+             <h1 className={styles.heroTitle}>Frontier analytics for Copilot and agents</h1>
+             <p className={styles.heroSubtitle}>
+-              Guided templates, sample code, and playbooks grounded in real customer deployments - helping you design and deploy analytics beyond what's available in Viva Insights today.
++              A hands-on hub to build with, learn from, and preview what's next in Copilot Analytics.
+             </p>
+           </div>
+ 
+           <div className={styles.heroValuesRow}>
+-            <svg width="0" height="0" style={{ position: "absolute" }} aria-hidden="true" focusable="false">
+-              <defs>
+-                <linearGradient id="heroGradBuild" x1="0" y1="0" x2="1" y2="0.1">
+-                  <stop offset="0.1238" stopColor="#764FF5" />
+-                  <stop offset="0.394" stopColor="#3F6CE9" />
+-                  <stop offset="0.9613" stopColor="#20BBC6" />
+-                </linearGradient>
+-                <linearGradient id="heroGradLearn" x1="0" y1="0" x2="1" y2="0.05">
+-                  <stop offset="0" stopColor="#FFB900" />
+-                  <stop offset="1" stopColor="#F4364B" />
+-                </linearGradient>
+-                <linearGradient id="heroGradExplore" x1="0" y1="0" x2="1" y2="0.05">
+-                  <stop offset="0" stopColor="#FFB3BA" />
+-                  <stop offset="1" stopColor="#8560C5" />
+-                </linearGradient>
+-              </defs>
+-            </svg>
+-            {heroValues.map(({ label, title, description, Icon, gradient }) => {
+-              const iconGradientClass = {
+-                Build: styles.heroIconBuild,
+-                Learn: styles.heroIconLearn,
+-                Explore: styles.heroIconExplore,
+-              }[label];
++            {heroValues.map(({ label, title, description, Icon }) => {
+               return (
+                 <div key={label} className={styles.heroValueItem}>
+                   <div className={styles.heroValueLabelRow}>
+-                    <Icon fontSize={20} className={iconGradientClass} />
+-                    <span
+-                      className={styles.heroValueLabel}
+-                      style={{
+-                        backgroundImage: gradient,
+-                        WebkitBackgroundClip: "text",
+-                        backgroundClip: "text",
+-                        WebkitTextFillColor: "transparent",
+-                        color: "transparent",
+-                      }}
+-                    >
+-                      {label}
+-                    </span>
++                    <Icon fontSize={20} className={styles.heroValueIcon} />
++                    <span className={styles.heroValueLabel}>{label}</span>
+                   </div>
+                   <h2 className={styles.heroValueTitle}>{title}</h2>
+                   <p className={styles.heroValueDescription}>{description}</p>
+@@ -2632,4 +2588,4 @@ function App() {
+   );
+ }
+ 
+-export default App;
++export default App;
