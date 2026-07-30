@@ -1344,7 +1344,6 @@ const useStyles = makeStyles({
     flexDirection: "column",
     flex: 1,
     minWidth: 0,
-    minHeight: "559px",
     backgroundColor: "#FFFFFF",
     ...shorthands.padding("24px", "40px"),
     ...shorthands.borderRadius("12px"),
@@ -1355,11 +1354,20 @@ const useStyles = makeStyles({
   },
   researchItem: {
     display: "flex",
-    flexDirection: "column",
+    flexDirection: "row",
     alignItems: "stretch",
-    gap: "16px",
+    // The text column wraps against the action column with this gap.
+    gap: "20px",
     ...shorthands.padding("24px", "0"),
     ...shorthands.borderBottom("1px", "solid", "#E0E0E0"),
+    // The last card sits directly above the "View all" link, so it needs no rule.
+    ':last-of-type': {
+      borderBottomStyle: "none",
+    },
+    '@media (max-width: 600px)': {
+      flexDirection: "column",
+      gap: "16px",
+    },
   },
   researchItemMain: {
     display: "flex",
@@ -1401,11 +1409,22 @@ const useStyles = makeStyles({
     overflow: "hidden",
     textOverflow: "ellipsis",
   },
-  researchItemFooter: {
+  // Holds the action button at the top and the vote bar at the bottom, so the
+  // button lines up with the chip row and the votes sit level with the last
+  // line of the subtext.
+  researchItemAside: {
     display: "flex",
-    alignItems: "center",
+    flexDirection: "column",
+    alignItems: "flex-end",
     justifyContent: "space-between",
-    gap: "16px",
+    gap: "12px",
+    flexShrink: 0,
+    '@media (max-width: 600px)': {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      width: "100%",
+    },
   },
   researchCardButton: {
     display: "inline-flex",
@@ -1413,6 +1432,11 @@ const useStyles = makeStyles({
     justifyContent: "center",
     gap: "6px",
     minHeight: "32px",
+    // Centres the 32px button on the 24px chip row it sits beside.
+    marginTop: "-4px",
+    '@media (max-width: 600px)': {
+      marginTop: 0,
+    },
     backgroundColor: "#ffffff",
     color: "#242424",
     fontSize: "14px",
@@ -2372,7 +2396,11 @@ function App() {
             <div className={styles.researchLeftPane}>
               <div className={styles.researchHeadingBlock}>
                 <p className={styles.researchEyebrowGradient}>RESEARCH &amp; PLAYBOOKS</p>
-                <h2 className={styles.researchMainHeading}>Examples from around the world</h2>
+                <h2 className={styles.researchMainHeading}>
+                  Examples from
+                  <br />
+                  around the world
+                </h2>
               </div>
 
               <div className={styles.researchAccordions}>
@@ -2442,7 +2470,7 @@ function App() {
                     </a>
                     <p className={styles.researchItemSubtext}>{item.description}</p>
                   </div>
-                  <div className={styles.researchItemFooter}>
+                  <div className={styles.researchItemAside}>
                     <a
                       className={styles.researchCardButton}
                       href={item.url}
