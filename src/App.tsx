@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { makeStyles, mergeClasses, shorthands, Tooltip } from "@fluentui/react-components";
 import {
   ArrowRight16Regular,
@@ -6,7 +6,6 @@ import {
   ArrowTrendingText20Regular,
   Book20Filled,
   BookTemplate20Filled,
-  BookCompass20Filled,
   ChartMultiple20Filled,
   ChartMultiple20Regular,
   ChevronLeft20Regular,
@@ -23,8 +22,6 @@ import {
   Sparkle20Filled,
   Sparkle20Regular,
   Star16Filled,
-  WrenchScrewdriver20Filled,
-  MountainLocationTop20Filled,
 } from "@fluentui/react-icons";
 import { research, resources, templates, templateImpactFilters, codeHomeTechFilters } from "./data";
 import type { TemplateImpactFilter, CodeHomeTechFilter } from "./data";
@@ -151,22 +148,16 @@ function buildFeaturedItems(): FeaturedItem[] {
 
 const heroValues = [
   {
-    label: "Build",
     title: "Build with ready-to-use assets",
-    description: "Templates, code, and prompts to plug into your own data.",
-    Icon: WrenchScrewdriver20Filled,
+    description: "Templates, code, and prompts\nto plug into your own data.",
   },
   {
-    label: "Learn",
-    title: "Learn from proven deployments",
-    description: "Playbooks, research, and demos from real customer rollouts.",
-    Icon: BookCompass20Filled,
+    title: "Proven in real deployments",
+    description: "Playbooks, research, and demos\nfrom real customer rollouts.",
   },
   {
-    label: "Explore",
     title: "See what's new and next",
-    description: "A preview of latest drops and upcoming capabilities.",
-    Icon: MountainLocationTop20Filled,
+    description: "A preview of latest drops\nand upcoming capabilities.",
   },
 ];
 
@@ -480,26 +471,38 @@ const useStyles = makeStyles({
   },
   hero: {
     position: "relative",
-    minHeight: "auto",
     overflow: "hidden",
+    // The artwork lives on `heroArt` so its scale is driven by the hero's
+    // height rather than the viewport width. This gradient stands in for the
+    // artwork's left-hand wash (sampled from the PNG's left edge: a faint blue
+    // at the top falling away to white) and fills the gap on ultra-wide screens.
     backgroundColor: "#ffffff",
+    backgroundImage: "linear-gradient(180deg, #EFF6FF 0%, #FDFEFF 55%, #FFFFFF 100%)",
+    ...shorthands.padding("40px", "24px"),
     '@media (max-width: 600px)': {
-      minHeight: "auto",
+      ...shorthands.padding("32px", "16px"),
     },
   },
-  heroRibbon: {
+  heroArt: {
     position: "absolute",
     top: 0,
+    right: 0,
+    bottom: 0,
     left: 0,
-    width: "100%",
-    height: "100%",
+    zIndex: 0,
     pointerEvents: "none",
-    backgroundImage: `url(${import.meta.env.BASE_URL}images/hero-bg.svg)`,
-    backgroundSize: "cover",
-    backgroundPosition: "center top",
+    backgroundImage: `url(${import.meta.env.BASE_URL}images/hero-bg.png)`,
     backgroundRepeat: "no-repeat",
-    '@media (max-width: 600px)': {
-      opacity: 0.5,
+    // Scale by HEIGHT, not width: the illustration then renders at a constant
+    // size and is never cropped, however wide the viewport gets.
+    backgroundSize: "auto 100%",
+    backgroundPosition: "right center",
+    // Fade the left edge so the artwork blends into the gradient above instead
+    // of ending on a hard vertical seam.
+    WebkitMaskImage: "linear-gradient(90deg, transparent 0, #000 340px)",
+    maskImage: "linear-gradient(90deg, transparent 0, #000 340px)",
+    '@media (max-width: 700px)': {
+      display: "none",
     },
   },
   heroContent: {
@@ -511,190 +514,57 @@ const useStyles = makeStyles({
     marginRight: "auto",
     display: "flex",
     flexDirection: "column",
-    alignItems: "center",
-    gap: "40px",
-    ...shorthands.padding("48px", "24px", "56px"),
-    '@media (max-width: 1200px)': {
-      ...shorthands.padding("48px", "24px", "56px"),
-    },
+    alignItems: "flex-start",
+    gap: "24px",
     '@media (max-width: 600px)': {
-      ...shorthands.padding("40px", "16px", "36px"),
-      gap: "24px",
+      gap: "20px",
     },
   },
   heroHeader: {
-    width: "100%",
+    maxWidth: "740px",
     display: "flex",
     flexDirection: "column",
-    alignItems: "center",
-    gap: "4px",
-    textAlign: "center",
+    alignItems: "flex-start",
+    gap: "12px",
+    textAlign: "left",
   },
   heroTitle: {
     margin: 0,
-    maxWidth: "730px",
     fontSize: "40px",
-    lineHeight: "56px",
+    lineHeight: "47.8px",
     fontWeight: 600,
+    letterSpacing: 0,
     color: "#0E1726",
-    whiteSpace: "nowrap",
     '@media (max-width: 600px)': {
-      fontSize: "26px",
-      lineHeight: "34px",
-      whiteSpace: "normal",
+      fontSize: "30px",
+      lineHeight: "38px",
     },
+  },
+  heroTitleAccent: {
+    backgroundImage: "linear-gradient(90deg, #7C4DEE 0%, #6355E8 42%, #3D6BE5 82%)",
+    backgroundClip: "text",
+    WebkitBackgroundClip: "text",
+    WebkitTextFillColor: "transparent",
+    color: "transparent",
   },
   heroSubtitle: {
     margin: 0,
-    maxWidth: "686px",
+    maxWidth: "640px",
     fontWeight: 400,
-    fontSize: "18px",
-    lineHeight: "28px",
-    color: "#424242",
-    whiteSpace: "nowrap",
+    fontSize: "16px",
+    lineHeight: "22px",
+    color: "#616161",
     '@media (max-width: 600px)': {
       maxWidth: "100%",
       fontSize: "14px",
       lineHeight: "20px",
-      whiteSpace: "normal",
     },
   },
-  valuesShell: {
+  heroDivider: {
     width: "100%",
-    display: "flex",
-    justifyContent: "center",
-    ...shorthands.borderRadius("24px"),
-    backgroundColor: "rgba(210, 225, 255, 0.5)",
-    ...shorthands.padding("10px"),
-    boxSizing: "border-box",
-    '@media (max-width: 600px)': {
-      ...shorthands.borderRadius("16px"),
-      ...shorthands.padding("8px"),
-    },
-  },
-  valuesPanel: {
-    width: "100%",
-    maxWidth: "896px",
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    gap: "24px",
-    backgroundColor: "rgba(255,255,255,0.72)",
-    backdropFilter: "blur(10px)",
-    ...shorthands.borderRadius("16px"),
-    ...shorthands.padding("24px"),
-    boxSizing: "border-box",
-    overflow: "hidden",
-    '@media (max-width: 600px)': {
-      ...shorthands.padding("16px"),
-      gap: "16px",
-    },
-  },
-  valuesGrid: {
-    width: "100%",
-    display: "grid",
-    gridTemplateColumns: "repeat(4, minmax(0, 1fr))",
-    gap: "24px",
-    '@media (max-width: 900px)': {
-      gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
-    },
-    '@media (max-width: 600px)': {
-      gridTemplateColumns: "1fr",
-      gap: "20px",
-    },
-  },
-  valueCard: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    gap: "8px",
-    textAlign: "center",
-  },
-  valueIcon: {
-    width: "64px",
-    height: "64px",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    ...shorthands.borderRadius("20px"),
-    boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.5)",
-    '@media (max-width: 600px)': {
-      width: "48px",
-      height: "48px",
-      ...shorthands.borderRadius("14px"),
-    },
-  },
-  valueTitle: {
-    margin: 0,
-    fontSize: "16px",
-    lineHeight: "24px",
-    fontWeight: 600,
-    color: "#000000",
-    whiteSpace: "normal",
-    '@media (max-width: 600px)': {
-      fontSize: "14px",
-      lineHeight: "20px",
-    },
-  },
-  valueDescription: {
-    margin: 0,
-    fontSize: "12px",
-    lineHeight: "16px",
-    color: "#616161",
-    display: "-webkit-box",
-    WebkitLineClamp: "3",
-    WebkitBoxOrient: "vertical",
-    overflow: "hidden",
-    '@media (max-width: 600px)': {
-      WebkitLineClamp: "4",
-      fontSize: "13px",
-      lineHeight: "18px",
-    },
-  },
-  primaryButton: {
-    display: "inline-flex",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: "6px",
-    minHeight: "32px",
-    backgroundColor: "#335CCC",
-    color: "#ffffff",
-    fontSize: "14px",
-    lineHeight: "20px",
-    fontWeight: 600,
-    textDecorationLine: "none",
-    ...shorthands.padding("6px", "12px"),
-    ...shorthands.borderRadius("4px"),
-    ...shorthands.border("none"),
-    ':hover': {
-      backgroundColor: "#294DAE",
-    },
-    '@media (max-width: 600px)': {
-      minHeight: "44px",
-      ...shorthands.padding("10px", "16px"),
-    },
-  },
-  secondaryButton: {
-    display: "inline-flex",
-    alignItems: "center",
-    justifyContent: "center",
-    minHeight: "32px",
-    backgroundColor: "#ffffff",
-    color: "#242424",
-    fontSize: "14px",
-    lineHeight: "20px",
-    fontWeight: 600,
-    textDecorationLine: "none",
-    ...shorthands.padding("5px", "12px"),
-    ...shorthands.borderRadius("4px"),
-    ...shorthands.border("1px", "solid", "#D1D1D1"),
-    ':hover': {
-      backgroundColor: "#F7F7F7",
-    },
-    '@media (max-width: 600px)': {
-      minHeight: "44px",
-      ...shorthands.padding("10px", "16px"),
-    },
+    maxWidth: "645px",
+    height: "1px",
+    backgroundColor: "#E0E0E0",
   },
   tabsShell: {
     position: "sticky",
@@ -735,7 +605,10 @@ const useStyles = makeStyles({
     alignItems: "center",
     gap: "6px",
     backgroundColor: "transparent",
+    // Rest and hover share the same foreground; the selected tab is set apart
+    // by the darker #242424, the bolder weight, and the brand indicator.
     color: "#424242",
+    fontWeight: 600,
     fontSize: "14px",
     lineHeight: "20px",
     fontFamily: '"Segoe UI", "Segoe UI Web (West European)", system-ui, sans-serif',
@@ -743,10 +616,25 @@ const useStyles = makeStyles({
     ...shorthands.borderStyle("none"),
     cursor: "pointer",
     whiteSpace: "nowrap",
+    // Hover reveals a neutral indicator in the same slot the active tab uses,
+    // so the bar does not shift when a tab becomes selected.
+    ':hover:after': {
+      content: '""',
+      position: "absolute",
+      left: "12px",
+      right: "12px",
+      bottom: "0",
+      height: "3px",
+      ...shorthands.borderRadius("9999px"),
+      backgroundColor: "#C7C7C7",
+    },
+    ':active:after': {
+      backgroundColor: "#B3B3B3",
+    },
   },
   tabButtonActive: {
     color: "#242424",
-    fontWeight: 600,
+    fontWeight: 700,
     ':after': {
       content: '""',
       position: "absolute",
@@ -755,6 +643,13 @@ const useStyles = makeStyles({
       bottom: "0",
       height: "3px",
       ...shorthands.borderRadius("9999px"),
+      backgroundColor: "#335CCC",
+    },
+    // The selected tab keeps its brand indicator on hover and press.
+    ':hover:after': {
+      backgroundColor: "#335CCC",
+    },
+    ':active:after': {
       backgroundColor: "#335CCC",
     },
   },
@@ -942,18 +837,10 @@ const useStyles = makeStyles({
     gap: "22px",
     flex: 1,
   },
-  statsDivider: {
-    width: "100%",
-    height: "0.5px",
-    backgroundColor: "#E0E0E0",
-  },
   badgeRow: {
     display: "flex",
     flexWrap: "wrap",
     gap: "8px",
-  },
-  badgeRowFeatured: {
-    gap: "16px",
   },
   badge: {
     display: "inline-flex",
@@ -968,14 +855,6 @@ const useStyles = makeStyles({
   badgeGreen: {
     color: "#0E700E",
     backgroundColor: "#F1FAF1",
-  },
-  badgeRose: {
-    color: "#C50F1F",
-    backgroundColor: "#FDF3F4",
-  },
-  badgeBlue: {
-    color: "#335CCC",
-    backgroundColor: "#E5EEFF",
   },
   badgeTeal: {
     color: "#00666D",
@@ -1093,14 +972,6 @@ const useStyles = makeStyles({
   codeCardSquare: {
     gridColumn: "span 1",
   },
-  codeCardImage: {
-    width: "100%",
-    height: "92px",
-    objectFit: "cover",
-    display: "block",
-    ...shorthands.borderRadius("12px"),
-    flexShrink: 0,
-  },
   codeCardWideImage: {
     width: "128px",
     height: "128px",
@@ -1162,57 +1033,6 @@ const useStyles = makeStyles({
     marginTop: "0",
     flexShrink: 0,
   },
-  researchGrid: {
-    display: "grid",
-    gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
-    gridAutoRows: "1fr",
-    gap: "16px",
-    '@media (max-width: 900px)': {
-      gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
-    },
-    '@media (max-width: 600px)': {
-      gridTemplateColumns: "1fr",
-    },
-  },
-  researchCard: {
-    minHeight: "146px",
-    display: "flex",
-    flexDirection: "column",
-    gap: "16px",
-    backgroundColor: "#ffffff",
-    boxShadow: "0 0 2px rgba(0,0,0,0.12), 0 4px 16px rgba(0,0,0,0.06)",
-    ...shorthands.borderRadius("16px"),
-    ...shorthands.padding("20px", "16px", "16px", "20px"),
-    textDecorationLine: "none",
-    '@media (max-width: 600px)': {
-      minHeight: "auto",
-      ...shorthands.padding("16px"),
-      gap: "12px",
-    },
-  },
-  researchTitle: {
-    margin: 0,
-    fontSize: "16px",
-    lineHeight: "24px",
-    fontWeight: 600,
-    color: "#000000",
-  },
-  researchDescription: {
-    margin: 0,
-    fontSize: "14px",
-    lineHeight: "18px",
-    color: "#424242",
-  },
-  tag: {
-    display: "inline-flex",
-    alignItems: "center",
-    minHeight: "20px",
-    fontSize: "11px",
-    lineHeight: "14px",
-    fontWeight: 500,
-    ...shorthands.padding("3px", "8px"),
-    ...shorthands.borderRadius("999px"),
-  },
   tagGreen: {
     color: "#2D6C2E",
     backgroundColor: "#EAF6E8",
@@ -1249,60 +1069,12 @@ const useStyles = makeStyles({
     background:
       "linear-gradient(137.22deg, rgba(118,79,245,0.04) 14.49%, rgba(63,108,233,0.04) 42.08%, rgba(32,187,198,0.04) 100%)",
   },
-  roadmapGrid: {
-    display: "grid",
-    gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
-    gridAutoRows: "1fr",
-    gap: "16px",
-    '@media (max-width: 600px)': {
-      gridTemplateColumns: "1fr",
-    },
-  },
-  roadmapCard: {
-    minHeight: "146px",
-    display: "flex",
-    flexDirection: "column",
-    gap: "16px",
-    backgroundColor: "#ffffff",
-    boxShadow: "0 0 2px rgba(0,0,0,0.12), 0 4px 16px rgba(0,0,0,0.06)",
-    ...shorthands.borderRadius("16px"),
-    ...shorthands.padding("20px", "16px", "16px", "20px"),
-    textDecorationLine: "none",
-    cursor: "pointer",
-    transitionProperty: "box-shadow, transform",
-    transitionDuration: "0.2s",
-    ':hover': {
-      boxShadow: "0 0 2px rgba(0,0,0,0.16), 0 8px 24px rgba(0,0,0,0.10)",
-      transform: "translateY(-2px)",
-    },
-    '@media (max-width: 600px)': {
-      minHeight: "auto",
-      ...shorthands.padding("16px"),
-      gap: "12px",
-    },
-  },
-  roadmapCardIcon: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    width: "40px",
-    height: "40px",
-    ...shorthands.borderRadius("10px"),
-    backgroundColor: "#F0EBFF",
-    color: "#5E4BD8",
-  },
   roadmapTitle: {
     margin: 0,
     fontSize: "16px",
     lineHeight: "24px",
     fontWeight: 400,
     color: "#000000",
-  },
-  roadmapDescription: {
-    margin: 0,
-    fontSize: "14px",
-    lineHeight: "18px",
-    color: "#424242",
   },
   roadmapLinks: {
     display: "flex",
@@ -1326,150 +1098,56 @@ const useStyles = makeStyles({
       textDecorationLine: "underline",
     },
   },
-  roadmapDetailOverlay: {
-    position: "fixed",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: "rgba(0, 0, 0, 0.4)",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    zIndex: 1000,
-  },
-  roadmapDetailPanel: {
-    backgroundColor: "#ffffff",
-    ...shorthands.borderRadius("16px"),
-    ...shorthands.padding("32px"),
-    maxWidth: "480px",
-    width: "90%",
-    boxShadow: "0 8px 32px rgba(0,0,0,0.16)",
-    position: "relative",
-  },
-  roadmapDetailClose: {
-    position: "absolute",
-    top: "16px",
-    right: "16px",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    width: "32px",
-    height: "32px",
-    ...shorthands.borderRadius("8px"),
-    backgroundColor: "transparent",
-    ...shorthands.border("none"),
-    cursor: "pointer",
-    color: "#424242",
-    ':hover': {
-      backgroundColor: "#F5F5F5",
-    },
-  },
-  roadmapDetailTitle: {
-    margin: 0,
-    fontSize: "20px",
-    lineHeight: "28px",
-    fontWeight: 600,
-    color: "#000000",
-    marginBottom: "16px",
-  },
-  roadmapDetailList: {
-    margin: 0,
-    ...shorthands.padding("0", "0", "0", "20px"),
-    display: "flex",
-    flexDirection: "column",
-    gap: "10px",
-  },
-  roadmapDetailListItem: {
-    fontSize: "14px",
-    lineHeight: "20px",
-    color: "#424242",
-  },
   heroValuesRow: {
-    width: "100%",
-    maxWidth: "812px",
     display: "flex",
-    justifyContent: "center",
-    gap: "24px",
+    alignItems: "stretch",
+    gap: "28px",
     '@media (max-width: 700px)': {
       flexDirection: "column",
-      gap: "24px",
-      alignItems: "center",
+      gap: "16px",
+      alignItems: "flex-start",
+    },
+  },
+  heroValueDivider: {
+    flex: "0 0 auto",
+    alignSelf: "center",
+    width: "1px",
+    height: "44px",
+    backgroundColor: "#E0E0E0",
+    '@media (max-width: 700px)': {
+      display: "none",
     },
   },
   heroValueItem: {
-    flex: "1 1 0",
-    minWidth: 0,
-    maxWidth: "254.67px",
     display: "flex",
     flexDirection: "column",
-    alignItems: "center",
     gap: "8px",
-    textAlign: "center",
-  },
-  heroValueLabelRow: {
-    display: "inline-flex",
-    alignItems: "center",
-    justifyContent: "center",
-    minWidth: "120px",
-    ...shorthands.padding("8px", "19px"),
-    ...shorthands.borderRadius("24px"),
-    backgroundColor: "#FFFFFF",
-    gap: "8px",
-  },
-  heroValueIcon: {
-    width: "20px",
-    height: "20px",
-    color: "#335CCC",
-  },
-  heroValueLabel: {
-    fontSize: "16px",
-    lineHeight: "22px",
-    fontWeight: 600,
-    letterSpacing: 0,
-    color: "#242424",
+    width: "fit-content",
+    maxWidth: "230px",
+    minWidth: 0,
+    textAlign: "left",
   },
   heroValueTitle: {
     margin: 0,
     fontSize: "14px",
     lineHeight: "20px",
     fontWeight: 600,
-    color: "#000000",
+    color: "#242424",
+    whiteSpace: "nowrap",
+    '@media (max-width: 400px)': {
+      whiteSpace: "normal",
+    },
   },
   heroValueDescription: {
     margin: 0,
     fontSize: "12px",
     lineHeight: "16px",
-    color: "#616161",
-  },
-  viewAllLink: {
-    display: "inline-flex",
-    alignItems: "center",
-    gap: "8px",
-    color: "#335CCC",
-    fontSize: "14px",
-    lineHeight: "20px",
-    fontWeight: 600,
-    textDecorationLine: "none",
-    whiteSpace: "nowrap",
-    ':hover': {
-      textDecorationLine: "none",
+    color: "#707070",
+    // Descriptions carry an explicit newline so each renders on exactly two lines.
+    whiteSpace: "pre-line",
+    '@media (max-width: 400px)': {
+      whiteSpace: "normal",
     },
-    ':hover .viewAllArrow': {
-      backgroundColor: "#2A4CB0",
-    },
-  },
-  viewAllArrow: {
-    display: "inline-flex",
-    alignItems: "center",
-    justifyContent: "center",
-    width: "23px",
-    height: "23px",
-    color: "#ffffff",
-    backgroundColor: "#335CCC",
-    boxShadow: "0px 1px 2px rgba(0,0,0,0.14), 0px 0px 2px rgba(0,0,0,0.12)",
-    ...shorthands.borderRadius("18px"),
-    flexShrink: 0,
   },
   templateViewAllLink: {
     display: "inline-flex",
@@ -1552,46 +1230,6 @@ const useStyles = makeStyles({
     fontSize: "14px",
     lineHeight: "20px",
     color: "#616161",
-  },
-  researchLayout: {
-    display: "grid",
-    gridTemplateColumns: "minmax(260px, 340px) 1fr",
-    gap: "48px",
-    '@media (max-width: 900px)': {
-      gridTemplateColumns: "1fr",
-      gap: "24px",
-    },
-  },
-  researchIntro: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "28px",
-  },
-  researchIntroBlock: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "8px",
-    ...shorthands.borderLeft("2px", "solid", "#E0E0E0"),
-    ...shorthands.padding("0", "0", "0", "16px"),
-  },
-  researchIntroLabel: {
-    fontSize: "12px",
-    lineHeight: "16px",
-    fontWeight: 700,
-    letterSpacing: "0.06em",
-    textTransform: "uppercase",
-    color: "#0E1726",
-  },
-  researchIntroText: {
-    margin: 0,
-    fontSize: "14px",
-    lineHeight: "20px",
-    color: "#616161",
-  },
-  researchList: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "16px",
   },
   // --- Figma "Research & playbooks" two-pane layout ---
   researchTwoPane: {
@@ -1698,26 +1336,11 @@ const useStyles = makeStyles({
     lineHeight: "20px",
     color: "#616161",
   },
-  researchAccordionLink: {
-    display: "inline-flex",
-    alignItems: "center",
-    gap: "4px",
-    alignSelf: "flex-start",
-    fontSize: "14px",
-    lineHeight: "20px",
-    fontWeight: 600,
-    color: "#335CCC",
-    textDecorationLine: "none",
-    ':hover': {
-      textDecorationLine: "underline",
-    },
-  },
   researchRightPane: {
     display: "flex",
     flexDirection: "column",
     flex: 1,
     minWidth: 0,
-    minHeight: "559px",
     backgroundColor: "#FFFFFF",
     ...shorthands.padding("24px", "40px"),
     ...shorthands.borderRadius("12px"),
@@ -1728,11 +1351,20 @@ const useStyles = makeStyles({
   },
   researchItem: {
     display: "flex",
-    flexDirection: "column",
+    flexDirection: "row",
     alignItems: "stretch",
-    gap: "16px",
+    // The text column wraps against the action column with this gap.
+    gap: "20px",
     ...shorthands.padding("24px", "0"),
     ...shorthands.borderBottom("1px", "solid", "#E0E0E0"),
+    // The last card sits directly above the "View all" link, so it needs no rule.
+    ':last-of-type': {
+      borderBottomStyle: "none",
+    },
+    '@media (max-width: 600px)': {
+      flexDirection: "column",
+      gap: "16px",
+    },
   },
   researchItemMain: {
     display: "flex",
@@ -1774,11 +1406,22 @@ const useStyles = makeStyles({
     overflow: "hidden",
     textOverflow: "ellipsis",
   },
-  researchItemFooter: {
+  // Holds the action button at the top and the vote bar at the bottom, so the
+  // button lines up with the chip row and the votes sit level with the last
+  // line of the subtext.
+  researchItemAside: {
     display: "flex",
-    alignItems: "center",
+    flexDirection: "column",
+    alignItems: "flex-end",
     justifyContent: "space-between",
-    gap: "16px",
+    gap: "12px",
+    flexShrink: 0,
+    '@media (max-width: 600px)': {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      width: "100%",
+    },
   },
   researchCardButton: {
     display: "inline-flex",
@@ -1786,6 +1429,11 @@ const useStyles = makeStyles({
     justifyContent: "center",
     gap: "6px",
     minHeight: "32px",
+    // Centres the 32px button on the 24px chip row it sits beside.
+    marginTop: "-4px",
+    '@media (max-width: 600px)': {
+      marginTop: 0,
+    },
     backgroundColor: "#ffffff",
     color: "#242424",
     fontSize: "14px",
@@ -1896,7 +1544,7 @@ const useStyles = makeStyles({
     gap: "16px",
     minHeight: "148px",
     backgroundColor: "#ffffff",
-    boxShadow: "0 0 2px rgba(0,0,0,0.12), 0 4px 16px rgba(0,0,0,0.06)",
+    ...shorthands.border("1px", "solid", "#E0E0E0"),
     ...shorthands.borderRadius("16px"),
     ...shorthands.padding("24px"),
     boxSizing: "border-box",
@@ -2067,26 +1715,6 @@ const useStyles = makeStyles({
   filterPillCountActive: {
     color: "#FFFFFF",
   },
-  chipIconCircle: {
-    display: "inline-flex",
-    alignItems: "center",
-    justifyContent: "center",
-    width: "24px",
-    height: "24px",
-    flexShrink: 0,
-    ...shorthands.borderRadius("18px"),
-  },
-  chipPill: {
-    display: "inline-flex",
-    alignItems: "center",
-    height: "24px",
-    fontSize: "12px",
-    lineHeight: "16px",
-    fontWeight: 600,
-    ...shorthands.padding("4px", "8px"),
-    ...shorthands.borderRadius("100px"),
-    boxSizing: "border-box",
-  },
   featuredTitle: {
     margin: 0,
     fontSize: "16px",
@@ -2120,23 +1748,6 @@ const useStyles = makeStyles({
     lineHeight: "16px",
     color: "#707070",
     whiteSpace: "nowrap",
-  },
-  featuredArrow: {
-    display: "inline-flex",
-    alignItems: "center",
-    justifyContent: "center",
-    width: "24px",
-    height: "24px",
-    color: "#ffffff",
-    backgroundColor: "#335CCC",
-    boxShadow: "0px 1px 2px rgba(0,0,0,0.14), 0px 0px 2px rgba(0,0,0,0.12)",
-    ...shorthands.borderRadius("18px"),
-    ...shorthands.border("none"),
-    textDecorationLine: "none",
-    cursor: "pointer",
-    ':hover': {
-      backgroundColor: "#2A4CB0",
-    },
   },
   featuredNav: {
     display: "flex",
@@ -2224,7 +1835,7 @@ function FeaturedDescription({ text, className }: { text: string; className: str
 
 function App() {
   const styles = useStyles();
-  const [activeTab, setActiveTab] = useState<(typeof sectionTabs)[number]["id"]>("whats-new");
+  const [activeTab, setActiveTab] = useState<(typeof sectionTabs)[number]["id"] | null>(null);
   const [ghStats, setGhStats] = useState<{ stars: string; forks: string; watchers: string }>({ stars: "—", forks: "—", watchers: "—" });
   const [templateFilter, setTemplateFilter] = useState<TemplateImpactFilter>("Featured");
   const [codeFilter, setCodeFilter] = useState<CodeHomeTechFilter>("Featured");
@@ -2316,7 +1927,7 @@ function App() {
   };
 
   const tabsShellRef = useRef<HTMLDivElement>(null);
-  const activeSectionRef = useRef<(typeof sectionTabs)[number]["id"]>("whats-new");
+  const activeSectionRef = useRef<(typeof sectionTabs)[number]["id"] | null>(null);
   const suppressSpyRef = useRef(false);
   const suppressTimerRef = useRef<number | undefined>(undefined);
   const settleTimerRef = useRef<number | undefined>(undefined);
@@ -2339,7 +1950,9 @@ function App() {
       const doc = document.documentElement;
       const atBottom = window.innerHeight + window.scrollY >= doc.scrollHeight - 2;
 
-      let currentId: (typeof sectionTabs)[number]["id"] = ids[0];
+      // No tab is active until a section actually reaches the reference line,
+      // so nothing is highlighted while the hero is in view.
+      let currentId: (typeof sectionTabs)[number]["id"] | null = null;
       if (atBottom) {
         // Ensure the final section can activate even if it is too short to
         // reach the reference line.
@@ -2362,7 +1975,9 @@ function App() {
       if (currentId !== activeSectionRef.current) {
         activeSectionRef.current = currentId;
         setActiveTab(currentId);
-        logClick(TelemetryEvents.SectionView, { section: currentId });
+        if (currentId) {
+          logClick(TelemetryEvents.SectionView, { section: currentId });
+        }
       }
     };
 
@@ -2409,33 +2024,6 @@ function App() {
 
   return (
     <div className={styles.page}>
-      <header className={styles.hero}>
-        <div className={styles.heroRibbon} />
-        <div className={styles.heroContent}>
-          <div className={styles.heroHeader}>
-            <h1 className={styles.heroTitle}>Frontier analytics for Copilot and agents</h1>
-            <p className={styles.heroSubtitle}>
-              A hands-on hub to build with, learn from, and preview what's next in Copilot Analytics.
-            </p>
-          </div>
-
-          <div className={styles.heroValuesRow}>
-            {heroValues.map(({ label, title, description, Icon }) => {
-              return (
-                <div key={label} className={styles.heroValueItem}>
-                  <div className={styles.heroValueLabelRow}>
-                    <Icon fontSize={20} className={styles.heroValueIcon} />
-                    <span className={styles.heroValueLabel}>{label}</span>
-                  </div>
-                  <h2 className={styles.heroValueTitle}>{title}</h2>
-                  <p className={styles.heroValueDescription}>{description}</p>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </header>
-
       <div className={styles.tabsShell} ref={tabsShellRef}>
         <div className={styles.tabsList} role="tablist" aria-label="Sections">
           {sectionTabs.map((tab) => (
@@ -2453,6 +2041,36 @@ function App() {
         </div>
         <div className={styles.tabsRail} />
       </div>
+
+      <header className={styles.hero}>
+        <div className={styles.heroArt} aria-hidden="true" />
+        <div className={styles.heroContent}>
+          <div className={styles.heroHeader}>
+            <h1 className={styles.heroTitle}>
+              Frontier analytics for
+              <br />
+              <span className={styles.heroTitleAccent}>Copilot and agents</span>
+            </h1>
+            <p className={styles.heroSubtitle}>
+              A hands-on hub to build with, learn from, and preview what's next in Copilot Analytics.
+            </p>
+          </div>
+
+          <div className={styles.heroDivider} aria-hidden="true" />
+
+          <div className={styles.heroValuesRow}>
+            {heroValues.map(({ title, description }, index) => (
+              <Fragment key={title}>
+                {index > 0 && <span className={styles.heroValueDivider} aria-hidden="true" />}
+                <div className={styles.heroValueItem}>
+                  <h2 className={styles.heroValueTitle}>{title}</h2>
+                  <p className={styles.heroValueDescription}>{description}</p>
+                </div>
+              </Fragment>
+            ))}
+          </div>
+        </div>
+      </header>
 
       <section id="whats-new" className={mergeClasses(styles.section, styles.sectionWhatsNewBg)}>
         <div className={mergeClasses(styles.sectionContent, styles.featuredSectionContent)}>
@@ -2775,7 +2393,11 @@ function App() {
             <div className={styles.researchLeftPane}>
               <div className={styles.researchHeadingBlock}>
                 <p className={styles.researchEyebrowGradient}>RESEARCH &amp; PLAYBOOKS</p>
-                <h2 className={styles.researchMainHeading}>Examples from around the world</h2>
+                <h2 className={styles.researchMainHeading}>
+                  Examples from
+                  <br />
+                  around the world
+                </h2>
               </div>
 
               <div className={styles.researchAccordions}>
@@ -2845,7 +2467,7 @@ function App() {
                     </a>
                     <p className={styles.researchItemSubtext}>{item.description}</p>
                   </div>
-                  <div className={styles.researchItemFooter}>
+                  <div className={styles.researchItemAside}>
                     <a
                       className={styles.researchCardButton}
                       href={item.url}

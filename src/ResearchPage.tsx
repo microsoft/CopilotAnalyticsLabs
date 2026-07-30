@@ -19,21 +19,6 @@ const useStyles = makeStyles({
     fontFamily: '"Segoe UI", system-ui, sans-serif',
     color: "#242424",
   },
-  backLink: {
-    display: "inline-flex",
-    alignItems: "center",
-    gap: "6px",
-    fontSize: "14px",
-    fontWeight: 600,
-    color: "#335CCC",
-    textDecorationLine: "none",
-    cursor: "pointer",
-    ...shorthands.border("none"),
-    backgroundColor: "transparent",
-    ':hover': {
-      textDecorationLine: "underline",
-    },
-  },
   hero: {
     background:
       "linear-gradient(96.15deg, rgba(118,79,245,0.06) 12.38%, rgba(63,108,233,0.06) 39.4%, rgba(32,187,198,0.06) 96.13%)",
@@ -67,17 +52,6 @@ const useStyles = makeStyles({
     ':hover': {
       textDecoration: "underline",
     },
-  },
-  eyebrow: {
-    margin: 0,
-    fontSize: "13px",
-    fontWeight: 600,
-    letterSpacing: "0.04em",
-    textTransform: "uppercase",
-    background: "linear-gradient(96.16deg, #E76633 -1.08%, #9D68E3 14.88%, #20BBC6 96.17%)",
-    WebkitBackgroundClip: "text",
-    WebkitTextFillColor: "transparent",
-    backgroundClip: "text",
   },
   title: {
     margin: "8px 0 0",
@@ -262,9 +236,6 @@ const useStyles = makeStyles({
     ':hover': {
       backgroundColor: "#F7F7F7",
     },
-  },
-  voteBar: {
-    marginTop: "12px",
   },
   cardFooter: {
     display: "flex",
