@@ -605,7 +605,10 @@ const useStyles = makeStyles({
     alignItems: "center",
     gap: "6px",
     backgroundColor: "transparent",
+    // Rest and hover share the same foreground; the selected tab is set apart
+    // by the darker #242424, the bolder weight, and the brand indicator.
     color: "#424242",
+    fontWeight: 600,
     fontSize: "14px",
     lineHeight: "20px",
     fontFamily: '"Segoe UI", "Segoe UI Web (West European)", system-ui, sans-serif',
@@ -613,12 +616,6 @@ const useStyles = makeStyles({
     ...shorthands.borderStyle("none"),
     cursor: "pointer",
     whiteSpace: "nowrap",
-    transitionProperty: "color",
-    transitionDuration: "100ms",
-    transitionTimingFunction: "cubic-bezier(0.33, 0, 0.67, 1)",
-    ':hover': {
-      color: "#242424",
-    },
     // Hover reveals a neutral indicator in the same slot the active tab uses,
     // so the bar does not shift when a tab becomes selected.
     ':hover:after': {
@@ -637,7 +634,7 @@ const useStyles = makeStyles({
   },
   tabButtonActive: {
     color: "#242424",
-    fontWeight: 600,
+    fontWeight: 700,
     ':after': {
       content: '""',
       position: "absolute",
