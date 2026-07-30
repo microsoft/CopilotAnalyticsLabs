@@ -472,16 +472,37 @@ const useStyles = makeStyles({
   hero: {
     position: "relative",
     overflow: "hidden",
-    // Figma "hero bg" (node 1300:29412) exported at 3x — the artwork already
-    // contains the gradient wash plus the Copilot illustration on the right.
-    backgroundColor: "#F5F4FB",
-    backgroundImage: `url(${import.meta.env.BASE_URL}images/hero-bg.png)`,
-    backgroundRepeat: "no-repeat",
-    backgroundPosition: "center right",
-    backgroundSize: "cover",
+    // The artwork lives on `heroArt` so its scale is driven by the hero's
+    // height rather than the viewport width. This gradient stands in for the
+    // artwork's left-hand wash (sampled from the PNG's left edge: a faint blue
+    // at the top falling away to white) and fills the gap on ultra-wide screens.
+    backgroundColor: "#ffffff",
+    backgroundImage: "linear-gradient(180deg, #EFF6FF 0%, #FDFEFF 55%, #FFFFFF 100%)",
     ...shorthands.padding("40px", "24px"),
     '@media (max-width: 600px)': {
       ...shorthands.padding("32px", "16px"),
+    },
+  },
+  heroArt: {
+    position: "absolute",
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+    zIndex: 0,
+    pointerEvents: "none",
+    backgroundImage: `url(${import.meta.env.BASE_URL}images/hero-bg.png)`,
+    backgroundRepeat: "no-repeat",
+    // Scale by HEIGHT, not width: the illustration then renders at a constant
+    // size and is never cropped, however wide the viewport gets.
+    backgroundSize: "auto 100%",
+    backgroundPosition: "right center",
+    // Fade the left edge so the artwork blends into the gradient above instead
+    // of ending on a hard vertical seam.
+    WebkitMaskImage: "linear-gradient(90deg, transparent 0, #000 340px)",
+    maskImage: "linear-gradient(90deg, transparent 0, #000 340px)",
+    '@media (max-width: 700px)': {
+      display: "none",
     },
   },
   heroContent: {
@@ -2412,6 +2433,7 @@ function App() {
       </div>
 
       <header className={styles.hero}>
+        <div className={styles.heroArt} aria-hidden="true" />
         <div className={styles.heroContent}>
           <div className={styles.heroHeader}>
             <h1 className={styles.heroTitle}>
