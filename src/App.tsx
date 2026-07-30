@@ -613,6 +613,27 @@ const useStyles = makeStyles({
     ...shorthands.borderStyle("none"),
     cursor: "pointer",
     whiteSpace: "nowrap",
+    transitionProperty: "color",
+    transitionDuration: "100ms",
+    transitionTimingFunction: "cubic-bezier(0.33, 0, 0.67, 1)",
+    ':hover': {
+      color: "#242424",
+    },
+    // Hover reveals a neutral indicator in the same slot the active tab uses,
+    // so the bar does not shift when a tab becomes selected.
+    ':hover:after': {
+      content: '""',
+      position: "absolute",
+      left: "12px",
+      right: "12px",
+      bottom: "0",
+      height: "3px",
+      ...shorthands.borderRadius("9999px"),
+      backgroundColor: "#C7C7C7",
+    },
+    ':active:after': {
+      backgroundColor: "#B3B3B3",
+    },
   },
   tabButtonActive: {
     color: "#242424",
@@ -625,6 +646,13 @@ const useStyles = makeStyles({
       bottom: "0",
       height: "3px",
       ...shorthands.borderRadius("9999px"),
+      backgroundColor: "#335CCC",
+    },
+    // The selected tab keeps its brand indicator on hover and press.
+    ':hover:after': {
+      backgroundColor: "#335CCC",
+    },
+    ':active:after': {
       backgroundColor: "#335CCC",
     },
   },
