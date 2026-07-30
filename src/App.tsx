@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { makeStyles, mergeClasses, shorthands, Tooltip } from "@fluentui/react-components";
 import {
   ArrowRight16Regular,
@@ -6,7 +6,6 @@ import {
   ArrowTrendingText20Regular,
   Book20Filled,
   BookTemplate20Filled,
-  BookCompass20Filled,
   ChartMultiple20Filled,
   ChartMultiple20Regular,
   ChevronLeft20Regular,
@@ -23,8 +22,6 @@ import {
   Sparkle20Filled,
   Sparkle20Regular,
   Star16Filled,
-  WrenchScrewdriver20Filled,
-  MountainLocationTop20Filled,
 } from "@fluentui/react-icons";
 import { research, resources, templates, templateImpactFilters, codeHomeTechFilters } from "./data";
 import type { TemplateImpactFilter, CodeHomeTechFilter } from "./data";
@@ -151,22 +148,16 @@ function buildFeaturedItems(): FeaturedItem[] {
 
 const heroValues = [
   {
-    label: "Build",
     title: "Build with ready-to-use assets",
-    description: "Templates, code, and prompts to plug into your own data.",
-    Icon: WrenchScrewdriver20Filled,
+    description: "Templates, code, and prompts\nto plug into your own data.",
   },
   {
-    label: "Learn",
-    title: "Learn from proven deployments",
-    description: "Playbooks, research, and demos from real customer rollouts.",
-    Icon: BookCompass20Filled,
+    title: "Proven in real deployments",
+    description: "Playbooks, research, and demos\nfrom real customer rollouts.",
   },
   {
-    label: "Explore",
     title: "See what's new and next",
-    description: "A preview of latest drops and upcoming capabilities.",
-    Icon: MountainLocationTop20Filled,
+    description: "A preview of latest drops\nand upcoming capabilities.",
   },
 ];
 
@@ -480,26 +471,17 @@ const useStyles = makeStyles({
   },
   hero: {
     position: "relative",
-    minHeight: "auto",
     overflow: "hidden",
-    backgroundColor: "#ffffff",
-    '@media (max-width: 600px)': {
-      minHeight: "auto",
-    },
-  },
-  heroRibbon: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    width: "100%",
-    height: "100%",
-    pointerEvents: "none",
-    backgroundImage: `url(${import.meta.env.BASE_URL}images/hero-bg.svg)`,
-    backgroundSize: "cover",
-    backgroundPosition: "center top",
+    // Figma "hero bg" (node 1300:29412) exported at 3x — the artwork already
+    // contains the gradient wash plus the Copilot illustration on the right.
+    backgroundColor: "#F5F4FB",
+    backgroundImage: `url(${import.meta.env.BASE_URL}images/hero-bg.png)`,
     backgroundRepeat: "no-repeat",
+    backgroundPosition: "center right",
+    backgroundSize: "cover",
+    ...shorthands.padding("40px", "24px"),
     '@media (max-width: 600px)': {
-      opacity: 0.5,
+      ...shorthands.padding("32px", "16px"),
     },
   },
   heroContent: {
@@ -511,53 +493,57 @@ const useStyles = makeStyles({
     marginRight: "auto",
     display: "flex",
     flexDirection: "column",
-    alignItems: "center",
-    gap: "40px",
-    ...shorthands.padding("48px", "24px", "56px"),
-    '@media (max-width: 1200px)': {
-      ...shorthands.padding("48px", "24px", "56px"),
-    },
+    alignItems: "flex-start",
+    gap: "24px",
     '@media (max-width: 600px)': {
-      ...shorthands.padding("40px", "16px", "36px"),
-      gap: "24px",
+      gap: "20px",
     },
   },
   heroHeader: {
-    width: "100%",
+    maxWidth: "740px",
     display: "flex",
     flexDirection: "column",
-    alignItems: "center",
-    gap: "4px",
-    textAlign: "center",
+    alignItems: "flex-start",
+    gap: "12px",
+    textAlign: "left",
   },
   heroTitle: {
     margin: 0,
-    maxWidth: "730px",
     fontSize: "40px",
-    lineHeight: "56px",
+    lineHeight: "47.8px",
     fontWeight: 600,
+    letterSpacing: 0,
     color: "#0E1726",
-    whiteSpace: "nowrap",
     '@media (max-width: 600px)': {
-      fontSize: "26px",
-      lineHeight: "34px",
-      whiteSpace: "normal",
+      fontSize: "30px",
+      lineHeight: "38px",
     },
+  },
+  heroTitleAccent: {
+    backgroundImage: "linear-gradient(90deg, #7C4DEE 0%, #6355E8 42%, #3D6BE5 82%)",
+    backgroundClip: "text",
+    WebkitBackgroundClip: "text",
+    WebkitTextFillColor: "transparent",
+    color: "transparent",
   },
   heroSubtitle: {
     margin: 0,
-    maxWidth: "686px",
+    maxWidth: "640px",
     fontWeight: 400,
-    fontSize: "18px",
-    lineHeight: "28px",
-    color: "#424242",
-    whiteSpace: "nowrap",
+    fontSize: "16px",
+    lineHeight: "22px",
+    color: "#616161",
     '@media (max-width: 600px)': {
       maxWidth: "100%",
       fontSize: "14px",
       lineHeight: "20px",
-      whiteSpace: "normal",
     },
+  },
+  heroDivider: {
+    width: "100%",
+    maxWidth: "645px",
+    height: "1px",
+    backgroundColor: "#E0E0E0",
   },
   valuesShell: {
     width: "100%",
@@ -1386,61 +1372,55 @@ const useStyles = makeStyles({
     color: "#424242",
   },
   heroValuesRow: {
-    width: "100%",
-    maxWidth: "812px",
     display: "flex",
-    justifyContent: "center",
-    gap: "24px",
+    alignItems: "stretch",
+    gap: "28px",
     '@media (max-width: 700px)': {
       flexDirection: "column",
-      gap: "24px",
-      alignItems: "center",
+      gap: "16px",
+      alignItems: "flex-start",
+    },
+  },
+  heroValueDivider: {
+    flex: "0 0 auto",
+    alignSelf: "center",
+    width: "1px",
+    height: "44px",
+    backgroundColor: "#E0E0E0",
+    '@media (max-width: 700px)': {
+      display: "none",
     },
   },
   heroValueItem: {
-    flex: "1 1 0",
-    minWidth: 0,
-    maxWidth: "254.67px",
     display: "flex",
     flexDirection: "column",
-    alignItems: "center",
     gap: "8px",
-    textAlign: "center",
-  },
-  heroValueLabelRow: {
-    display: "inline-flex",
-    alignItems: "center",
-    justifyContent: "center",
-    minWidth: "120px",
-    ...shorthands.padding("8px", "19px"),
-    ...shorthands.borderRadius("24px"),
-    backgroundColor: "#FFFFFF",
-    gap: "8px",
-  },
-  heroValueIcon: {
-    width: "20px",
-    height: "20px",
-    color: "#335CCC",
-  },
-  heroValueLabel: {
-    fontSize: "16px",
-    lineHeight: "22px",
-    fontWeight: 600,
-    letterSpacing: 0,
-    color: "#242424",
+    width: "fit-content",
+    maxWidth: "230px",
+    minWidth: 0,
+    textAlign: "left",
   },
   heroValueTitle: {
     margin: 0,
     fontSize: "14px",
     lineHeight: "20px",
     fontWeight: 600,
-    color: "#000000",
+    color: "#242424",
+    whiteSpace: "nowrap",
+    '@media (max-width: 400px)': {
+      whiteSpace: "normal",
+    },
   },
   heroValueDescription: {
     margin: 0,
     fontSize: "12px",
     lineHeight: "16px",
-    color: "#616161",
+    color: "#707070",
+    // Descriptions carry an explicit newline so each renders on exactly two lines.
+    whiteSpace: "pre-line",
+    '@media (max-width: 400px)': {
+      whiteSpace: "normal",
+    },
   },
   viewAllLink: {
     display: "inline-flex",
@@ -1896,7 +1876,7 @@ const useStyles = makeStyles({
     gap: "16px",
     minHeight: "148px",
     backgroundColor: "#ffffff",
-    boxShadow: "0 0 2px rgba(0,0,0,0.12), 0 4px 16px rgba(0,0,0,0.06)",
+    ...shorthands.border("1px", "solid", "#E0E0E0"),
     ...shorthands.borderRadius("16px"),
     ...shorthands.padding("24px"),
     boxSizing: "border-box",
@@ -2224,7 +2204,7 @@ function FeaturedDescription({ text, className }: { text: string; className: str
 
 function App() {
   const styles = useStyles();
-  const [activeTab, setActiveTab] = useState<(typeof sectionTabs)[number]["id"]>("whats-new");
+  const [activeTab, setActiveTab] = useState<(typeof sectionTabs)[number]["id"] | null>(null);
   const [ghStats, setGhStats] = useState<{ stars: string; forks: string; watchers: string }>({ stars: "—", forks: "—", watchers: "—" });
   const [templateFilter, setTemplateFilter] = useState<TemplateImpactFilter>("Featured");
   const [codeFilter, setCodeFilter] = useState<CodeHomeTechFilter>("Featured");
@@ -2316,7 +2296,7 @@ function App() {
   };
 
   const tabsShellRef = useRef<HTMLDivElement>(null);
-  const activeSectionRef = useRef<(typeof sectionTabs)[number]["id"]>("whats-new");
+  const activeSectionRef = useRef<(typeof sectionTabs)[number]["id"] | null>(null);
   const suppressSpyRef = useRef(false);
   const suppressTimerRef = useRef<number | undefined>(undefined);
   const settleTimerRef = useRef<number | undefined>(undefined);
@@ -2339,7 +2319,9 @@ function App() {
       const doc = document.documentElement;
       const atBottom = window.innerHeight + window.scrollY >= doc.scrollHeight - 2;
 
-      let currentId: (typeof sectionTabs)[number]["id"] = ids[0];
+      // No tab is active until a section actually reaches the reference line,
+      // so nothing is highlighted while the hero is in view.
+      let currentId: (typeof sectionTabs)[number]["id"] | null = null;
       if (atBottom) {
         // Ensure the final section can activate even if it is too short to
         // reach the reference line.
@@ -2362,7 +2344,9 @@ function App() {
       if (currentId !== activeSectionRef.current) {
         activeSectionRef.current = currentId;
         setActiveTab(currentId);
-        logClick(TelemetryEvents.SectionView, { section: currentId });
+        if (currentId) {
+          logClick(TelemetryEvents.SectionView, { section: currentId });
+        }
       }
     };
 
@@ -2409,33 +2393,6 @@ function App() {
 
   return (
     <div className={styles.page}>
-      <header className={styles.hero}>
-        <div className={styles.heroRibbon} />
-        <div className={styles.heroContent}>
-          <div className={styles.heroHeader}>
-            <h1 className={styles.heroTitle}>Frontier analytics for Copilot and agents</h1>
-            <p className={styles.heroSubtitle}>
-              A hands-on hub to build with, learn from, and preview what's next in Copilot Analytics.
-            </p>
-          </div>
-
-          <div className={styles.heroValuesRow}>
-            {heroValues.map(({ label, title, description, Icon }) => {
-              return (
-                <div key={label} className={styles.heroValueItem}>
-                  <div className={styles.heroValueLabelRow}>
-                    <Icon fontSize={20} className={styles.heroValueIcon} />
-                    <span className={styles.heroValueLabel}>{label}</span>
-                  </div>
-                  <h2 className={styles.heroValueTitle}>{title}</h2>
-                  <p className={styles.heroValueDescription}>{description}</p>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </header>
-
       <div className={styles.tabsShell} ref={tabsShellRef}>
         <div className={styles.tabsList} role="tablist" aria-label="Sections">
           {sectionTabs.map((tab) => (
@@ -2453,6 +2410,35 @@ function App() {
         </div>
         <div className={styles.tabsRail} />
       </div>
+
+      <header className={styles.hero}>
+        <div className={styles.heroContent}>
+          <div className={styles.heroHeader}>
+            <h1 className={styles.heroTitle}>
+              Frontier analytics for
+              <br />
+              <span className={styles.heroTitleAccent}>Copilot and agents</span>
+            </h1>
+            <p className={styles.heroSubtitle}>
+              A hands-on hub to build with, learn from, and preview what's next in Copilot Analytics.
+            </p>
+          </div>
+
+          <div className={styles.heroDivider} aria-hidden="true" />
+
+          <div className={styles.heroValuesRow}>
+            {heroValues.map(({ title, description }, index) => (
+              <Fragment key={title}>
+                {index > 0 && <span className={styles.heroValueDivider} aria-hidden="true" />}
+                <div className={styles.heroValueItem}>
+                  <h2 className={styles.heroValueTitle}>{title}</h2>
+                  <p className={styles.heroValueDescription}>{description}</p>
+                </div>
+              </Fragment>
+            ))}
+          </div>
+        </div>
+      </header>
 
       <section id="whats-new" className={mergeClasses(styles.section, styles.sectionWhatsNewBg)}>
         <div className={mergeClasses(styles.sectionContent, styles.featuredSectionContent)}>

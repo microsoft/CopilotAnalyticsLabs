@@ -196,8 +196,13 @@ const useStyles = makeStyles({
   cardImage: {
     width: "100%",
     height: "160px",
-    objectFit: "cover",
+    // Contain (not cover) so the square illustrations render at their natural
+    // proportions and stay centred, matching the L1 sample-code cards.
+    objectFit: "contain",
+    objectPosition: "center",
     display: "block",
+    ...shorthands.padding("16px"),
+    boxSizing: "border-box",
   },
   cardIcon: {
     display: "flex",
