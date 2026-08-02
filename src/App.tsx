@@ -542,19 +542,21 @@ const useStyles = makeStyles({
     right: 0,
     // Anchor the artwork to the centred content column rather than to the
     // viewport: 50% is the column's centre, so this starts the illustration a
-    // constant 624px right of the column's left edge at every width. It never
+    // constant 604px right of the column's left edge at every width. It never
     // drifts out to the far right of an ultra-wide screen, and it never walks
     // left into the value-prop text on a narrow one. Any overhang is clipped
     // by the hero's `overflow: hidden`.
-    left: "calc(50% + 112px)",
+    left: "calc(50% + 92px)",
     zIndex: 0,
     pointerEvents: "none",
-    // A transparent cut-out of just the illustration, so it blends into the
-    // hero gradient with no seam and needs no edge mask.
+    // The PNG's field fades out to transparent on its left and right edges, so
+    // it blends into the hero gradient with no seam and needs no edge mask.
     backgroundImage: `url(${import.meta.env.BASE_URL}images/bgwide.png)`,
     backgroundRepeat: "no-repeat",
-    // Scale by HEIGHT, not width: the illustration then renders at a constant
-    // size and is never cropped, however wide the viewport gets.
+    // Scale by HEIGHT, not width, so the illustration renders at a constant
+    // size however wide the viewport gets. It must be exactly 100%: the PNG's
+    // left and right edges fade out to transparent but its top and bottom are
+    // hard cuts, so anything less exposes them as visible horizontal seams.
     backgroundSize: "auto 100%",
     backgroundPosition: "left center",
     '@media (max-width: 900px)': {
