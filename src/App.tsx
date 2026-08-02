@@ -1419,33 +1419,40 @@ const useStyles = makeStyles({
   },
   researchItem: {
     display: "flex",
-    flexDirection: "row",
-    alignItems: "stretch",
-    // The text column wraps against the action column with this gap.
-    gap: "20px",
+    // Stacked rows rather than a text column beside an action column: the
+    // title then spans the full card width instead of being squeezed by a
+    // sidebar, so it no longer truncates and the subtext needs fewer lines.
+    flexDirection: "column",
+    gap: "8px",
     ...shorthands.padding("24px", "0"),
     ...shorthands.borderBottom("1px", "solid", "#E0E0E0"),
     // The last card sits directly above the "View all" link, so it needs no rule.
     ':last-of-type': {
       borderBottomStyle: "none",
     },
-    '@media (max-width: 600px)': {
-      flexDirection: "column",
-      gap: "16px",
-    },
   },
-  researchItemMain: {
+  // Chips on the left, the action button pinned right and centred against them.
+  researchItemTopRow: {
     display: "flex",
-    flexDirection: "column",
-    gap: "8px",
-    flexGrow: 1,
-    minWidth: 0,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: "16px",
+  },
+  // Subtext on the left, votes pinned right and level with its last line.
+  researchItemBottomRow: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "flex-end",
+    justifyContent: "space-between",
+    gap: "20px",
   },
   researchItemChips: {
     display: "flex",
     flexDirection: "row",
     flexWrap: "wrap",
     gap: "8px",
+    minWidth: 0,
   },
   researchItemChip: {
     display: "inline-flex",
@@ -1470,26 +1477,6 @@ const useStyles = makeStyles({
     lineHeight: "24px",
     fontWeight: 600,
     color: "#000000",
-    whiteSpace: "nowrap",
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-  },
-  // Holds the action button at the top and the vote bar at the bottom, so the
-  // button lines up with the chip row and the votes sit level with the last
-  // line of the subtext.
-  researchItemAside: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "flex-end",
-    justifyContent: "space-between",
-    gap: "12px",
-    flexShrink: 0,
-    '@media (max-width: 600px)': {
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
-      width: "100%",
-    },
   },
   researchCardButton: {
     display: "inline-flex",
@@ -1497,11 +1484,11 @@ const useStyles = makeStyles({
     justifyContent: "center",
     gap: "6px",
     minHeight: "32px",
-    // Centres the 32px button on the 24px chip row it sits beside.
+    flexShrink: 0,
+    // The button is 32px against a 24px chip row. Absorb the difference so it
+    // centres on the chips without making the row, and every card, 8px taller.
     marginTop: "-4px",
-    '@media (max-width: 600px)': {
-      marginTop: 0,
-    },
+    marginBottom: "-4px",
     backgroundColor: "#ffffff",
     color: "#242424",
     fontSize: "14px",
@@ -1536,6 +1523,7 @@ const useStyles = makeStyles({
     fontSize: "12px",
     lineHeight: "16px",
     color: "#616161",
+    minWidth: 0,
   },
   roadmapSectionContent: {
     gap: "24px",
@@ -2529,7 +2517,7 @@ function App() {
             <div className={styles.researchRightPane}>
               {visibleResearchItems.map((item) => (
                 <article key={item.id} className={styles.researchItem}>
-                  <div className={styles.researchItemMain}>
+                  <div className={styles.researchItemTopRow}>
                     <div className={styles.researchItemChips}>
                       {(researchTags[item.id] ?? []).map((tag) => (
                         <span
@@ -2551,18 +2539,6 @@ function App() {
                       ))}
                     </div>
                     <a
-                      className={styles.researchItemTitleLink}
-                      href={item.url}
-                      target="_blank"
-                      rel="noreferrer"
-                      onClick={() => logClick(TelemetryEvents.ResearchViewClick, { research: item.id })}
-                    >
-                      <h3 className={mergeClasses(styles.researchItemTitle, "research-item-title")}>{item.title}</h3>
-                    </a>
-                    <p className={styles.researchItemSubtext}>{item.description}</p>
-                  </div>
-                  <div className={styles.researchItemAside}>
-                    <a
                       className={styles.researchCardButton}
                       href={item.url}
                       target="_blank"
@@ -2572,6 +2548,18 @@ function App() {
                       {item.kind === "Playbook" ? "View playbook" : "View report"}
                       <Open16Filled fontSize={12} />
                     </a>
+                  </div>
+                  <a
+                    className={styles.researchItemTitleLink}
+                    href={item.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    onClick={() => logClick(TelemetryEvents.ResearchViewClick, { research: item.id })}
+                  >
+                    <h3 className={mergeClasses(styles.researchItemTitle, "research-item-title")}>{item.title}</h3>
+                  </a>
+                  <div className={styles.researchItemBottomRow}>
+                    <p className={styles.researchItemSubtext}>{item.description}</p>
                     <VoteBar cardId={item.id} variant="inline" />
                   </div>
                 </article>
