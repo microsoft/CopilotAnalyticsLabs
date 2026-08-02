@@ -549,14 +549,16 @@ const useStyles = makeStyles({
     left: "calc(50% + 92px)",
     zIndex: 0,
     pointerEvents: "none",
-    // The PNG's field fades out to transparent on its left and right edges, so
-    // it blends into the hero gradient with no seam and needs no edge mask.
+    // The PNG's field fades out to transparent on its left, right and bottom
+    // edges, so it blends into the hero gradient with no seam and needs no
+    // edge mask.
     backgroundImage: `url(${import.meta.env.BASE_URL}images/bgwide.png)`,
     backgroundRepeat: "no-repeat",
     // Scale by HEIGHT, not width, so the illustration renders at a constant
-    // size however wide the viewport gets. It must be exactly 100%: the PNG's
-    // left and right edges fade out to transparent but its top and bottom are
-    // hard cuts, so anything less exposes them as visible horizontal seams.
+    // size however wide the viewport gets. It must be exactly 100%: the card
+    // at the top of the artwork is cropped by the PNG's top edge and is meant
+    // to bleed off the top of the hero, so anything less leaves that crop
+    // floating mid-section as a visible horizontal seam.
     backgroundSize: "auto 100%",
     backgroundPosition: "left center",
     '@media (max-width: 900px)': {
