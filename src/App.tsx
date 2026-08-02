@@ -525,10 +525,9 @@ const useStyles = makeStyles({
   hero: {
     position: "relative",
     overflow: "hidden",
-    // The artwork lives on `heroArt` so its scale is driven by the hero's
-    // height rather than the viewport width. This gradient stands in for the
-    // artwork's left-hand wash (sampled from the PNG's left edge: a faint blue
-    // at the top falling away to white) and fills the gap on ultra-wide screens.
+    // The artwork is a transparent PNG on `heroArt`, so this gradient is the
+    // hero's only wash and shows through it: a faint blue at the top falling
+    // away to white.
     backgroundColor: "#ffffff",
     backgroundImage: "linear-gradient(180deg, #EFF6FF 0%, #FDFEFF 55%, #FFFFFF 100%)",
     ...shorthands.padding("40px", "24px"),
@@ -539,22 +538,26 @@ const useStyles = makeStyles({
   heroArt: {
     position: "absolute",
     top: 0,
-    right: 0,
     bottom: 0,
-    left: 0,
+    right: 0,
+    // Anchor the artwork to the centred content column rather than to the
+    // viewport: 50% is the column's centre, so this starts the illustration a
+    // constant 624px right of the column's left edge at every width. It never
+    // drifts out to the far right of an ultra-wide screen, and it never walks
+    // left into the value-prop text on a narrow one. Any overhang is clipped
+    // by the hero's `overflow: hidden`.
+    left: "calc(50% + 112px)",
     zIndex: 0,
     pointerEvents: "none",
-    backgroundImage: `url(${import.meta.env.BASE_URL}images/hero-bg.png)`,
+    // A transparent cut-out of just the illustration, so it blends into the
+    // hero gradient with no seam and needs no edge mask.
+    backgroundImage: `url(${import.meta.env.BASE_URL}images/bgwide.png)`,
     backgroundRepeat: "no-repeat",
     // Scale by HEIGHT, not width: the illustration then renders at a constant
     // size and is never cropped, however wide the viewport gets.
     backgroundSize: "auto 100%",
-    backgroundPosition: "right center",
-    // Fade the left edge so the artwork blends into the gradient above instead
-    // of ending on a hard vertical seam.
-    WebkitMaskImage: "linear-gradient(90deg, transparent 0, #000 340px)",
-    maskImage: "linear-gradient(90deg, transparent 0, #000 340px)",
-    '@media (max-width: 700px)': {
+    backgroundPosition: "left center",
+    '@media (max-width: 900px)': {
       display: "none",
     },
   },
