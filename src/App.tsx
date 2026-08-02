@@ -76,6 +76,10 @@ const featuredPillLabel: Record<FeaturedKind, string> = {
   Playbook: "Playbooks",
 };
 
+// How many featured cards the row shows at once. Past this the row scrolls,
+// so it is also the threshold for showing the scroll arrows.
+const FEATURED_CARDS_PER_VIEW = 3;
+
 interface FeaturedItem {
   id: string;
   sourceId: string;
@@ -2000,6 +2004,11 @@ function App() {
     featuredRowRef.current?.scrollBy({ left: dir * 340, behavior: "smooth" });
   };
 
+  // Gate the arrows on the full set rather than the filtered one. A pill that
+  // narrows the row to three or fewer cards keeps its arrows so the section
+  // does not change height as the user moves between pills.
+  const showFeaturedNav = featuredItems.length > FEATURED_CARDS_PER_VIEW;
+
   const tabsShellRef = useRef<HTMLDivElement>(null);
   const activeSectionRef = useRef<(typeof sectionTabs)[number]["id"] | null>(null);
   const suppressSpyRef = useRef(false);
@@ -2230,14 +2239,16 @@ function App() {
                 })}
               </div>
 
-              <div className={styles.featuredNav}>
-                <button type="button" className={styles.featuredNavButton} aria-label="Scroll previous" onClick={() => scrollFeatured(-1)}>
-                  <ChevronLeft20Regular fontSize={18} />
-                </button>
-                <button type="button" className={styles.featuredNavButton} aria-label="Scroll next" onClick={() => scrollFeatured(1)}>
-                  <ChevronRight20Regular fontSize={18} />
-                </button>
-              </div>
+              {showFeaturedNav && (
+                <div className={styles.featuredNav}>
+                  <button type="button" className={styles.featuredNavButton} aria-label="Scroll previous" onClick={() => scrollFeatured(-1)}>
+                    <ChevronLeft20Regular fontSize={18} />
+                  </button>
+                  <button type="button" className={styles.featuredNavButton} aria-label="Scroll next" onClick={() => scrollFeatured(1)}>
+                    <ChevronRight20Regular fontSize={18} />
+                  </button>
+                </div>
+              )}
             </>
           ) : (
             <p className={styles.featuredDate}>No new resources right now — check back soon.</p>
