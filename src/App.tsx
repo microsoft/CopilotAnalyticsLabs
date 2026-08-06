@@ -86,6 +86,25 @@ interface FeaturedItem {
   addedOn?: string;
 }
 
+async function fetchBadgeCount(url: string): Promise<string> {
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(`Count request failed with status ${response.status}`);
+  }
+
+  const data: unknown = await response.json();
+  if (
+    typeof data !== "object" ||
+    data === null ||
+    !("message" in data) ||
+    typeof data.message !== "string"
+  ) {
+    throw new Error("Count response did not include a message");
+  }
+
+  return data.message;
+}
+
 // Whole days elapsed since an ISO date, or null when unknown/invalid.
 function daysSince(iso?: string): number | null {
   if (!iso) return null;
@@ -193,8 +212,8 @@ const templateMeta: Record<
       { text: "Org wide", tone: "purple" },
     ],
     stats: [
-      { value: "12", label: "KPI views" },
-      { value: "7", label: "Cohorts" },
+      { value: "—", label: "Stars" },
+      { value: "—", label: "Watching" },
       { value: "<10 min", label: "Setup" },
     ],
   },
@@ -236,6 +255,7 @@ const templateHomeCopyOverrides: Record<string, { title?: string; description?: 
 };
 
 const codeHomeOrder = [
+  "copilot-causal-toolkit",
   "viva-insights-essentials",
   "advanced-analytics",
   "network-analysis",
@@ -290,6 +310,12 @@ const resourceMeta: Record<
       { text: "R", tone: "orange" },
     ],
   },
+  "copilot-causal-toolkit": {
+    badges: [
+      { text: "Python", tone: "red" },
+      { text: "AI-assisted", tone: "teal" },
+    ],
+  },
 };
 
 const codeHomeCopyOverrides: Record<string, { description?: string }> = {
@@ -317,6 +343,7 @@ const codeHomeCopyOverrides: Record<string, { description?: string }> = {
 };
 
 const researchOrder = [
+  "ai-transformation-invisible-work",
   "agent-assisted-hours",
   "new-agent-assisted-hours",
   "adoption-playbook",
@@ -330,6 +357,10 @@ const researchOrder = [
 ];
 
 const researchTags: Record<string, { text: string; tone: string }[]> = {
+  "ai-transformation-invisible-work": [
+    { text: "Research", tone: "teal" },
+    { text: "Industry wide", tone: "amber" },
+  ],
   "agent-assisted-hours": [
     { text: "Business value", tone: "blue" },
     { text: "Org wide", tone: "purple" },
@@ -1836,7 +1867,7 @@ function FeaturedDescription({ text, className }: { text: string; className: str
 function App() {
   const styles = useStyles();
   const [activeTab, setActiveTab] = useState<(typeof sectionTabs)[number]["id"] | null>(null);
-  const [ghStats, setGhStats] = useState<{ stars: string; forks: string; watchers: string }>({ stars: "—", forks: "—", watchers: "—" });
+  const [ghStats, setGhStats] = useState<{ stars: string; watchers: string }>({ stars: "—", watchers: "—" });
   const [templateFilter, setTemplateFilter] = useState<TemplateImpactFilter>("Featured");
   const [codeFilter, setCodeFilter] = useState<CodeHomeTechFilter>("Featured");
   const [activeRoadmapTab, setActiveRoadmapTab] = useState<string>(roadmapItems[0].id);
@@ -1847,18 +1878,27 @@ function App() {
   }, []);
 
   useEffect(() => {
-    fetch("https://api.github.com/repos/microsoft/AI-in-One-Dashboard")
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.stargazers_count != null) {
+    let cancelled = false;
+
+    Promise.all([
+      fetchBadgeCount("https://img.shields.io/github/stars/microsoft/AI-in-One-Dashboard.json"),
+      fetchBadgeCount("https://img.shields.io/github/watchers/microsoft/AI-in-One-Dashboard.json"),
+    ])
+      .then(([stars, watchers]) => {
+        if (!cancelled) {
           setGhStats({
-            stars: String(data.stargazers_count),
-            forks: String(data.forks_count),
-            watchers: String(data.subscribers_count),
+            stars,
+            watchers,
           });
         }
       })
-      .catch(() => {});
+      .catch((error: unknown) => {
+        console.warn("Unable to load AI in One Dashboard GitHub counts", error);
+      });
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const orderedTemplates = useMemo(() => {

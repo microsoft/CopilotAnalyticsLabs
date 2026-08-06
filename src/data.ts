@@ -110,7 +110,7 @@ const base = import.meta.env.BASE_URL;
 export const templates: TemplateItem[] = [
   {
     id: "aio-dashboard",
-    title: "All in One Dashboard",
+    title: "AI in One Dashboard",
     description:
       "Comprehensive Copilot and Agent analytics covering adoption, usage, impact, and ROI — all in a single Power BI dashboard.",
     url: "https://github.com/microsoft/AI-in-One-Dashboard#-dashboard-preview",
@@ -280,10 +280,10 @@ export const resources: ResourceItem[] = [
   },
   {
     id: "portable-audit-exporter",
-    title: "Portable Audit Exporter",
+    title: "Portable Audit eXporter (PAX)",
     description:
       "Portable exporter utilities for Purview audit data - parse, normalize, and prepare audit logs for downstream analytics and dashboarding.",
-    url: "https://microsoft.github.io/viva-insights-sample-code/frontier-analytics-prompt-audit-parsing/",
+    url: "https://github.com/Microsoft/PAX#what-is-pax",
     icon: DocumentBulletList24Regular,
     category: "Code",
     image: `${base}images/code-portable-audit-exporter.png`,
@@ -304,6 +304,19 @@ export const resources: ResourceItem[] = [
     addedOn: "2026-06-05",
     tech: ["Python", "R", "Power BI"],
     domain: ["Adoption & Usage", "Impact & ROI"],
+    collections: ["Analytics"],
+  },
+  {
+    id: "copilot-causal-toolkit",
+    title: "Copilot Causal Toolkit",
+    description:
+      "Estimate the causal effect of Copilot usage on workplace outcomes with Python and Jupyter notebooks using double machine learning.",
+    url: "https://microsoft.github.io/viva-insights-sample-code/copilot-causal-toolkit/",
+    icon: DocumentBulletList24Regular,
+    category: "Code",
+    addedOn: "2026-08-06",
+    tech: ["Python", "AI-assisted"],
+    domain: ["Impact & ROI", "Copilot & Agents", "Advanced / ML"],
     collections: ["Analytics"],
   },
 ];
@@ -458,6 +471,18 @@ export const research: ResearchItem[] = [
     kind: "Research",
     addedOn: "2026-07-06",
     domain: ["Productivity", "AI Transformation"],
+    contentType: ["Industry wide"],
+  },
+  {
+    id: "ai-transformation-invisible-work",
+    title: "AI and the Transformation of Invisible Work",
+    description:
+      "Interviews with 24 professionals show how AI is changing the communication, mentoring, feedback, and relationship-building work that formal job descriptions rarely capture.",
+    url: "https://microsoft.github.io/nfw-reader/posts/beyond-the-org-chart",
+    icon: DocumentBulletList24Regular,
+    kind: "Research",
+    addedOn: "2026-08-06",
+    domain: ["AI Transformation", "Productivity"],
     contentType: ["Industry wide"],
   },
 ];
