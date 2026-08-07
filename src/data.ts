@@ -142,7 +142,7 @@ export const templates: TemplateItem[] = [
     url: "https://github.com/microsoft/What-I-did-with-Cowork#option-1--let-cowork-install-it-for-you-easiest",
     icon: Sparkle24Regular,
     image: `${base}images/card-ai-business-value.png`,
-    addedOn: "2026-07-15",
+    addedOn: "2026-08-07",
     type: "Copilot",
     impact: ["AI Impact", "Individual"],
     collections: ["AI Business Value"],
@@ -283,7 +283,7 @@ export const resources: ResourceItem[] = [
     title: "Portable Audit eXporter (PAX)",
     description:
       "Portable exporter utilities for Purview audit data - parse, normalize, and prepare audit logs for downstream analytics and dashboarding.",
-    url: "https://github.com/Microsoft/PAX#what-is-pax",
+    url: "https://github.com/microsoft/PAX",
     icon: DocumentBulletList24Regular,
     category: "Code",
     image: `${base}images/code-portable-audit-exporter.png`,
