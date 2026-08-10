@@ -185,7 +185,7 @@ const templateOrder = [
   "cowork-value-estimator",
   "github-copilot-impact-org",
   "m365-copilot-personal",
-  "superuser-impact",
+  "credit-usage-chargebacks",
 ];
 
 const templateFilterLabelHome: Record<TemplateImpactFilter, string> = {
@@ -232,6 +232,12 @@ const templateMeta: Record<
   },
   "m365-copilot-personal": {
     badges: [{ text: "Individual", tone: "orange" }],
+  },
+  "credit-usage-chargebacks": {
+    badges: [
+      { text: "Org wide", tone: "purple" },
+      { text: "Team", tone: "red" },
+    ],
   },
   "superuser-impact": {
     badges: [{ text: "Team", tone: "red" }],

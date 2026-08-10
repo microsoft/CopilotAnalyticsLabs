@@ -187,6 +187,19 @@ export const templates: TemplateItem[] = [
     collections: ["Microsoft 365"],
   },
   {
+    id: "credit-usage-chargebacks",
+    title: "Credit Usage & Chargebacks",
+    description:
+      "Track Copilot credit consumption, utilization, limits, and $0.01-per-credit chargebacks across departments, cost centers, and business units.",
+    url: "https://github.com/microsoft/creditusage#credit-usage--chargebacks",
+    icon: DataTrending24Regular,
+    image: `${base}images/card-credit-usage-chargebacks.png`,
+    addedOn: "2026-08-10",
+    type: "Business",
+    impact: ["Org wide", "Team"],
+    collections: ["AI Business Value"],
+  },
+  {
     id: "superuser-impact",
     title: "SuperUser Impact Report",
     description:
