@@ -182,9 +182,9 @@ const heroValues = [
 
 const templateOrder = [
   "aio-dashboard",
+  "valuelens",
+  "consumption-central",
   "cowork-value-estimator",
-  "github-copilot-impact-org",
-  "m365-copilot-personal",
   "credit-usage-chargebacks",
 ];
 
@@ -200,7 +200,7 @@ const templateMeta: Record<
   string,
   {
     featured?: boolean;
-    badges?: { text: string; tone: "green" | "teal" | "purple" | "orange" | "red" }[];
+    badges?: { text: string; tone: "green" | "teal" | "purple" | "orange" | "red" | "blue" }[];
     stats?: { value: string; label: string }[];
   }
 > = {
@@ -222,6 +222,20 @@ const templateMeta: Record<
       { text: "Featured", tone: "green" },
       { text: "AI-impact", tone: "teal" },
       { text: "Individual", tone: "orange" },
+    ],
+  },
+  valuelens: {
+    badges: [
+      { text: "New", tone: "blue" },
+      { text: "AI-impact", tone: "teal" },
+      { text: "Org wide", tone: "purple" },
+    ],
+  },
+  "consumption-central": {
+    badges: [
+      { text: "New", tone: "blue" },
+      { text: "Org wide", tone: "purple" },
+      { text: "Team", tone: "red" },
     ],
   },
   "github-copilot-impact-org": {
@@ -908,6 +922,10 @@ const useStyles = makeStyles({
   badgeRed: {
     color: "#B10E1C",
     backgroundColor: "#FDF3F4",
+  },
+  badgeBlue: {
+    color: "#0F548C",
+    backgroundColor: "#EFF6FC",
   },
   templateTitle: {
     margin: 0,
@@ -2285,6 +2303,7 @@ function App() {
                               badge.tone === "purple" && styles.badgePurple,
                               badge.tone === "orange" && styles.badgeOrange,
                               badge.tone === "red" && styles.badgeRed,
+                              badge.tone === "blue" && styles.badgeBlue,
                             )}
                           >
                             {badge.text}
