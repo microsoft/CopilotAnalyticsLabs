@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { makeStyles, mergeClasses, shorthands } from "@fluentui/react-components";
-import { ChevronLeft20Filled, Open16Filled, Play16Filled } from "@fluentui/react-icons";
+import { ChevronLeft20Filled, Open16Filled } from "@fluentui/react-icons";
 import {
   templates,
   templateTypeFilters,
@@ -10,6 +10,7 @@ import {
 import type { TemplateTypeFilter, TemplatePageImpactFilter } from "./data";
 import { logClick, logPageView, TelemetryEvents } from "./telemetry";
 import { VoteBar } from "./VoteBar";
+import { DemoVideoButton } from "./DemoVideo";
 
 const useStyles = makeStyles({
   page: {
@@ -390,16 +391,12 @@ export default function TemplatesPage() {
                               <Open16Filled fontSize={12} />
                             </a>
                             {item.videoUrl ? (
-                              <a
+                              <DemoVideoButton
+                                id={item.id}
+                                title={item.title}
+                                videoUrl={item.videoUrl}
                                 className={styles.cardButton}
-                                href={item.videoUrl}
-                                target="_blank"
-                                rel="noreferrer"
-                                onClick={() => logClick(TelemetryEvents.TemplateDemoClick, { template: item.id })}
-                              >
-                                <Play16Filled fontSize={12} />
-                                Watch demo
-                              </a>
+                              />
                             ) : null}
                             <VoteBar cardId={item.id} variant="inline" />
                           </div>

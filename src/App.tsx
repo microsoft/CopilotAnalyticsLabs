@@ -19,7 +19,6 @@ import {
   Open16Regular,
   PersonGuest20Filled,
   PersonGuest20Regular,
-  Play16Filled,
   Sparkle20Filled,
   Sparkle20Regular,
   Star16Filled,
@@ -28,6 +27,7 @@ import { research, resources, templates, templateImpactFilters, codeHomeTechFilt
 import type { TemplateImpactFilter, CodeHomeTechFilter } from "./data";
 import { logClick, logPageView, TelemetryEvents } from "./telemetry";
 import { VoteBar } from "./VoteBar";
+import { DemoVideoButton } from "./DemoVideo";
 
 
 const sectionTabs = [
@@ -2349,16 +2349,12 @@ function App() {
                           <Open16Filled fontSize={12} />
                         </a>
                         {item.videoUrl ? (
-                          <a
+                          <DemoVideoButton
+                            id={item.id}
+                            title={item.title}
+                            videoUrl={item.videoUrl}
                             className={styles.templateCardButton}
-                            href={item.videoUrl}
-                            target="_blank"
-                            rel="noreferrer"
-                            onClick={() => logClick(TelemetryEvents.TemplateDemoClick, { template: item.id })}
-                          >
-                            <Play16Filled fontSize={12} />
-                            Watch demo
-                          </a>
+                          />
                         ) : null}
                         <VoteBar cardId={item.id} variant="inline" className={styles.templateVoteBar} />
                       </div>
