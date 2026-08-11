@@ -19,6 +19,7 @@ import {
   Open16Regular,
   PersonGuest20Filled,
   PersonGuest20Regular,
+  Play16Filled,
   Sparkle20Filled,
   Sparkle20Regular,
   Star16Filled,
@@ -2347,6 +2348,18 @@ function App() {
                           View template
                           <Open16Filled fontSize={12} />
                         </a>
+                        {item.videoUrl ? (
+                          <a
+                            className={styles.templateCardButton}
+                            href={item.videoUrl}
+                            target="_blank"
+                            rel="noreferrer"
+                            onClick={() => logClick(TelemetryEvents.TemplateDemoClick, { template: item.id })}
+                          >
+                            <Play16Filled fontSize={12} />
+                            Watch demo
+                          </a>
+                        ) : null}
                         <VoteBar cardId={item.id} variant="inline" className={styles.templateVoteBar} />
                       </div>
                     </div>

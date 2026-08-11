@@ -17,6 +17,8 @@ export interface TemplateItem {
   image?: string;
   /** ISO date (YYYY-MM-DD) the item was added. Drives the "What's new" section. */
   addedOn?: string;
+  /** Optional demo video. Renders a "Watch demo" action on the template card. */
+  videoUrl?: string;
   /** Product family, used by the dedicated Template Library page "Type" filter. */
   type: "Copilot" | "Business" | "GitHub";
   /** Impact scope tags, used by the Template Library "Impact" filters. */
@@ -115,7 +117,9 @@ export const templates: TemplateItem[] = [
       "Measure AI business value, ROI and cost across your whole Copilot estate — hours saved, assisted value, adoption, agent governance and user feedback in one Power BI template. Ships with a sample dataset so you can explore it before connecting a tenant.",
     url: "https://github.com/microsoft/ValueLens-for-Microsoft-Copilot#-pick-a-deployment-path",
     icon: BoardSplit24Regular,
+    image: `${base}images/card-valuelens.png`,
     addedOn: "2026-08-11",
+    videoUrl: "https://github.com/microsoft/ValueLens-for-Microsoft-Copilot/blob/main/media/ValueLens-Demo.mp4",
     type: "Copilot",
     impact: ["AI Impact", "Org wide", "Team"],
     collections: ["AI Business Value"],
@@ -127,7 +131,9 @@ export const templates: TemplateItem[] = [
       "One Power BI template for Microsoft Copilot credit consumption and cost — Cowork / Work IQ, Copilot Studio, GitHub Copilot and Azure AI Foundry together in a single view.",
     url: "https://github.com/microsoft/ConsumptionCentral-for-Microsoft-Copilot",
     icon: DataTrending24Regular,
+    image: `${base}images/card-consumption-central.png`,
     addedOn: "2026-08-11",
+    videoUrl: "https://github.com/microsoft/ConsumptionCentral-for-Microsoft-Copilot/blob/main/media/ConsumptionCentral-Demo.mp4",
     type: "Copilot",
     impact: ["Org wide", "Team"],
     collections: ["AI Business Value"],

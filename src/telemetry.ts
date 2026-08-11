@@ -62,6 +62,7 @@ export const TelemetryEvents = {
   SectionView: "CopilotAnalyticsLabs.SectionView",
   HeroExploreClick: "CopilotAnalyticsLabs.HeroExploreClick",
   TemplateViewClick: "CopilotAnalyticsLabs.TemplateViewClick",
+  TemplateDemoClick: "CopilotAnalyticsLabs.TemplateDemoClick",
   CodeViewClick: "CopilotAnalyticsLabs.CodeViewClick",
   ResearchViewClick: "CopilotAnalyticsLabs.ResearchViewClick",
 } as const;
