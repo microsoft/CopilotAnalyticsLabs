@@ -19,6 +19,7 @@ import {
   Open16Regular,
   PersonGuest20Filled,
   PersonGuest20Regular,
+  Play16Filled,
   Sparkle20Filled,
   Sparkle20Regular,
   Star16Filled,
@@ -182,9 +183,9 @@ const heroValues = [
 
 const templateOrder = [
   "aio-dashboard",
+  "valuelens",
+  "consumption-central",
   "cowork-value-estimator",
-  "github-copilot-impact-org",
-  "m365-copilot-personal",
   "credit-usage-chargebacks",
 ];
 
@@ -200,7 +201,7 @@ const templateMeta: Record<
   string,
   {
     featured?: boolean;
-    badges?: { text: string; tone: "green" | "teal" | "purple" | "orange" | "red" }[];
+    badges?: { text: string; tone: "green" | "teal" | "purple" | "orange" | "red" | "blue" }[];
     stats?: { value: string; label: string }[];
   }
 > = {
@@ -222,6 +223,20 @@ const templateMeta: Record<
       { text: "Featured", tone: "green" },
       { text: "AI-impact", tone: "teal" },
       { text: "Individual", tone: "orange" },
+    ],
+  },
+  valuelens: {
+    badges: [
+      { text: "New", tone: "blue" },
+      { text: "AI-impact", tone: "teal" },
+      { text: "Org wide", tone: "purple" },
+    ],
+  },
+  "consumption-central": {
+    badges: [
+      { text: "New", tone: "blue" },
+      { text: "Org wide", tone: "purple" },
+      { text: "Team", tone: "red" },
     ],
   },
   "github-copilot-impact-org": {
@@ -908,6 +923,10 @@ const useStyles = makeStyles({
   badgeRed: {
     color: "#B10E1C",
     backgroundColor: "#FDF3F4",
+  },
+  badgeBlue: {
+    color: "#0F548C",
+    backgroundColor: "#EFF6FC",
   },
   templateTitle: {
     margin: 0,
@@ -2285,6 +2304,7 @@ function App() {
                               badge.tone === "purple" && styles.badgePurple,
                               badge.tone === "orange" && styles.badgeOrange,
                               badge.tone === "red" && styles.badgeRed,
+                              badge.tone === "blue" && styles.badgeBlue,
                             )}
                           >
                             {badge.text}
@@ -2328,6 +2348,18 @@ function App() {
                           View template
                           <Open16Filled fontSize={12} />
                         </a>
+                        {item.videoUrl ? (
+                          <a
+                            className={styles.templateCardButton}
+                            href={item.videoUrl}
+                            target="_blank"
+                            rel="noreferrer"
+                            onClick={() => logClick(TelemetryEvents.TemplateDemoClick, { template: item.id })}
+                          >
+                            <Play16Filled fontSize={12} />
+                            Watch demo
+                          </a>
+                        ) : null}
                         <VoteBar cardId={item.id} variant="inline" className={styles.templateVoteBar} />
                       </div>
                     </div>
