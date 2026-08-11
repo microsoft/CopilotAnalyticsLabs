@@ -109,6 +109,30 @@ const base = import.meta.env.BASE_URL;
 
 export const templates: TemplateItem[] = [
   {
+    id: "valuelens",
+    title: "ValueLens for Microsoft Copilot",
+    description:
+      "Measure AI business value, ROI and cost across your whole Copilot estate — hours saved, assisted value, adoption, agent governance and user feedback in one Power BI template. Ships with a sample dataset so you can explore it before connecting a tenant.",
+    url: "https://github.com/microsoft/ValueLens-for-Microsoft-Copilot#-pick-a-deployment-path",
+    icon: BoardSplit24Regular,
+    addedOn: "2026-08-11",
+    type: "Copilot",
+    impact: ["AI Impact", "Org wide", "Team"],
+    collections: ["AI Business Value"],
+  },
+  {
+    id: "consumption-central",
+    title: "Consumption Central for Microsoft Copilot",
+    description:
+      "One Power BI template for Microsoft Copilot credit consumption and cost — Cowork / Work IQ, Copilot Studio, GitHub Copilot and Azure AI Foundry together in a single view.",
+    url: "https://github.com/microsoft/ConsumptionCentral-for-Microsoft-Copilot",
+    icon: DataTrending24Regular,
+    addedOn: "2026-08-11",
+    type: "Copilot",
+    impact: ["Org wide", "Team"],
+    collections: ["AI Business Value"],
+  },
+  {
     id: "aio-dashboard",
     title: "AI in One Dashboard",
     description:
