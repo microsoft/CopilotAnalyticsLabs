@@ -23,7 +23,7 @@ import {
   Sparkle20Regular,
   Star16Filled,
 } from "@fluentui/react-icons";
-import { research, resources, templates, templateImpactFilters, codeHomeTechFilters } from "./data";
+import { research, resources, templates, templateImpactFilters, codeHomeTechFilters, libraries } from "./data";
 import type { TemplateImpactFilter, CodeHomeTechFilter } from "./data";
 import { logClick, logPageView, TelemetryEvents } from "./telemetry";
 import { VoteBar } from "./VoteBar";
@@ -85,6 +85,8 @@ interface FeaturedItem {
   description: string;
   url: string;
   addedOn?: string;
+  /** Overrides the default per-kind call to action (e.g. libraries link to docs). */
+  ctaLabel?: string;
 }
 
 async function fetchBadgeCount(url: string): Promise<string> {
@@ -140,7 +142,7 @@ function buildFeaturedItems(): FeaturedItem[] {
   const byDateDesc = (a: { addedOn?: string }, b: { addedOn?: string }) =>
     (b.addedOn ?? "").localeCompare(a.addedOn ?? "");
 
-  const groups: { kind: FeaturedKind; items: { id: string; title: string; description: string; url: string; addedOn?: string }[] }[] = [
+  const groups: { kind: FeaturedKind; items: { id: string; title: string; description: string; url: string; addedOn?: string; assetType?: "Library" }[] }[] = [
     { kind: "Template", items: templates },
     { kind: "Code", items: resources },
     { kind: "Research", items: research.filter((item) => item.kind === "Research") },
@@ -161,6 +163,7 @@ function buildFeaturedItems(): FeaturedItem[] {
           description: item.description,
           url: item.url,
           addedOn: item.addedOn,
+          ctaLabel: item.assetType === "Library" ? "View documentation" : undefined,
         })),
     )
     .sort(byDateDesc);
@@ -341,6 +344,14 @@ const resourceMeta: Record<
 };
 
 const codeHomeCopyOverrides: Record<string, { description?: string }> = {
+  "vivainsights-r": {
+    description:
+      "Import an Analyst portal query, validate it, and go straight to Copilot metrics, standard visualisations, and network analysis in R.",
+  },
+  "vivainsights-py": {
+    description:
+      "The same validated metrics, visualisations, and network analysis for pandas, ideal for notebooks and production pipelines.",
+  },
   "viva-insights-essentials": {
     description:
       "Get started with R & Python utility scripts — exploratory data analysis, standard visualisations, and custom KPI generation from Insights data.",
@@ -990,6 +1001,105 @@ const useStyles = makeStyles({
       gridTemplateColumns: "1fr",
       gridAutoRows: "auto",
     },
+  },
+  librariesPanel: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "20px",
+    background: "linear-gradient(113deg, rgba(255,255,255,0.92) 0%, rgba(248,246,255,0.92) 100%)",
+    boxShadow: "0 0 2px rgba(0,0,0,0.10), 0 4px 16px rgba(0,0,0,0.05)",
+    ...shorthands.borderRadius("20px"),
+    ...shorthands.border("1px", "solid", "#E4E0F4"),
+    ...shorthands.padding("24px"),
+    boxSizing: "border-box",
+    '@media (max-width: 600px)': {
+      ...shorthands.padding("16px"),
+      gap: "16px",
+    },
+  },
+  librariesHeading: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "6px",
+  },
+  librariesTitle: {
+    margin: 0,
+    fontSize: "20px",
+    lineHeight: "26px",
+    fontWeight: 700,
+    color: "#0E1726",
+  },
+  librariesDescription: {
+    margin: 0,
+    fontSize: "14px",
+    lineHeight: "20px",
+    color: "#424242",
+    maxWidth: "760px",
+  },
+  librariesGrid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+    gap: "16px",
+    '@media (max-width: 700px)': {
+      gridTemplateColumns: "1fr",
+    },
+  },
+  libraryCard: {
+    display: "flex",
+    alignItems: "flex-start",
+    gap: "14px",
+    backgroundColor: "#ffffff",
+    color: "inherit",
+    textDecorationLine: "none",
+    ...shorthands.borderRadius("14px"),
+    ...shorthands.border("1px", "solid", "#EDEBF6"),
+    ...shorthands.padding("16px"),
+    boxSizing: "border-box",
+    ':hover': {
+      backgroundColor: "#FBFAFF",
+      boxShadow: "0 0 2px rgba(0,0,0,0.10), 0 4px 12px rgba(0,0,0,0.06)",
+    },
+  },
+  libraryIcon: {
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    width: "40px",
+    height: "40px",
+    fontSize: "20px",
+    color: "#7A49BB",
+    background: "linear-gradient(135deg, #F5EAFE 0%, #EEF2FF 100%)",
+    ...shorthands.borderRadius("10px"),
+    flexShrink: 0,
+  },
+  libraryCardBody: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "6px",
+    minWidth: 0,
+  },
+  libraryCardTitle: {
+    display: "flex",
+    alignItems: "center",
+    gap: "8px",
+    fontSize: "16px",
+    lineHeight: "22px",
+    fontWeight: 600,
+    color: "#0E1726",
+  },
+  libraryCardText: {
+    fontSize: "13px",
+    lineHeight: "18px",
+    color: "#616161",
+  },
+  libraryCardCta: {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: "6px",
+    fontSize: "13px",
+    lineHeight: "18px",
+    fontWeight: 600,
+    color: "#335CCC",
   },
   codeCard: {
     display: "flex",
@@ -2188,12 +2298,14 @@ function App() {
                 <div className={styles.featuredEdgeSpacer} aria-hidden="true" />
                 {visibleFeatured.map((item) => {
                   const chip = featuredChipByKind[item.kind];
-                  const ctaLabel = {
-                    Template: "View template",
-                    Code: "View code",
-                    Research: "View report",
-                    Playbook: "View playbook",
-                  }[item.kind];
+                  const ctaLabel =
+                    item.ctaLabel ??
+                    {
+                      Template: "View template",
+                      Code: "View code",
+                      Research: "View report",
+                      Playbook: "View playbook",
+                    }[item.kind];
                   return (
                     <article key={item.id} className={styles.featuredCard}>
                       <div className={styles.featuredChips}>
@@ -2393,6 +2505,61 @@ function App() {
               Runnable scripts, prompt libraries, and analytical methods in Python, R, and Power BI, adapt them to your org's data.
             </p>
           </div>
+
+          {libraries.length > 0 ? (
+            <div className={styles.librariesPanel}>
+              <div className={styles.librariesHeading}>
+                <h3 className={styles.librariesTitle}>Start with the vivainsights libraries</h3>
+                <p className={styles.librariesDescription}>
+                  Open-source R and Python packages for Viva Insights and Copilot data from the Analyst portal.
+                  Import a query, validate it, and go straight to metrics, visualisations, and network analysis.
+                  They underpin most of the sample code below.
+                </p>
+              </div>
+              <div className={styles.librariesGrid}>
+                {libraries.map((item) => {
+                  const Icon = item.icon;
+                  const description = codeHomeCopyOverrides[item.id]?.description ?? item.description;
+                  return (
+                    <a
+                      key={item.id}
+                      className={styles.libraryCard}
+                      href={item.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      onClick={() => logClick(TelemetryEvents.VivaInsightsClick, { resource: item.id })}
+                    >
+                      <span className={styles.libraryIcon} aria-hidden="true">
+                        <Icon />
+                      </span>
+                      <span className={styles.libraryCardBody}>
+                        <span className={styles.libraryCardTitle}>
+                          {item.title}
+                          {item.tech.map((tag) => (
+                            <span
+                              key={tag}
+                              className={mergeClasses(
+                                styles.badge,
+                                tag === "Python" && styles.badgeRed,
+                                tag === "R" && styles.badgeOrange,
+                              )}
+                            >
+                              {tag}
+                            </span>
+                          ))}
+                        </span>
+                        <span className={styles.libraryCardText}>{description}</span>
+                        <span className={styles.libraryCardCta}>
+                          View documentation
+                          <Open16Filled fontSize={12} />
+                        </span>
+                      </span>
+                    </a>
+                  );
+                })}
+              </div>
+            </div>
+          ) : null}
 
           <div className={styles.chipRow} role="tablist" aria-label="Filter sample code">
             {codeHomeTechFilters.map((cat) => (

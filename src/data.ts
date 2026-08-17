@@ -1,5 +1,6 @@
 import {
   BoardSplit24Regular,
+  Code24Regular,
   DataTrending24Regular,
   Sparkle24Regular,
   DocumentBulletList24Regular,
@@ -42,7 +43,12 @@ export interface ResourceItem {
   /** Domain tags, used by the dedicated Sample Code page "Domain" filter. */
   domain: CodeDomainTag[];
   /** Thematic sections the sample code belongs to on the Sample Code page. */
-  collections: ("Analytics" | "Export")[];
+  collections: ("Analytics" | "Export" | "Libraries")[];
+  /**
+   * Installable packages rather than runnable sample scripts. These render in the
+   * dedicated "Libraries" block instead of the main sample code grid.
+   */
+  assetType?: "Library";
 }
 
 export type CodeTechTag =
@@ -253,6 +259,34 @@ export function pageImpactToTag(filter: TemplatePageImpactFilter): TemplateItem[
 
 export const resources: ResourceItem[] = [
   {
+    id: "vivainsights-r",
+    title: "vivainsights (R)",
+    description:
+      "The open-source R library behind these analyses. Import a Person, Meeting, or network Query straight from the Analyst portal, validate it, and generate Copilot adoption metrics, standard visualisations, and organisational network analysis with a single function call.",
+    url: "https://microsoft.github.io/vivainsights/",
+    icon: Code24Regular,
+    category: "Code",
+    addedOn: "2026-08-17",
+    tech: ["R"],
+    domain: ["Adoption & Usage", "Impact & ROI", "Copilot & Agents"],
+    collections: ["Libraries"],
+    assetType: "Library",
+  },
+  {
+    id: "vivainsights-py",
+    title: "vivainsights (Python)",
+    description:
+      "The open-source Python library for Viva Insights and Copilot data. Load an Analyst portal query into pandas, run the same validation and metric functions as the R library, and build adoption, impact, and network analyses in notebooks or pipelines.",
+    url: "https://microsoft.github.io/vivainsights-py/",
+    icon: Code24Regular,
+    category: "Code",
+    addedOn: "2026-08-17",
+    tech: ["Python"],
+    domain: ["Adoption & Usage", "Impact & ROI", "Copilot & Agents"],
+    collections: ["Libraries"],
+    assetType: "Library",
+  },
+  {
     id: "viva-insights-essentials",
     title: "Viva Insights Analysis - Essentials",
     description:
@@ -350,6 +384,12 @@ export const resources: ResourceItem[] = [
     collections: ["Analytics"],
   },
 ];
+
+/** Installable packages, surfaced in the dedicated "Libraries" block. */
+export const libraries = resources.filter((item) => item.assetType === "Library");
+
+/** Runnable sample code, meaning everything that is not an installable library. */
+export const sampleCode = resources.filter((item) => item.assetType !== "Library");
 
 // Technology tag filters for the home "Sample Code" section. "Featured" (default)
 // shows all; mirrors the Template Library home impact chips.
