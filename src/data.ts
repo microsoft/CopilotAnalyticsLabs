@@ -182,7 +182,7 @@ export const templates: TemplateItem[] = [
     title: "Microsoft 365 Copilot Personal Insights",
     description:
       "Personal adoption and engagement dashboard tracking your Microsoft 365 Copilot usage journey and productivity gains.",
-    url: "https://github.com/sbrandl1005/copilot-personal-dashboard#whats-in-this-report",
+    url: "https://github.com/microsoft/Personal-Dashboard#copilot-agent-and-cowork-personal-dashboard",
     icon: PersonBoard24Regular,
     image: `${base}images/card-m365-copilot-personal.png`,
     addedOn: "2026-05-10",

@@ -279,11 +279,12 @@ const codeHomeOrder = [
   "copilot-causal-toolkit",
   "viva-insights-essentials",
   "advanced-analytics",
-  "network-analysis",
   "portable-audit-exporter",
   "frontier-analytics",
   "copilot-analytics",
 ];
+
+const maxHomeCodeCards = 6;
 
 const resourceMeta: Record<
   string,
@@ -1957,9 +1958,10 @@ function App() {
 
   const visibleResources = useMemo(
     () =>
-      codeFilter === "Featured"
+      (codeFilter === "Featured"
         ? orderedCodeResources
-        : orderedCodeResources.filter((item) => item.tech.includes(codeFilter)),
+        : orderedCodeResources.filter((item) => item.tech.includes(codeFilter))
+      ).slice(0, maxHomeCodeCards),
     [codeFilter, orderedCodeResources],
   );
 
