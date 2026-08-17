@@ -4,17 +4,13 @@ import {
   ArrowRight16Regular,
   ArrowTrendingText20Filled,
   ArrowTrendingText20Regular,
-  Book20Filled,
-  BookTemplate20Filled,
   ChartMultiple20Filled,
   ChartMultiple20Regular,
   ChevronLeft20Regular,
   ChevronRight20Filled,
   ChevronRight20Regular,
-  Code20Filled,
   Eye16Regular,
   FlowSparkle20Regular,
-  Microscope20Filled,
   Open16Filled,
   Open16Regular,
   PersonGuest20Filled,
@@ -56,15 +52,11 @@ const featuredToneByKind: Record<FeaturedKind, "green" | "teal" | "purple"> = {
   Playbook: "purple",
 };
 
-// Figma chip styling per kind: colored icon + matching pill + display label.
-const featuredChipByKind: Record<
-  FeaturedKind,
-  { Icon: typeof BookTemplate20Filled; label: string; bg: string; fg: string; iconColor: string }
-> = {
-  Template: { Icon: BookTemplate20Filled, label: "Template", bg: "#F1FAF1", fg: "#0E700E", iconColor: "#0E700E" },
-  Code: { Icon: Code20Filled, label: "Sample code", bg: "rgba(198, 177, 222, 0.2)", fg: "#5C2E91", iconColor: "#5C2E91" },
-  Research: { Icon: Microscope20Filled, label: "Research", bg: "#FDF3F4", fg: "#C50F1F", iconColor: "#B10E1C" },
-  Playbook: { Icon: Book20Filled, label: "Playbook", bg: "#F0F0F0", fg: "#242424", iconColor: "#424242" },
+const featuredChipByKind: Record<FeaturedKind, { label: string; bg: string; fg: string }> = {
+  Template: { label: "Template", bg: "#F1FAF1", fg: "#0E700E" },
+  Code: { label: "Sample code", bg: "rgba(198, 177, 222, 0.2)", fg: "#5C2E91" },
+  Research: { label: "Research", bg: "#FDF3F4", fg: "#C50F1F" },
+  Playbook: { label: "Playbook", bg: "#F0F0F0", fg: "#242424" },
 };
 
 // Filter-pill labels + ordering for the "What's new" filter group.
@@ -2202,7 +2194,6 @@ function App() {
                     <article key={item.id} className={styles.featuredCard}>
                       <div className={styles.featuredChips}>
                         <span className={styles.featuredTag} style={{ backgroundColor: chip.bg, color: chip.fg }}>
-                          <chip.Icon fontSize={16} style={{ color: chip.iconColor }} />
                           {chip.label}
                         </span>
                         <span className={styles.featuredDate}>{formatRelativeDate(item.addedOn)}</span>
