@@ -276,9 +276,9 @@ const templateHomeCopyOverrides: Record<string, { title?: string; description?: 
 };
 
 const codeHomeOrder = [
-  "copilot-causal-toolkit",
   "viva-insights-essentials",
   "advanced-analytics",
+  "copilot-causal-toolkit",
   "portable-audit-exporter",
   "frontier-analytics",
   "copilot-analytics",
