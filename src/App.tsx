@@ -350,7 +350,7 @@ const codeHomeCopyOverrides: Record<string, { description?: string }> = {
   },
   "vivainsights-py": {
     description:
-      "The same validated metrics, visualisations, and network analysis for pandas — ideal for notebooks and production pipelines.",
+      "The same validated metrics, visualisations, and network analysis for pandas, ideal for notebooks and production pipelines.",
   },
   "viva-insights-essentials": {
     description:
@@ -2512,8 +2512,8 @@ function App() {
                 <h3 className={styles.librariesTitle}>Start with the vivainsights libraries</h3>
                 <p className={styles.librariesDescription}>
                   Open-source R and Python packages for Viva Insights and Copilot data from the Analyst portal.
-                  Import a query, validate it, and go straight to metrics, visualisations, and network analysis —
-                  they underpin most of the sample code below.
+                  Import a query, validate it, and go straight to metrics, visualisations, and network analysis.
+                  They underpin most of the sample code below.
                 </p>
               </div>
               <div className={styles.librariesGrid}>

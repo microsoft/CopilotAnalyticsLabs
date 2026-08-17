@@ -334,7 +334,7 @@ export default function CodesPage() {
         key: "libraries",
         title: "Libraries",
         description:
-          "Open-source packages that do the heavy lifting for Viva Insights and Copilot data — install once, then reuse across every analysis below.",
+          "Open-source packages that do the heavy lifting for Viva Insights and Copilot data. Install once, then reuse across every analysis below.",
         items: libraryItems,
       },
       { key: "new", title: "New and Popular", items: newAndPopular },

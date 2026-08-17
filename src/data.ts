@@ -262,7 +262,7 @@ export const resources: ResourceItem[] = [
     id: "vivainsights-r",
     title: "vivainsights (R)",
     description:
-      "The open-source R library behind these analyses — import a Person, Meeting, or network Query straight from the Analyst portal, validate it, and generate Copilot adoption metrics, standard visualisations, and organisational network analysis with a single function call.",
+      "The open-source R library behind these analyses. Import a Person, Meeting, or network Query straight from the Analyst portal, validate it, and generate Copilot adoption metrics, standard visualisations, and organisational network analysis with a single function call.",
     url: "https://microsoft.github.io/vivainsights/",
     icon: Code24Regular,
     category: "Code",
@@ -276,7 +276,7 @@ export const resources: ResourceItem[] = [
     id: "vivainsights-py",
     title: "vivainsights (Python)",
     description:
-      "The open-source Python library for Viva Insights and Copilot data — load an Analyst portal query into pandas, run the same validation and metric functions as the R library, and build adoption, impact, and network analyses in notebooks or pipelines.",
+      "The open-source Python library for Viva Insights and Copilot data. Load an Analyst portal query into pandas, run the same validation and metric functions as the R library, and build adoption, impact, and network analyses in notebooks or pipelines.",
     url: "https://microsoft.github.io/vivainsights-py/",
     icon: Code24Regular,
     category: "Code",
@@ -388,7 +388,7 @@ export const resources: ResourceItem[] = [
 /** Installable packages, surfaced in the dedicated "Libraries" block. */
 export const libraries = resources.filter((item) => item.assetType === "Library");
 
-/** Runnable sample code — everything that is not an installable library. */
+/** Runnable sample code, meaning everything that is not an installable library. */
 export const sampleCode = resources.filter((item) => item.assetType !== "Library");
 
 // Technology tag filters for the home "Sample Code" section. "Featured" (default)
