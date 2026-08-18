@@ -4,17 +4,13 @@ import {
   ArrowRight16Regular,
   ArrowTrendingText20Filled,
   ArrowTrendingText20Regular,
-  Book20Filled,
-  BookTemplate20Filled,
   ChartMultiple20Filled,
   ChartMultiple20Regular,
   ChevronLeft20Regular,
   ChevronRight20Filled,
   ChevronRight20Regular,
-  Code20Filled,
   Eye16Regular,
   FlowSparkle20Regular,
-  Microscope20Filled,
   Open16Filled,
   Open16Regular,
   PersonGuest20Filled,
@@ -56,15 +52,11 @@ const featuredToneByKind: Record<FeaturedKind, "green" | "teal" | "purple"> = {
   Playbook: "purple",
 };
 
-// Figma chip styling per kind: colored icon + matching pill + display label.
-const featuredChipByKind: Record<
-  FeaturedKind,
-  { Icon: typeof BookTemplate20Filled; label: string; bg: string; fg: string; iconColor: string }
-> = {
-  Template: { Icon: BookTemplate20Filled, label: "Template", bg: "#F1FAF1", fg: "#0E700E", iconColor: "#0E700E" },
-  Code: { Icon: Code20Filled, label: "Sample code", bg: "rgba(198, 177, 222, 0.2)", fg: "#5C2E91", iconColor: "#5C2E91" },
-  Research: { Icon: Microscope20Filled, label: "Research", bg: "#FDF3F4", fg: "#C50F1F", iconColor: "#B10E1C" },
-  Playbook: { Icon: Book20Filled, label: "Playbook", bg: "#F0F0F0", fg: "#242424", iconColor: "#424242" },
+const featuredChipByKind: Record<FeaturedKind, { label: string; bg: string; fg: string }> = {
+  Template: { label: "Template", bg: "#F1FAF1", fg: "#0E700E" },
+  Code: { label: "Sample code", bg: "rgba(198, 177, 222, 0.2)", fg: "#5C2E91" },
+  Research: { label: "Research", bg: "#FDF3F4", fg: "#C50F1F" },
+  Playbook: { label: "Playbook", bg: "#F0F0F0", fg: "#242424" },
 };
 
 // Filter-pill labels + ordering for the "What's new" filter group.
@@ -75,6 +67,10 @@ const featuredPillLabel: Record<FeaturedKind, string> = {
   Research: "Research",
   Playbook: "Playbooks",
 };
+
+// How many featured cards the row shows at once. Past this the row scrolls,
+// so it is also the threshold for showing the scroll arrows.
+const FEATURED_CARDS_PER_VIEW = 3;
 
 interface FeaturedItem {
   id: string;
@@ -525,10 +521,9 @@ const useStyles = makeStyles({
   hero: {
     position: "relative",
     overflow: "hidden",
-    // The artwork lives on `heroArt` so its scale is driven by the hero's
-    // height rather than the viewport width. This gradient stands in for the
-    // artwork's left-hand wash (sampled from the PNG's left edge: a faint blue
-    // at the top falling away to white) and fills the gap on ultra-wide screens.
+    // The artwork is a transparent PNG on `heroArt`, so this gradient is the
+    // hero's only wash and shows through it: a faint blue at the top falling
+    // away to white.
     backgroundColor: "#ffffff",
     backgroundImage: "linear-gradient(180deg, #EFF6FF 0%, #FDFEFF 55%, #FFFFFF 100%)",
     ...shorthands.padding("40px", "24px"),
@@ -539,22 +534,30 @@ const useStyles = makeStyles({
   heroArt: {
     position: "absolute",
     top: 0,
-    right: 0,
     bottom: 0,
-    left: 0,
+    right: 0,
+    // Anchor the artwork to the centred content column rather than to the
+    // viewport: 50% is the column's centre, so this starts the illustration a
+    // constant 604px right of the column's left edge at every width. It never
+    // drifts out to the far right of an ultra-wide screen, and it never walks
+    // left into the value-prop text on a narrow one. Any overhang is clipped
+    // by the hero's `overflow: hidden`.
+    left: "calc(50% + 92px)",
     zIndex: 0,
     pointerEvents: "none",
-    backgroundImage: `url(${import.meta.env.BASE_URL}images/hero-bg.png)`,
+    // The PNG's field fades out to transparent on its left, right and bottom
+    // edges, so it blends into the hero gradient with no seam and needs no
+    // edge mask.
+    backgroundImage: `url(${import.meta.env.BASE_URL}images/bgwide.png)`,
     backgroundRepeat: "no-repeat",
-    // Scale by HEIGHT, not width: the illustration then renders at a constant
-    // size and is never cropped, however wide the viewport gets.
+    // Scale by HEIGHT, not width, so the illustration renders at a constant
+    // size however wide the viewport gets. It must be exactly 100%: the card
+    // at the top of the artwork is cropped by the PNG's top edge and is meant
+    // to bleed off the top of the hero, so anything less leaves that crop
+    // floating mid-section as a visible horizontal seam.
     backgroundSize: "auto 100%",
-    backgroundPosition: "right center",
-    // Fade the left edge so the artwork blends into the gradient above instead
-    // of ending on a hard vertical seam.
-    WebkitMaskImage: "linear-gradient(90deg, transparent 0, #000 340px)",
-    maskImage: "linear-gradient(90deg, transparent 0, #000 340px)",
-    '@media (max-width: 700px)': {
+    backgroundPosition: "left center",
+    '@media (max-width: 900px)': {
       display: "none",
     },
   },
@@ -1408,33 +1411,40 @@ const useStyles = makeStyles({
   },
   researchItem: {
     display: "flex",
-    flexDirection: "row",
-    alignItems: "stretch",
-    // The text column wraps against the action column with this gap.
-    gap: "20px",
+    // Stacked rows rather than a text column beside an action column: the
+    // title then spans the full card width instead of being squeezed by a
+    // sidebar, so it no longer truncates and the subtext needs fewer lines.
+    flexDirection: "column",
+    gap: "8px",
     ...shorthands.padding("24px", "0"),
     ...shorthands.borderBottom("1px", "solid", "#E0E0E0"),
     // The last card sits directly above the "View all" link, so it needs no rule.
     ':last-of-type': {
       borderBottomStyle: "none",
     },
-    '@media (max-width: 600px)': {
-      flexDirection: "column",
-      gap: "16px",
-    },
   },
-  researchItemMain: {
+  // Chips on the left, the action button pinned right and centred against them.
+  researchItemTopRow: {
     display: "flex",
-    flexDirection: "column",
-    gap: "8px",
-    flexGrow: 1,
-    minWidth: 0,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: "16px",
+  },
+  // Subtext on the left, votes pinned right and level with its last line.
+  researchItemBottomRow: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "flex-end",
+    justifyContent: "space-between",
+    gap: "20px",
   },
   researchItemChips: {
     display: "flex",
     flexDirection: "row",
     flexWrap: "wrap",
     gap: "8px",
+    minWidth: 0,
   },
   researchItemChip: {
     display: "inline-flex",
@@ -1459,26 +1469,6 @@ const useStyles = makeStyles({
     lineHeight: "24px",
     fontWeight: 600,
     color: "#000000",
-    whiteSpace: "nowrap",
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-  },
-  // Holds the action button at the top and the vote bar at the bottom, so the
-  // button lines up with the chip row and the votes sit level with the last
-  // line of the subtext.
-  researchItemAside: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "flex-end",
-    justifyContent: "space-between",
-    gap: "12px",
-    flexShrink: 0,
-    '@media (max-width: 600px)': {
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
-      width: "100%",
-    },
   },
   researchCardButton: {
     display: "inline-flex",
@@ -1486,11 +1476,11 @@ const useStyles = makeStyles({
     justifyContent: "center",
     gap: "6px",
     minHeight: "32px",
-    // Centres the 32px button on the 24px chip row it sits beside.
+    flexShrink: 0,
+    // The button is 32px against a 24px chip row. Absorb the difference so it
+    // centres on the chips without making the row, and every card, 8px taller.
     marginTop: "-4px",
-    '@media (max-width: 600px)': {
-      marginTop: 0,
-    },
+    marginBottom: "-4px",
     backgroundColor: "#ffffff",
     color: "#242424",
     fontSize: "14px",
@@ -1525,6 +1515,7 @@ const useStyles = makeStyles({
     fontSize: "12px",
     lineHeight: "16px",
     color: "#616161",
+    minWidth: 0,
   },
   roadmapSectionContent: {
     gap: "24px",
@@ -1993,6 +1984,11 @@ function App() {
     featuredRowRef.current?.scrollBy({ left: dir * 340, behavior: "smooth" });
   };
 
+  // Gate the arrows on the full set rather than the filtered one. A pill that
+  // narrows the row to three or fewer cards keeps its arrows so the section
+  // does not change height as the user moves between pills.
+  const showFeaturedNav = featuredItems.length > FEATURED_CARDS_PER_VIEW;
+
   const tabsShellRef = useRef<HTMLDivElement>(null);
   const activeSectionRef = useRef<(typeof sectionTabs)[number]["id"] | null>(null);
   const suppressSpyRef = useRef(false);
@@ -2198,7 +2194,6 @@ function App() {
                     <article key={item.id} className={styles.featuredCard}>
                       <div className={styles.featuredChips}>
                         <span className={styles.featuredTag} style={{ backgroundColor: chip.bg, color: chip.fg }}>
-                          <chip.Icon fontSize={16} style={{ color: chip.iconColor }} />
                           {chip.label}
                         </span>
                         <span className={styles.featuredDate}>{formatRelativeDate(item.addedOn)}</span>
@@ -2223,14 +2218,16 @@ function App() {
                 })}
               </div>
 
-              <div className={styles.featuredNav}>
-                <button type="button" className={styles.featuredNavButton} aria-label="Scroll previous" onClick={() => scrollFeatured(-1)}>
-                  <ChevronLeft20Regular fontSize={18} />
-                </button>
-                <button type="button" className={styles.featuredNavButton} aria-label="Scroll next" onClick={() => scrollFeatured(1)}>
-                  <ChevronRight20Regular fontSize={18} />
-                </button>
-              </div>
+              {showFeaturedNav && (
+                <div className={styles.featuredNav}>
+                  <button type="button" className={styles.featuredNavButton} aria-label="Scroll previous" onClick={() => scrollFeatured(-1)}>
+                    <ChevronLeft20Regular fontSize={18} />
+                  </button>
+                  <button type="button" className={styles.featuredNavButton} aria-label="Scroll next" onClick={() => scrollFeatured(1)}>
+                    <ChevronRight20Regular fontSize={18} />
+                  </button>
+                </div>
+              )}
             </>
           ) : (
             <p className={styles.featuredDate}>No new resources right now — check back soon.</p>
@@ -2511,7 +2508,7 @@ function App() {
             <div className={styles.researchRightPane}>
               {visibleResearchItems.map((item) => (
                 <article key={item.id} className={styles.researchItem}>
-                  <div className={styles.researchItemMain}>
+                  <div className={styles.researchItemTopRow}>
                     <div className={styles.researchItemChips}>
                       {(researchTags[item.id] ?? []).map((tag) => (
                         <span
@@ -2533,18 +2530,6 @@ function App() {
                       ))}
                     </div>
                     <a
-                      className={styles.researchItemTitleLink}
-                      href={item.url}
-                      target="_blank"
-                      rel="noreferrer"
-                      onClick={() => logClick(TelemetryEvents.ResearchViewClick, { research: item.id })}
-                    >
-                      <h3 className={mergeClasses(styles.researchItemTitle, "research-item-title")}>{item.title}</h3>
-                    </a>
-                    <p className={styles.researchItemSubtext}>{item.description}</p>
-                  </div>
-                  <div className={styles.researchItemAside}>
-                    <a
                       className={styles.researchCardButton}
                       href={item.url}
                       target="_blank"
@@ -2554,6 +2539,18 @@ function App() {
                       {item.kind === "Playbook" ? "View playbook" : "View report"}
                       <Open16Filled fontSize={12} />
                     </a>
+                  </div>
+                  <a
+                    className={styles.researchItemTitleLink}
+                    href={item.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    onClick={() => logClick(TelemetryEvents.ResearchViewClick, { research: item.id })}
+                  >
+                    <h3 className={mergeClasses(styles.researchItemTitle, "research-item-title")}>{item.title}</h3>
+                  </a>
+                  <div className={styles.researchItemBottomRow}>
+                    <p className={styles.researchItemSubtext}>{item.description}</p>
                     <VoteBar cardId={item.id} variant="inline" />
                   </div>
                 </article>

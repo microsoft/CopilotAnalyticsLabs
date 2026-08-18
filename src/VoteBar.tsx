@@ -5,6 +5,7 @@ import {
   ThumbDislike16Regular,
   ThumbDislike16Filled,
 } from "@fluentui/react-icons";
+import { useState } from "react";
 import { useCardVotes } from "./votes";
 
 const useStyles = makeStyles({
@@ -89,6 +90,36 @@ const useStyles = makeStyles({
   inlineDown: {
     color: "#b10e1c",
   },
+  // Positioning context for the ripple, which is centred on the thumb icon.
+  iconWrap: {
+    position: "relative",
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  // A ring the size of the icon that expands outwards and fades as it goes.
+  ripple: {
+    position: "absolute",
+    left: "50%",
+    top: "50%",
+    width: "16px",
+    height: "16px",
+    marginLeft: "-8px",
+    marginTop: "-8px",
+    ...shorthands.borderRadius("50%"),
+    ...shorthands.border("1px", "solid", "#0e700e"),
+    pointerEvents: "none",
+    animationName: {
+      from: { transform: "scale(0.5)", opacity: 0.55 },
+      to: { transform: "scale(2.4)", opacity: 0 },
+    },
+    animationDuration: "450ms",
+    animationTimingFunction: "cubic-bezier(0.22, 1, 0.36, 1)",
+    animationFillMode: "forwards",
+    '@media (prefers-reduced-motion: reduce)': {
+      display: "none",
+    },
+  },
 });
 
 interface VoteBarProps {
@@ -101,6 +132,20 @@ export function VoteBar({ cardId, className, variant = "pill" }: VoteBarProps) {
   const styles = useStyles();
   const { counts, myVote, vote, pending } = useCardVotes(cardId);
 
+  // Bumping this remounts the ripple element, which restarts its animation.
+  const [rippleId, setRippleId] = useState(0);
+  const voteUp = () => {
+    // Ripple only when the click casts a vote, not when it takes one back.
+    if (myVote !== "up") setRippleId((id) => id + 1);
+    vote("up");
+  };
+  const thumbUpIcon = (
+    <span className={styles.iconWrap}>
+      {myVote === "up" ? <ThumbLike16Filled fontSize={16} /> : <ThumbLike16Regular fontSize={16} />}
+      {rippleId > 0 && <span key={rippleId} className={styles.ripple} aria-hidden="true" />}
+    </span>
+  );
+
   if (variant === "inline") {
     return (
       <div className={mergeClasses(styles.inlineRoot, className)} role="group" aria-label="Was this helpful?">
@@ -110,9 +155,9 @@ export function VoteBar({ cardId, className, variant = "pill" }: VoteBarProps) {
           aria-pressed={myVote === "up"}
           aria-label={`Thumbs up. ${counts.up} ${counts.up === 1 ? "vote" : "votes"}`}
           disabled={pending}
-          onClick={() => vote("up")}
+          onClick={voteUp}
         >
-          {myVote === "up" ? <ThumbLike16Filled fontSize={16} /> : <ThumbLike16Regular fontSize={16} />}
+          {thumbUpIcon}
           <span className={styles.count}>{counts.up}</span>
         </button>
         <button
@@ -142,9 +187,9 @@ export function VoteBar({ cardId, className, variant = "pill" }: VoteBarProps) {
         aria-pressed={myVote === "up"}
         aria-label={`Thumbs up. ${counts.up} ${counts.up === 1 ? "vote" : "votes"}`}
         disabled={pending}
-        onClick={() => vote("up")}
+        onClick={voteUp}
       >
-        {myVote === "up" ? <ThumbLike16Filled fontSize={16} /> : <ThumbLike16Regular fontSize={16} />}
+        {thumbUpIcon}
         <span className={styles.count}>{counts.up}</span>
       </button>
       <button

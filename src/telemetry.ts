@@ -48,6 +48,8 @@ function writeStore(store: TelemetryStore): void {
 }
 
 /* ─── Event names (mirrors NovaClient CopilotAnalyticsLabsEventNames) ─── */
+// This list is kept in sync with the NovaClient registry, so names stay here
+// even when nothing in this app emits them yet.
 export const TelemetryEvents = {
   PageView: "CopilotAnalyticsLabs.PageView",
   ExploreTemplatesClick: "CopilotAnalyticsLabs.ExploreTemplatesClick",
