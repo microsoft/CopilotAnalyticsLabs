@@ -6,6 +6,7 @@ import ResearchPage from './ResearchPage.tsx'
 import { DisclaimerBar } from './DisclaimerBar.tsx'
 import { SiteHeader } from './SiteHeader.tsx'
 import { SiteFooter } from './SiteFooter.tsx'
+import { trackPageview } from './telemetry.ts'
 
 function getRoute(): string {
   return window.location.hash.replace(/^#/, '')
@@ -33,6 +34,13 @@ export default function Root() {
     }, RELOAD_AFTER_MS)
     return () => window.clearTimeout(timer)
   }, [])
+
+  // Report an Umami pageview for the current virtual route whenever it
+  // changes (including the initial load), since Umami's auto-tracker can't
+  // observe hash-based navigation on its own.
+  useEffect(() => {
+    trackPageview(route || '/')
+  }, [route])
 
   let page
   if (route === '/templates') page = <TemplatesPage />
