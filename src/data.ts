@@ -173,6 +173,7 @@ export const templates: TemplateItem[] = [
     icon: Sparkle24Regular,
     image: `${base}images/card-ai-business-value.png`,
     addedOn: "2026-08-07",
+    videoUrl: `${base}media/Cowork-Value-Estimator-Demo.mp4`,
     type: "Copilot",
     impact: ["AI Impact", "Individual"],
     collections: ["AI Business Value"],
