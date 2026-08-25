@@ -40,6 +40,8 @@ interface DemoVideoButtonProps {
    * it supports range requests, so the video streams and seeks.
    */
   videoUrl: string;
+  /** Button label. Defaults to "Watch demo". */
+  label?: string;
   /** Button class, so each surface keeps its own card-button styling. */
   className?: string;
 }
@@ -52,9 +54,10 @@ interface DemoVideoButtonProps {
  * the explicit <source type="video/mp4"> tells the browser what to expect, so
  * playback works — the same approach the Analytics Hub uses.
  */
-export function DemoVideoButton({ id, title, videoUrl, className }: DemoVideoButtonProps) {
+export function DemoVideoButton({ id, title, videoUrl, label = "Watch demo", className }: DemoVideoButtonProps) {
   const styles = useStyles();
   const [open, setOpen] = useState(false);
+  const heading = label === "Watch demo" ? title : `${title} — ${label.replace(/^Watch\s+/i, "")}`;
 
   return (
     <>
@@ -67,13 +70,13 @@ export function DemoVideoButton({ id, title, videoUrl, className }: DemoVideoBut
         }}
       >
         <Play16Filled fontSize={12} />
-        Watch demo
+        {label}
       </button>
 
       <Dialog open={open} onOpenChange={(_, data) => setOpen(data.open)}>
         <DialogSurface className={styles.surface}>
           <DialogBody>
-            <DialogTitle>{title}</DialogTitle>
+            <DialogTitle>{heading}</DialogTitle>
             <DialogContent>
               {/* Only mount the video while the dialog is open, so closing it
                   stops playback and releases the download. */}
@@ -83,7 +86,7 @@ export function DemoVideoButton({ id, title, videoUrl, className }: DemoVideoBut
                   controls
                   preload="metadata"
                   playsInline
-                  aria-label={`${title} demo video`}
+                  aria-label={`${title} ${label} video`}
                 >
                   <source src={videoUrl} type="video/mp4" />
                   <p className={styles.fallback}>

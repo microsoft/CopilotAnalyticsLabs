@@ -2355,6 +2355,15 @@ function App() {
                             className={styles.templateCardButton}
                           />
                         ) : null}
+                        {item.setupVideoUrl ? (
+                          <DemoVideoButton
+                            id={`${item.id}-setup`}
+                            title={item.title}
+                            videoUrl={item.setupVideoUrl}
+                            label="Watch setup"
+                            className={styles.templateCardButton}
+                          />
+                        ) : null}
                         <VoteBar cardId={item.id} variant="inline" className={styles.templateVoteBar} />
                       </div>
                     </div>

@@ -398,6 +398,15 @@ export default function TemplatesPage() {
                                 className={styles.cardButton}
                               />
                             ) : null}
+                            {item.setupVideoUrl ? (
+                              <DemoVideoButton
+                                id={`${item.id}-setup`}
+                                title={item.title}
+                                videoUrl={item.setupVideoUrl}
+                                label="Watch setup"
+                                className={styles.cardButton}
+                              />
+                            ) : null}
                             <VoteBar cardId={item.id} variant="inline" />
                           </div>
                         </div>
