@@ -212,6 +212,7 @@ export const templates: TemplateItem[] = [
     icon: DataTrending24Regular,
     image: `${base}images/card-credit-usage-chargebacks.png`,
     addedOn: "2026-08-10",
+    videoUrl: "https://github.com/microsoft/creditusage/raw/main/media/CreditUsage-Demo.mp4",
     type: "Business",
     impact: ["Org wide", "Team"],
     collections: ["AI Business Value"],
