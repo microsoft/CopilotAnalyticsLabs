@@ -19,6 +19,8 @@ export interface TemplateItem {
   addedOn?: string;
   /** Optional demo video. Renders a "Watch demo" action on the template card. */
   videoUrl?: string;
+  /** Optional setup/walkthrough video. Renders a second "Watch setup" action. */
+  setupVideoUrl?: string;
   /** Product family, used by the dedicated Template Library page "Type" filter. */
   type: "Copilot" | "Business" | "GitHub";
   /** Impact scope tags, used by the Template Library "Impact" filters. */
@@ -147,6 +149,8 @@ export const templates: TemplateItem[] = [
     icon: BoardSplit24Regular,
     image: `${base}images/card-aio-featured.png`,
     addedOn: "2026-07-05",
+    videoUrl: `${base}media/AI-in-One-Overview.mp4`,
+    setupVideoUrl: `${base}media/AI-in-One-Setup-Guide.mp4`,
     type: "Copilot",
     impact: ["AI Impact", "Org wide"],
     collections: ["AI Business Value"],
