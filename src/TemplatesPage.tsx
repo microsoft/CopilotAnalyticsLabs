@@ -248,6 +248,13 @@ const useStyles = makeStyles({
     gap: "12px",
     marginTop: "auto",
   },
+  videoRow: {
+    display: "flex",
+    flexWrap: "wrap",
+    gap: "12px",
+    marginTop: "auto",
+    marginBottom: "12px",
+  },
   empty: {
     ...shorthands.padding("48px", "0"),
     textAlign: "center",
@@ -379,6 +386,27 @@ export default function TemplatesPage() {
                           </div>
                           <h3 className={styles.cardTitle}>{item.title}</h3>
                           <p className={styles.cardDescription}>{item.description}</p>
+                          {(item.videoUrl || item.setupVideoUrl) ? (
+                            <div className={styles.videoRow}>
+                              {item.videoUrl ? (
+                                <DemoVideoButton
+                                  id={item.id}
+                                  title={item.title}
+                                  videoUrl={item.videoUrl}
+                                  className={styles.cardButton}
+                                />
+                              ) : null}
+                              {item.setupVideoUrl ? (
+                                <DemoVideoButton
+                                  id={`${item.id}-setup`}
+                                  title={item.title}
+                                  videoUrl={item.setupVideoUrl}
+                                  label="Watch setup"
+                                  className={styles.cardButton}
+                                />
+                              ) : null}
+                            </div>
+                          ) : null}
                           <div className={styles.cardFooter}>
                             <a
                               className={styles.cardButton}
@@ -390,23 +418,6 @@ export default function TemplatesPage() {
                               View template
                               <Open16Filled fontSize={12} />
                             </a>
-                            {item.videoUrl ? (
-                              <DemoVideoButton
-                                id={item.id}
-                                title={item.title}
-                                videoUrl={item.videoUrl}
-                                className={styles.cardButton}
-                              />
-                            ) : null}
-                            {item.setupVideoUrl ? (
-                              <DemoVideoButton
-                                id={`${item.id}-setup`}
-                                title={item.title}
-                                videoUrl={item.setupVideoUrl}
-                                label="Watch setup"
-                                className={styles.cardButton}
-                              />
-                            ) : null}
                             <VoteBar cardId={item.id} variant="inline" />
                           </div>
                         </div>
