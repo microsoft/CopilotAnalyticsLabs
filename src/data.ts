@@ -191,6 +191,7 @@ export const templates: TemplateItem[] = [
     icon: PersonBoard24Regular,
     image: `${base}images/card-m365-copilot-personal.png`,
     addedOn: "2026-05-10",
+    videoUrl: `${base}media/Personal-Dashboard-Demo.mp4`,
     type: "Copilot",
     impact: ["Individual"],
     collections: ["Microsoft 365"],
