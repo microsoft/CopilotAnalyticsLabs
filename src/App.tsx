@@ -832,7 +832,7 @@ const useStyles = makeStyles({
   templateGrid: {
     display: "grid",
     gridTemplateColumns: "320px repeat(2, minmax(0, 1fr))",
-    gridTemplateRows: "repeat(2, 256px)",
+    gridTemplateRows: "repeat(2, minmax(256px, auto))",
     gap: "20px",
     '@media (max-width: 900px)': {
       gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
