@@ -17,7 +17,7 @@ export interface TemplateItem {
   image?: string;
   /** ISO date (YYYY-MM-DD) the item was added. Drives the "What's new" section. */
   addedOn?: string;
-  /** Optional demo video. Renders a "Watch demo" action on the template card. */
+  /** Optional demo video. Renders a "Play demo" action on the template card. */
   videoUrl?: string;
   /** Optional setup/walkthrough video. Renders a second "Watch setup" action. */
   setupVideoUrl?: string;

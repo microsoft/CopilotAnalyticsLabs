@@ -841,7 +841,7 @@ const useStyles = makeStyles({
   templateGrid: {
     display: "grid",
     gridTemplateColumns: "320px repeat(2, minmax(0, 1fr))",
-    gridTemplateRows: "repeat(2, minmax(256px, auto))",
+    gridTemplateRows: "repeat(2, minmax(274px, auto))",
     gap: "20px",
     '@media (max-width: 900px)': {
       gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
@@ -853,7 +853,7 @@ const useStyles = makeStyles({
     },
   },
   templateCard: {
-    minHeight: "256px",
+    minHeight: "274px",
     display: "flex",
     flexDirection: "column",
     justifyContent: "space-between",
@@ -861,7 +861,8 @@ const useStyles = makeStyles({
     backgroundColor: "#ffffff",
     boxShadow: "0 0 2px rgba(0,0,0,0.12), 0 4px 16px rgba(0,0,0,0.06)",
     ...shorthands.borderRadius("16px"),
-    ...shorthands.padding("24px"),
+    // The footer sits closer to the card's bottom edge than to its sides.
+    ...shorthands.padding("24px", "24px", "16px"),
     boxSizing: "border-box",
     '@media (max-width: 600px)': {
       minHeight: "auto",
@@ -871,7 +872,7 @@ const useStyles = makeStyles({
   },
   templateCardFeatured: {
     gridRow: "span 2",
-    minHeight: "532px",
+    minHeight: "568px",
     gap: "16px",
     '@media (max-width: 900px)': {
       gridRow: "span 1",
@@ -894,12 +895,12 @@ const useStyles = makeStyles({
     objectFit: "cover",
     display: "block",
     backgroundColor: "#F5F5F5",
-    ...shorthands.borderRadius("12px"),
+    ...shorthands.borderRadius("16px"),
   },
   templateBody: {
     display: "flex",
     flexDirection: "column",
-    gap: "22px",
+    gap: "12px",
     flex: 1,
   },
   badgeRow: {
@@ -968,12 +969,57 @@ const useStyles = makeStyles({
     gap: "16px",
     marginTop: "auto",
   },
-  templateVideoRow: {
+  // Bottom block of a card: primary buttons, a rule, then the secondary link
+  // and vote bar. Pinned to the card's bottom edge so cards in a row line up
+  // regardless of how much copy each one carries.
+  templateFooter: {
+    display: "flex",
+    flexDirection: "column",
+    marginTop: "auto",
+  },
+  templateButtonsRow: {
     display: "flex",
     flexWrap: "wrap",
-    gap: "16px",
-    marginTop: "auto",
+    gap: "20px",
+  },
+  // The two primary buttons share the row evenly. Their natural widths vary
+  // with the label, which would otherwise wrap the second button onto its own
+  // line in narrower columns. The tighter padding and gap are minimums that
+  // keep the longest label on one line; the labels stay centred either way.
+  templateButtonGrow: {
+    flexGrow: 1,
+    flexBasis: 0,
+    minWidth: "120px",
+    gap: "4px",
+    whiteSpace: "nowrap",
+    paddingLeft: "8px",
+    paddingRight: "8px",
+  },
+  templateFooterDivider: {
+    height: "1px",
+    backgroundColor: "#E0E0E0",
+    marginTop: "16px",
     marginBottom: "16px",
+  },
+  templateFooterRow: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "flex-end",
+    gap: "16px",
+    minHeight: "20px",
+  },
+  // Text-only link in the footer row; the vote bar is pushed to the far edge.
+  templateFooterLink: {
+    marginRight: "auto",
+    ...shorthands.border("none"),
+    ...shorthands.padding(0),
+    minHeight: "20px",
+    backgroundColor: "transparent",
+    color: "#335CCC",
+    ':hover': {
+      backgroundColor: "transparent",
+      textDecorationLine: "underline",
+    },
   },
   statsRow: {
     display: "flex",
@@ -1256,6 +1302,8 @@ const useStyles = makeStyles({
     minHeight: "32px",
     backgroundColor: "#ffffff",
     color: "#242424",
+    // <button> does not inherit the page font by default.
+    fontFamily: "inherit",
     fontSize: "14px",
     lineHeight: "20px",
     fontWeight: 600,
@@ -2361,33 +2409,44 @@ function App() {
                       ) : null}
 
                       {(item.videoUrl || item.setupVideoUrl) ? (
-                        <div className={styles.templateVideoRow}>
-                          {item.videoUrl ? (
-                            <DemoVideoButton
-                              id={item.id}
-                              title={item.title}
-                              videoUrl={item.videoUrl}
-                              className={styles.templateCardButton}
-                            />
-                          ) : null}
-                          {item.setupVideoUrl ? (
-                            <DemoVideoButton
-                              id={`${item.id}-setup`}
-                              title={item.title}
-                              videoUrl={item.setupVideoUrl}
-                              label="Watch setup"
-                              className={styles.templateCardButton}
-                            />
-                          ) : null}
+                        <div className={styles.templateFooter}>
+                          <div className={styles.templateButtonsRow}>
+                            <a className={mergeClasses(styles.templateCardButton, styles.templateButtonGrow)} href={item.url} target="_blank" rel="noreferrer" onClick={() => logClick(TelemetryEvents.TemplateViewClick, { template: item.id })}>
+                              View template
+                              <Open16Filled fontSize={12} />
+                            </a>
+                            {item.videoUrl ? (
+                              <DemoVideoButton
+                                id={item.id}
+                                title={item.title}
+                                videoUrl={item.videoUrl}
+                                className={mergeClasses(styles.templateCardButton, styles.templateButtonGrow)}
+                              />
+                            ) : null}
+                          </div>
+                          <div className={styles.templateFooterDivider} aria-hidden="true" />
+                          <div className={styles.templateFooterRow}>
+                            {item.setupVideoUrl ? (
+                              <DemoVideoButton
+                                id={`${item.id}-setup`}
+                                title={item.title}
+                                videoUrl={item.setupVideoUrl}
+                                label="Watch setup"
+                                className={mergeClasses(styles.templateCardButton, styles.templateFooterLink)}
+                              />
+                            ) : null}
+                            <VoteBar cardId={item.id} variant="inline" className={styles.templateVoteBar} />
+                          </div>
                         </div>
-                      ) : null}
-                      <div className={styles.templateActionsRow}>
-                        <a className={styles.templateCardButton} href={item.url} target="_blank" rel="noreferrer" onClick={() => logClick(TelemetryEvents.TemplateViewClick, { template: item.id })}>
-                          View template
-                          <Open16Filled fontSize={12} />
-                        </a>
-                        <VoteBar cardId={item.id} variant="inline" className={styles.templateVoteBar} />
-                      </div>
+                      ) : (
+                        <div className={styles.templateActionsRow}>
+                          <a className={styles.templateCardButton} href={item.url} target="_blank" rel="noreferrer" onClick={() => logClick(TelemetryEvents.TemplateViewClick, { template: item.id })}>
+                            View template
+                            <Open16Filled fontSize={12} />
+                          </a>
+                          <VoteBar cardId={item.id} variant="inline" className={styles.templateVoteBar} />
+                        </div>
+                      )}
                     </div>
                   </div>
 

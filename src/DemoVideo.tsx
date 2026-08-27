@@ -8,7 +8,7 @@ import {
   makeStyles,
   shorthands,
 } from "@fluentui/react-components";
-import { Play16Filled } from "@fluentui/react-icons";
+import { Play16Regular } from "@fluentui/react-icons";
 import { logClick, TelemetryEvents } from "./telemetry";
 
 const useStyles = makeStyles({
@@ -40,24 +40,24 @@ interface DemoVideoButtonProps {
    * it supports range requests, so the video streams and seeks.
    */
   videoUrl: string;
-  /** Button label. Defaults to "Watch demo". */
+  /** Button label. Defaults to "Play demo". */
   label?: string;
   /** Button class, so each surface keeps its own card-button styling. */
   className?: string;
 }
 
 /**
- * "Watch demo" button that plays the demo inline in a dialog.
+ * "Play demo" button that plays the demo inline in a dialog.
  *
  * GitHub serves MP4s as application/octet-stream, so navigating to the URL
  * directly downloads the file rather than playing it. Inside a <video> element
  * the explicit <source type="video/mp4"> tells the browser what to expect, so
  * playback works — the same approach the Analytics Hub uses.
  */
-export function DemoVideoButton({ id, title, videoUrl, label = "Watch demo", className }: DemoVideoButtonProps) {
+export function DemoVideoButton({ id, title, videoUrl, label = "Play demo", className }: DemoVideoButtonProps) {
   const styles = useStyles();
   const [open, setOpen] = useState(false);
-  const heading = label === "Watch demo" ? title : `${title} — ${label.replace(/^Watch\s+/i, "")}`;
+  const heading = label === "Play demo" ? title : `${title} — ${label.replace(/^(Watch|Play)\s+/i, "")}`;
 
   return (
     <>
@@ -69,8 +69,8 @@ export function DemoVideoButton({ id, title, videoUrl, label = "Watch demo", cla
           logClick(TelemetryEvents.TemplateDemoClick, { template: id });
         }}
       >
-        <Play16Filled fontSize={12} />
         {label}
+        <Play16Regular fontSize={16} />
       </button>
 
       <Dialog open={open} onOpenChange={(_, data) => setOpen(data.open)}>

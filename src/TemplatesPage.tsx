@@ -164,6 +164,7 @@ const useStyles = makeStyles({
     gap: "20px",
   },
   card: {
+    minHeight: "274px",
     display: "flex",
     flexDirection: "column",
     backgroundColor: "#ffffff",
@@ -181,8 +182,9 @@ const useStyles = makeStyles({
   cardContent: {
     display: "flex",
     flexDirection: "column",
-    gap: "12px",
-    ...shorthands.padding("20px"),
+    gap: "8px",
+    // The footer sits closer to the card's bottom edge than to its sides.
+    ...shorthands.padding("24px", "24px", "16px"),
     flex: 1,
   },
   tagRow: {
@@ -230,6 +232,8 @@ const useStyles = makeStyles({
     minHeight: "32px",
     backgroundColor: "#ffffff",
     color: "#242424",
+    // <button> does not inherit the page font by default.
+    fontFamily: "inherit",
     fontSize: "14px",
     lineHeight: "20px",
     fontWeight: 600,
@@ -248,12 +252,54 @@ const useStyles = makeStyles({
     gap: "12px",
     marginTop: "auto",
   },
-  videoRow: {
+  // Bottom block of a card: primary buttons, a rule, then the secondary link
+  // and vote bar, pinned to the card's bottom edge.
+  footer: {
+    display: "flex",
+    flexDirection: "column",
+    marginTop: "auto",
+  },
+  buttonsRow: {
     display: "flex",
     flexWrap: "wrap",
-    gap: "12px",
-    marginTop: "auto",
-    marginBottom: "12px",
+    gap: "20px",
+  },
+  // The two primary buttons share the row evenly; their natural widths vary
+  // with the label and would otherwise wrap onto separate lines. The tighter
+  // padding and gap are minimums that keep the longest label on one line.
+  buttonGrow: {
+    flexGrow: 1,
+    flexBasis: 0,
+    minWidth: "120px",
+    gap: "4px",
+    whiteSpace: "nowrap",
+    paddingLeft: "8px",
+    paddingRight: "8px",
+  },
+  footerDivider: {
+    height: "1px",
+    backgroundColor: "#E0E0E0",
+    marginTop: "16px",
+    marginBottom: "16px",
+  },
+  footerRow: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "flex-end",
+    gap: "16px",
+    minHeight: "20px",
+  },
+  footerLink: {
+    marginRight: "auto",
+    ...shorthands.border("none"),
+    ...shorthands.padding(0),
+    minHeight: "20px",
+    backgroundColor: "transparent",
+    color: "#335CCC",
+    ':hover': {
+      backgroundColor: "transparent",
+      textDecorationLine: "underline",
+    },
   },
   empty: {
     ...shorthands.padding("48px", "0"),
@@ -387,39 +433,56 @@ export default function TemplatesPage() {
                           <h3 className={styles.cardTitle}>{item.title}</h3>
                           <p className={styles.cardDescription}>{item.description}</p>
                           {(item.videoUrl || item.setupVideoUrl) ? (
-                            <div className={styles.videoRow}>
-                              {item.videoUrl ? (
-                                <DemoVideoButton
-                                  id={item.id}
-                                  title={item.title}
-                                  videoUrl={item.videoUrl}
-                                  className={styles.cardButton}
-                                />
-                              ) : null}
-                              {item.setupVideoUrl ? (
-                                <DemoVideoButton
-                                  id={`${item.id}-setup`}
-                                  title={item.title}
-                                  videoUrl={item.setupVideoUrl}
-                                  label="Watch setup"
-                                  className={styles.cardButton}
-                                />
-                              ) : null}
+                            <div className={styles.footer}>
+                              <div className={styles.buttonsRow}>
+                                <a
+                                  className={mergeClasses(styles.cardButton, styles.buttonGrow)}
+                                  href={item.url}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  onClick={() => logClick(TelemetryEvents.TemplateViewClick, { template: item.id })}
+                                >
+                                  View template
+                                  <Open16Filled fontSize={12} />
+                                </a>
+                                {item.videoUrl ? (
+                                  <DemoVideoButton
+                                    id={item.id}
+                                    title={item.title}
+                                    videoUrl={item.videoUrl}
+                                    className={mergeClasses(styles.cardButton, styles.buttonGrow)}
+                                  />
+                                ) : null}
+                              </div>
+                              <div className={styles.footerDivider} aria-hidden="true" />
+                              <div className={styles.footerRow}>
+                                {item.setupVideoUrl ? (
+                                  <DemoVideoButton
+                                    id={`${item.id}-setup`}
+                                    title={item.title}
+                                    videoUrl={item.setupVideoUrl}
+                                    label="Watch setup"
+                                    className={mergeClasses(styles.cardButton, styles.footerLink)}
+                                  />
+                                ) : null}
+                                <VoteBar cardId={item.id} variant="inline" />
+                              </div>
                             </div>
-                          ) : null}
-                          <div className={styles.cardFooter}>
-                            <a
-                              className={styles.cardButton}
-                              href={item.url}
-                              target="_blank"
-                              rel="noreferrer"
-                              onClick={() => logClick(TelemetryEvents.TemplateViewClick, { template: item.id })}
-                            >
-                              View template
-                              <Open16Filled fontSize={12} />
-                            </a>
-                            <VoteBar cardId={item.id} variant="inline" />
-                          </div>
+                          ) : (
+                            <div className={styles.cardFooter}>
+                              <a
+                                className={styles.cardButton}
+                                href={item.url}
+                                target="_blank"
+                                rel="noreferrer"
+                                onClick={() => logClick(TelemetryEvents.TemplateViewClick, { template: item.id })}
+                              >
+                                View template
+                                <Open16Filled fontSize={12} />
+                              </a>
+                              <VoteBar cardId={item.id} variant="inline" />
+                            </div>
+                          )}
                         </div>
                       </article>
                     ))}
