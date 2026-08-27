@@ -531,35 +531,44 @@ const useStyles = makeStyles({
       ...shorthands.padding("32px", "16px"),
     },
   },
+  // Mirrors the geometry of `heroContent` so the artwork lives inside the same
+  // centred column as every other section of the page. Without this the art was
+  // anchored to the viewport's right edge and spilled past the column, which
+  // made the whole page read as right-aligned on wide screens.
+  heroArtColumn: {
+    position: "absolute",
+    top: 0,
+    bottom: 0,
+    left: "24px",
+    right: "24px",
+    marginLeft: "auto",
+    marginRight: "auto",
+    maxWidth: "1024px",
+    zIndex: 0,
+    pointerEvents: "none",
+    '@media (max-width: 900px)': {
+      display: "none",
+    },
+  },
   heroArt: {
     position: "absolute",
     top: 0,
     bottom: 0,
+    // Flush with the column's right edge, so the illustration ends exactly where
+    // the page's content ends.
     right: 0,
-    // Anchor the artwork to the centred content column rather than to the
-    // viewport: 50% is the column's centre, so this starts the illustration a
-    // constant 604px right of the column's left edge at every width. It never
-    // drifts out to the far right of an ultra-wide screen, and it never walks
-    // left into the value-prop text on a narrow one. Any overhang is clipped
-    // by the hero's `overflow: hidden`.
-    left: "calc(50% + 92px)",
-    zIndex: 0,
-    pointerEvents: "none",
-    // The PNG's field fades out to transparent on its left, right and bottom
-    // edges, so it blends into the hero gradient with no seam and needs no
-    // edge mask.
-    backgroundImage: `url(${import.meta.env.BASE_URL}images/bgwide.png)`,
+    // Wide enough to hold the artwork uncropped at full hero height: the PNG is
+    // 546x378, so at `auto 100%` it renders ~1.44x the hero's height.
+    width: "480px",
+    maxWidth: "46%",
+    // The PNG's field fades out on its edges, so it blends into the hero
+    // gradient with no seam and needs no edge mask.
+    backgroundImage: `url(${import.meta.env.BASE_URL}images/herobg1.png)`,
     backgroundRepeat: "no-repeat",
-    // Scale by HEIGHT, not width, so the illustration renders at a constant
-    // size however wide the viewport gets. It must be exactly 100%: the card
-    // at the top of the artwork is cropped by the PNG's top edge and is meant
-    // to bleed off the top of the hero, so anything less leaves that crop
-    // floating mid-section as a visible horizontal seam.
+    // Scale by HEIGHT so the illustration fills the hero at its native
+    // proportions rather than being shrunk to the column's spare width.
     backgroundSize: "auto 100%",
-    backgroundPosition: "left center",
-    '@media (max-width: 900px)': {
-      display: "none",
-    },
+    backgroundPosition: "right center",
   },
   heroContent: {
     position: "relative",
@@ -618,7 +627,7 @@ const useStyles = makeStyles({
   },
   heroDivider: {
     width: "100%",
-    maxWidth: "645px",
+    maxWidth: "600px",
     height: "1px",
     backgroundColor: "#E0E0E0",
   },
@@ -1168,7 +1177,7 @@ const useStyles = makeStyles({
   heroValuesRow: {
     display: "flex",
     alignItems: "stretch",
-    gap: "28px",
+    gap: "18px",
     '@media (max-width: 700px)': {
       flexDirection: "column",
       gap: "16px",
@@ -2113,7 +2122,9 @@ function App() {
       </div>
 
       <header className={styles.hero}>
-        <div className={styles.heroArt} aria-hidden="true" />
+        <div className={styles.heroArtColumn} aria-hidden="true">
+          <div className={styles.heroArt} />
+        </div>
         <div className={styles.heroContent}>
           <div className={styles.heroHeader}>
             <h1 className={styles.heroTitle}>
