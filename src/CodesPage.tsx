@@ -6,7 +6,7 @@ import {
   codeDomainFilters,
   codeTechFilters,
 } from "./data";
-import type { CodeDomainFilter, CodeTechFilter } from "./data";
+import type { CodeDomainFilter, CodeTechFilter, ResourceItem } from "./data";
 import { logClick, logPageView, TelemetryEvents } from "./telemetry";
 import { VoteBar } from "./VoteBar";
 
@@ -137,6 +137,22 @@ const useStyles = makeStyles({
   },
   section: {
     marginBottom: "48px",
+  },
+  sectionLibraries: {
+    background: "linear-gradient(135deg, rgba(245,234,254,0.55) 0%, rgba(238,242,255,0.75) 100%)",
+    ...shorthands.padding("24px"),
+    ...shorthands.borderRadius("20px"),
+    ...shorthands.border("1px", "solid", "#E4E0F4"),
+    '@media (max-width: 600px)': {
+      ...shorthands.padding("16px"),
+    },
+  },
+  sectionDescription: {
+    margin: "-12px 0 20px",
+    fontSize: "14px",
+    lineHeight: "20px",
+    color: "#424242",
+    maxWidth: "720px",
   },
   sectionHeader: {
     display: "flex",
@@ -298,24 +314,43 @@ export default function CodesPage() {
         (techFilter === "All" || item.tech.includes(techFilter)),
     );
 
+    // Libraries are installable packages rather than runnable samples, so they get
+    // their own block and are excluded from the sample-code sections below.
+    const libraryItems = filtered.filter((item) => item.assetType === "Library");
+    const codeItems = filtered.filter((item) => item.assetType !== "Library");
+
     // "New and Popular" mirrors the home page logic: most recently added first, capped.
-    const newAndPopular = [...filtered]
+    const newAndPopular = [...codeItems]
       .sort((a, b) => (b.addedOn ?? "").localeCompare(a.addedOn ?? ""))
       .slice(0, 3);
 
-    return [
+    const sectionList: {
+      key: string;
+      title: string;
+      description?: string;
+      items: ResourceItem[];
+    }[] = [
+      {
+        key: "libraries",
+        title: "Libraries",
+        description:
+          "Open-source packages that do the heavy lifting for Viva Insights and Copilot data. Install once, then reuse across every analysis below.",
+        items: libraryItems,
+      },
       { key: "new", title: "New and Popular", items: newAndPopular },
       {
         key: "analytics",
         title: "Analytics",
-        items: filtered.filter((item) => item.collections.includes("Analytics")),
+        items: codeItems.filter((item) => item.collections.includes("Analytics")),
       },
       {
         key: "export",
         title: "Export",
-        items: filtered.filter((item) => item.collections.includes("Export")),
+        items: codeItems.filter((item) => item.collections.includes("Export")),
       },
     ];
+
+    return sectionList;
   }, [domainFilter, techFilter]);
 
   const hasResults = sections.some((section) => section.items.length > 0);
@@ -332,8 +367,8 @@ export default function CodesPage() {
           </nav>
           <h1 className={styles.title}>Browse all sample code</h1>
           <p className={styles.description}>
-            Reusable scripts, prompt libraries, and analytical methods for Python, R, Power BI, and more. Filter
-            by analysis focus and language to find the right starting point.
+            Open-source libraries, reusable scripts, prompt collections, and analytical methods for Python, R,
+            Power BI, and more. Filter by analysis focus and language to find the right starting point.
           </p>
         </div>
       </header>
@@ -384,14 +419,21 @@ export default function CodesPage() {
             sections
               .filter((section) => section.items.length > 0)
               .map((section) => (
-                <section key={section.key} className={styles.section}>
+                <section
+                  key={section.key}
+                  className={mergeClasses(styles.section, section.key === "libraries" && styles.sectionLibraries)}
+                >
                   <div className={styles.sectionHeader}>
                     <h2 className={styles.sectionTitle}>{section.title}</h2>
                     <span className={styles.sectionCount}>{section.items.length}</span>
                   </div>
+                  {section.description ? (
+                    <p className={styles.sectionDescription}>{section.description}</p>
+                  ) : null}
                   <div className={styles.grid}>
                     {section.items.map((item) => {
                       const Icon = item.icon ?? DocumentBulletList24Regular;
+                      const isLibrary = item.assetType === "Library";
                       return (
                         <article key={item.id} className={styles.card}>
                           {item.image ? (
@@ -431,9 +473,16 @@ export default function CodesPage() {
                                 href={item.url}
                                 target="_blank"
                                 rel="noreferrer"
-                                onClick={() => logClick(TelemetryEvents.CodeViewClick, { resource: item.id })}
+                                onClick={() =>
+                                  logClick(
+                                    isLibrary
+                                      ? TelemetryEvents.VivaInsightsClick
+                                      : TelemetryEvents.CodeViewClick,
+                                    { resource: item.id },
+                                  )
+                                }
                               >
-                                View code
+                                {isLibrary ? "View documentation" : "View code"}
                                 <Open16Filled fontSize={12} />
                               </a>
                               <VoteBar cardId={item.id} variant="inline" />
