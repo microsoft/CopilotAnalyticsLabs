@@ -431,10 +431,10 @@ export const research: ResearchItem[] = [
     title: "Cowork Value Estimator Methodology",
     description:
       "Explore the methodology behind the Cowork Value Estimator for measuring collaboration impact.",
-    url: "/CopilotAnalyticsLabs/Cowork_Methodology.pdf",
+    url: "/CopilotAnalyticsLabs/Cowork_Methodology_2026-09.pdf",
     icon: DocumentBulletList24Regular,
     kind: "Research",
-    addedOn: "2026-05-15",
+    addedOn: "2026-09-08",
     domain: ["Business Value", "Productivity", "AI Transformation"],
     contentType: ["Framework", "Benchmark"],
   },
