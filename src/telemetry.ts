@@ -25,6 +25,28 @@ interface TelemetryStore {
 const STORAGE_KEY = "cal_telemetry";
 const MAX_EVENTS = 500; // keep last 500 events to avoid unbounded growth
 
+interface UmamiPageviewProps {
+  website: string;
+  url: string;
+  [key: string]: unknown;
+}
+
+interface UmamiTracker {
+  track(
+    payload?:
+      | string
+      | Record<string, unknown>
+      | ((props: UmamiPageviewProps) => UmamiPageviewProps),
+    data?: Record<string, unknown>
+  ): Promise<void>;
+}
+
+declare global {
+  interface Window {
+    umami?: UmamiTracker;
+  }
+}
+
 function readStore(): TelemetryStore {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -93,6 +115,22 @@ export function logPageView(): void {
     `%c[Telemetry] PageView #${store.pageViews}`,
     "color:#6264A7;font-weight:bold"
   );
+}
+
+/**
+ * Report a pageview to Umami for a virtual (hash-based) route.
+ *
+ * The app navigates by mutating `location.hash` (see Root.tsx), which the
+ * Umami tracker script cannot observe automatically — its auto-tracker only
+ * hooks `history.pushState`/`replaceState`. `data-auto-pageview="false"` is
+ * set on the tracker script tag in index.html, so pageviews must be sent
+ * manually via this function on every route change, using `path` as the
+ * canonical URL (e.g. "/", "/templates", "/codes", "/research") so each
+ * route shows up as a distinct entry under "Pages" in Umami.
+ */
+export function trackPageview(path: string): void {
+  if (typeof window === "undefined" || !window.umami) return;
+  window.umami.track((props) => ({ ...props, url: path }));
 }
 
 /** Log a click event with optional properties. */

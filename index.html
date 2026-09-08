@@ -44,6 +44,18 @@
     </script>
 
     <!-- Umami analytics -->
+    <!--
+      This app is a hash-routed SPA (see src/Root.tsx), so navigation never
+      calls history.pushState/replaceState — it only mutates location.hash.
+      Umami's auto-tracker only detects route changes via pushState/
+      replaceState, so it can never see these navigations, and
+      data-exclude-hash would strip the route from the URL anyway. We
+      disable the automatic pageview firing here and instead report each
+      route change manually (with the correct virtual path) from
+      src/Root.tsx via trackPageview() in src/telemetry.ts. This is what
+      previously caused "Pages" to show no breakdown: every visit was
+      recorded as a single view of the same base URL.
+    -->
     <script
       defer
       src="https://ca-umami-prod.lemonglacier-6a5930b7.uksouth.azurecontainerapps.io/script.js"
@@ -51,7 +63,7 @@
       data-domains="microsoft.github.io"
       data-do-not-track="true"
       data-exclude-search="true"
-      data-exclude-hash="true"></script>
+      data-auto-pageview="false"></script>
 
     <!-- Microsoft Clarity -->
     <script type="text/javascript">
