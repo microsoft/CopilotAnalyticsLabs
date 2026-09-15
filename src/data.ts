@@ -223,6 +223,20 @@ export function pageImpactToTag(filter: TemplatePageImpactFilter): TemplateItem[
 
 export const resources: ResourceItem[] = [
   {
+    id: "copilot-cli-personal-insights",
+    title: "GitHub Copilot CLI Personal Insights Dashboard",
+    description:
+      "A local, personal dashboard for exploring GitHub Copilot CLI usage - tokens, estimated cost, models, providers, trends, and task patterns. Unlike organizational insights tools, it is designed for one person's private analysis and runs entirely from local session data.",
+    url: "https://github.com/microsoft/ghc-cli-dashboard",
+    icon: DataTrending24Regular,
+    category: "Code",
+    image: `${base}images/code-copilot-cli-personal.png`,
+    addedOn: "2026-09-15",
+    tech: ["Python"],
+    domain: ["Adoption & Usage", "Copilot & Agents"],
+    collections: ["Analytics"],
+  },
+  {
     id: "viva-insights-essentials",
     title: "Viva Insights Analysis - Essentials",
     description:
