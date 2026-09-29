@@ -95,6 +95,9 @@ const useStyles = makeStyles({
       color: "#ffffff",
     },
   },
+  navLinkEmphasis: {
+    fontWeight: 700,
+  },
 });
 
 /**
@@ -122,6 +125,9 @@ export function SiteHeader() {
           </a>
           <a className={styles.navLink} href={FEEDBACK_URL} target="_blank" rel="noreferrer">
             <span>Feedback</span>
+          </a>
+          <a className={mergeClasses(styles.navLink, styles.navLinkEmphasis)} href={`${import.meta.env.BASE_URL}#/updates`}>
+            <span>Stay Up To Date</span>
           </a>
           <button
             className={mergeClasses(styles.navLink, styles.navIconOnly)}

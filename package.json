@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "node scripts/build-feed.mjs && tsc -b && vite build",
+    "build:feed": "node scripts/build-feed.mjs",
     "lint": "eslint .",
     "preview": "vite preview",
     "deploy": "gh-pages -d dist"

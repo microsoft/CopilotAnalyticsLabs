@@ -1,0 +1,63 @@
+{
+  "site": {
+    "title": "Copilot Analytics Labs — what's new",
+    "base": "https://swadas1989.github.io/CopilotAnalyticsLabs/",
+    "description": "Release notes for new Copilot Analytics Labs templates, sample code, research, playbooks, and important fixes."
+  },
+  "updates": [
+    {
+      "id": "2026-09-29-update-feed",
+      "date": "2026-09-29",
+      "tool": "Copilot Analytics Labs",
+      "link": "#/updates",
+      "tags": ["Added"],
+      "title": "Subscribe to Copilot Analytics Labs updates by RSS",
+      "summary": "Copilot Analytics Labs now publishes important announcements to an RSS feed. Subscribe from Power Automate, a Teams channel, classic Outlook, or any feed reader to hear about new templates, sample code, research, playbooks, and critical fixes."
+    },
+    {
+      "id": "2026-09-08-cowork-methodology",
+      "date": "2026-09-08",
+      "tool": "Cowork Value Estimator",
+      "link": "Cowork_Methodology_2026-09.pdf",
+      "tags": ["Added"],
+      "title": "Cowork Value Estimator methodology published",
+      "summary": "A new methodology guide explains how the Cowork Value Estimator measures collaboration impact, including the research basis and assumptions behind its business-value calculations."
+    },
+    {
+      "id": "2026-08-11-valuelens",
+      "date": "2026-08-11",
+      "tool": "ValueLens for Microsoft Copilot",
+      "link": "https://github.com/microsoft/ValueLens-for-Microsoft-Copilot#-pick-a-deployment-path",
+      "tags": ["Added"],
+      "title": "Measure AI business value across the Copilot estate",
+      "summary": "ValueLens joins the template library with Power BI reporting for hours saved, assisted value, adoption, agent governance, user feedback, ROI, and cost. A sample dataset is included so the report can be explored before connecting a tenant."
+    },
+    {
+      "id": "2026-08-11-consumption-central",
+      "date": "2026-08-11",
+      "tool": "Consumption Central for Microsoft Copilot",
+      "link": "https://github.com/microsoft/ConsumptionCentral-for-Microsoft-Copilot",
+      "tags": ["Added"],
+      "title": "Copilot credit consumption and cost in one report",
+      "summary": "Consumption Central joins the template library, bringing Cowork and Work IQ, Copilot Studio, GitHub Copilot, and Azure AI Foundry consumption and cost into a single Power BI view."
+    },
+    {
+      "id": "2026-09-29-cowork-team-report",
+      "date": "2026-09-29",
+      "tool": "Cowork Team Report",
+      "link": "https://github.com/microsoft/CoworkDashboard#cowork-team-report--team-member-cowork-skill",
+      "tags": ["Added"],
+      "title": "Measure team-level Cowork ROI with an anonymized dashboard",
+      "summary": "Cowork Team Report combines privacy-reviewed member summaries into an anonymized team dashboard covering hours saved, value delivered, work patterns, and outputs. A manager skill can email the dashboard to the team as a scheduled newsletter."
+    },
+    {
+      "id": "2026-08-07-cowork-value-estimator",
+      "date": "2026-08-07",
+      "tool": "Cowork Value Estimator",
+      "link": "https://github.com/microsoft/What-I-did-with-Cowork#option-1--let-cowork-install-it-for-you-easiest",
+      "tags": ["Added"],
+      "title": "Estimate the personal impact of Copilot Cowork",
+      "summary": "The Cowork Value Estimator adds a personal impact report with research-anchored time saved, professional-services-equivalent value, and work mapped to jobs, business processes, and four value pillars."
+    }
+  ]
+}

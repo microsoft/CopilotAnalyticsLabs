@@ -3,6 +3,7 @@ import App from './App.tsx'
 import TemplatesPage from './TemplatesPage.tsx'
 import CodesPage from './CodesPage.tsx'
 import ResearchPage from './ResearchPage.tsx'
+import UpdatesPage from './UpdatesPage.tsx'
 import { DisclaimerBar } from './DisclaimerBar.tsx'
 import { SiteHeader } from './SiteHeader.tsx'
 import { SiteFooter } from './SiteFooter.tsx'
@@ -38,6 +39,7 @@ export default function Root() {
   if (route === '/templates') page = <TemplatesPage />
   else if (route === '/codes') page = <CodesPage />
   else if (route === '/research') page = <ResearchPage />
+  else if (route === '/updates') page = <UpdatesPage />
   else page = <App />
 
   return (
