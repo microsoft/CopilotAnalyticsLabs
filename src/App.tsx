@@ -182,7 +182,7 @@ const templateOrder = [
   "valuelens",
   "consumption-central",
   "cowork-value-estimator",
-  "credit-usage-chargebacks",
+  "cowork-team-report",
 ];
 
 const templateFilterLabelHome: Record<TemplateImpactFilter, string> = {
@@ -244,9 +244,10 @@ const templateMeta: Record<
   "m365-copilot-personal": {
     badges: [{ text: "Individual", tone: "orange" }],
   },
-  "credit-usage-chargebacks": {
+  "cowork-team-report": {
     badges: [
-      { text: "Org wide", tone: "purple" },
+      { text: "New", tone: "blue" },
+      { text: "AI-impact", tone: "teal" },
       { text: "Team", tone: "red" },
     ],
   },
