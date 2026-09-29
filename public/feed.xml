@@ -3,15 +3,15 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Copilot Analytics Labs — what&#39;s new</title>
-    <link>https://swadas1989.github.io/CopilotAnalyticsLabs/</link>
+    <link>https://microsoft.github.io/CopilotAnalyticsLabs/</link>
     <description>Release notes for new Copilot Analytics Labs templates, sample code, research, playbooks, and important fixes.</description>
     <language>en</language>
     <lastBuildDate>Tue, 29 Sep 2026 16:00:00 GMT</lastBuildDate>
     <ttl>1440</ttl>
-    <atom:link href="https://swadas1989.github.io/CopilotAnalyticsLabs/feed.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://microsoft.github.io/CopilotAnalyticsLabs/feed.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Copilot Analytics Labs — Subscribe to Copilot Analytics Labs updates by RSS</title>
-      <link>https://swadas1989.github.io/CopilotAnalyticsLabs/#/updates</link>
+      <link>https://microsoft.github.io/CopilotAnalyticsLabs/#/updates</link>
       <description>[Added] Copilot Analytics Labs now publishes important announcements to an RSS feed. Subscribe from Power Automate, a Teams channel, classic Outlook, or any feed reader to hear about new templates, sample code, research, playbooks, and critical fixes.</description>
       <pubDate>Tue, 29 Sep 2026 16:00:00 GMT</pubDate>
       <guid isPermaLink="false">copilot-analytics-labs:2026-09-29-update-feed</guid>
@@ -27,7 +27,7 @@
     </item>
     <item>
       <title>Cowork Value Estimator — Cowork Value Estimator methodology published</title>
-      <link>https://swadas1989.github.io/CopilotAnalyticsLabs/Cowork_Methodology_2026-09.pdf</link>
+      <link>https://microsoft.github.io/CopilotAnalyticsLabs/Cowork_Methodology_2026-09.pdf</link>
       <description>[Added] A new methodology guide explains how the Cowork Value Estimator measures collaboration impact, including the research basis and assumptions behind its business-value calculations.</description>
       <pubDate>Tue, 08 Sep 2026 16:00:00 GMT</pubDate>
       <guid isPermaLink="false">copilot-analytics-labs:2026-09-08-cowork-methodology</guid>

@@ -1,7 +1,7 @@
 {
   "site": {
     "title": "Copilot Analytics Labs — what's new",
-    "base": "https://swadas1989.github.io/CopilotAnalyticsLabs/",
+    "base": "https://microsoft.github.io/CopilotAnalyticsLabs/",
     "description": "Release notes for new Copilot Analytics Labs templates, sample code, research, playbooks, and important fixes."
   },
   "updates": [
