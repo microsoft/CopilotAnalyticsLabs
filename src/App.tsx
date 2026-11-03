@@ -99,7 +99,12 @@ async function fetchBadgeCount(url: string): Promise<string> {
     throw new Error("Count response did not include a message");
   }
 
-  return data.message;
+  // shields.io reports failures (rate limits, bad repos) in the same field, so accept counts only.
+  if (!/^\d[\d,.]*\s*[kKmM]?$/.test(data.message.trim())) {
+    throw new Error(`Count response was not a count: ${data.message}`);
+  }
+
+  return data.message.trim();
 }
 
 // Whole days elapsed since an ISO date, or null when unknown/invalid.
@@ -131,7 +136,7 @@ function formatRelativeDate(iso?: string): string {
   return months === 1 ? "1 month ago" : `${months} months ago`;
 }
 
-// New items grouped by type, newest first — only those within each kind's window.
+// New items grouped by type, newest first, limited to each kind's window.
 function buildFeaturedItems(): FeaturedItem[] {
   const byDateDesc = (a: { addedOn?: string }, b: { addedOn?: string }) =>
     (b.addedOn ?? "").localeCompare(a.addedOn ?? "");
@@ -198,7 +203,8 @@ const templateMeta: Record<
   {
     featured?: boolean;
     badges?: { text: string; tone: "green" | "teal" | "purple" | "orange" | "red" | "blue" }[];
-    stats?: { value: string; label: string }[];
+    /** Stats without a value are filled in at runtime and stay hidden until they load. */
+    stats?: { value?: string; label: string }[];
   }
 > = {
   "aio-dashboard": {
@@ -209,8 +215,8 @@ const templateMeta: Record<
       { text: "Org wide", tone: "purple" },
     ],
     stats: [
-      { value: "—", label: "Stars" },
-      { value: "—", label: "Watching" },
+      { label: "Stars" },
+      { label: "Watching" },
       { value: "<10 min", label: "Setup" },
     ],
   },
@@ -340,7 +346,7 @@ const resourceMeta: Record<
 const codeHomeCopyOverrides: Record<string, { description?: string }> = {
   "viva-insights-essentials": {
     description:
-      "Get started with R & Python utility scripts — exploratory data analysis, standard visualisations, and custom KPI generation from Business Analytics data.",
+      "Get started with R & Python utility scripts: exploratory data analysis, standard visualisations, and custom KPI generation from Business Analytics data.",
   },
   "advanced-analytics": {
     description: "Advanced analytical techniques and methods for deeper Business Analytics data.",
@@ -455,7 +461,7 @@ const roadmapItems: RoadmapItem[] = [
     id: "agent-analytics",
     title: "Agent Analytics",
     description:
-      "Comprehensive analytics for AI agents — dashboards, metrics, lifecycle management, and augmented capacity insights.",
+      "Comprehensive analytics for AI agents: dashboards, metrics, lifecycle management, and augmented capacity insights.",
     icon: ChartMultiple20Regular,
     iconActive: ChartMultiple20Filled,
     details: [
@@ -487,7 +493,7 @@ const roadmapItems: RoadmapItem[] = [
     icon: Sparkle20Regular,
     iconActive: Sparkle20Filled,
     details: [
-      "Insights Agent — General Availability",
+      "Insights Agent: General Availability",
       "Intelligent summaries",
       "Build-your-own custom dashboards",
     ],
@@ -573,7 +579,10 @@ function ClampedDescription({ text, className }: { text: string; className: stri
 
 function App() {
   const [activeTab, setActiveTab] = useState<(typeof sectionTabs)[number]["id"] | null>(null);
-  const [ghStats, setGhStats] = useState<{ stars: string; watchers: string }>({ stars: "—", watchers: "—" });
+  const [ghStats, setGhStats] = useState<{ stars: string | null; watchers: string | null }>({
+    stars: null,
+    watchers: null,
+  });
   const [templateFilter, setTemplateFilter] = useState<TemplateImpactFilter>("Featured");
   const [codeFilter, setCodeFilter] = useState<CodeHomeTechFilter>("Featured");
   const [activeRoadmapTab, setActiveRoadmapTab] = useState<string>(roadmapItems[0].id);
@@ -1040,9 +1049,10 @@ function App() {
                         {meta.stats.map((stat) => {
                           let value = stat.value;
                           if (item.id === "aio-dashboard") {
-                            if (stat.label === "Stars") value = ghStats.stars;
-                            else if (stat.label === "Watching") value = ghStats.watchers;
+                            if (stat.label === "Stars") value = ghStats.stars ?? undefined;
+                            else if (stat.label === "Watching") value = ghStats.watchers ?? undefined;
                           }
+                          if (!value) return null;
                           return (
                             <div key={stat.label} className="labs-stats__item">
                               <PortalText textRole="card-title" className="labs-stats__value">

@@ -249,21 +249,21 @@
     <p class="dek">Agent Assisted Hours (AAH) estimates the time people save when Copilot Studio–powered agents take on routine, time-intensive work. It is the <b>first impact metric</b> shipped by Microsoft in a suite designed to help organizations understand the business value agents create.</p>
     <div class="byline">By the PANDAS team · A Copilot Analytics Lab article · ~7 min read</div>
     <nav class="series-nav" aria-label="Article series">
-      <span class="sn-item cur"><span class="sn-n">Part 1</span><span class="sn-t">Agent Assisted Hours — time saved</span></span>
-      <span class="sn-item"><span class="sn-n">Part 2</span><span class="sn-t">New Assisted Hours — human-augmented time</span><span class="sn-soon">Coming soon</span></span>
+      <span class="sn-item cur"><span class="sn-n">Part 1</span><span class="sn-t">Agent Assisted Hours: time saved</span></span>
+      <span class="sn-item"><span class="sn-n">Part 2</span><span class="sn-t">New Assisted Hours: human-augmented time</span><span class="sn-soon">Coming soon</span></span>
     </nav>
   </header>
 
   <main>
     <div class="lead">
       <p>AI agents are quickly becoming an important part of how people get work done. From answering questions and retrieving information to completing actions across business workflows, agents reduce friction in everyday tasks and free people to focus on higher-value work. As organizations adopt Microsoft Copilot Studio–powered agents, one question becomes increasingly important: <b>how do we understand the business value these agents are creating?</b></p>
-      <p>To help answer that, Microsoft has shipped <b>Agent Assisted Hours (AAH)</b> — an agent impact metric that estimates the time end users save through interactions with Copilot Studio–powered agents. It is the first in a suite of metrics Microsoft is delivering so customers can see the value agents add to their business, and the first entry in this series on the science behind those metrics.</p>
+      <p>To help answer that, Microsoft has shipped <b>Agent Assisted Hours (AAH)</b>, an agent impact metric that estimates the time end users save through interactions with Copilot Studio–powered agents. It is the first in a suite of metrics Microsoft is delivering so customers can see the value agents add to their business, and the first entry in this series on the science behind those metrics.</p>
     </div>
 
     <div class="panel">
       <h3>Summary</h3>
       <ul class="tight">
-        <li><b>What it measures.</b> The difference between the time a person would conventionally take to complete a task and the time taken when that same task is completed with help from an AI agent — a time-<em>saved</em> view of agent impact.</li>
+        <li><b>What it measures.</b> The difference between the time a person would conventionally take to complete a task and the time taken when that same task is completed with help from an AI agent, a time-<em>saved</em> view of agent impact.</li>
         <li><b>Where it lives.</b> Available today for Copilot Studio <b>conversational</b> and <b>autonomous</b> agents, in the Copilot Studio agents report in Viva Insights.</li>
         <li><b>What it is built from.</b> Agent usage signals, research- and telemetry-based time benchmarks for real-world tasks, and information-retrieval time estimates grounded in studies of AI usage.</li>
         <li><b>How it is computed.</b> Conversational agents are credited based on session outcomes and information retrieval activities, whereas autonomous agents are credited based on the actions they automate and the information retrieval activities they perform.</li>
@@ -275,7 +275,7 @@
     <section id="what">
       <div class="eyebrow">The metric</div>
       <h2>What Agent Assisted Hours measures</h2>
-      <p>Agent Assisted Hours estimates the difference between the time a person would conventionally take to complete a task and the time taken when that same task is completed with assistance from an AI agent. It helps organizations understand how agents augment workflows — handling routine, time-intensive tasks so users can spend more time on higher-value activities. The metric draws on three major inputs.</p>
+      <p>Agent Assisted Hours estimates the difference between the time a person would conventionally take to complete a task and the time taken when that same task is completed with assistance from an AI agent. It helps organizations understand how agents augment workflows, handling routine, time-intensive tasks so users can spend more time on higher-value activities. The metric draws on three major inputs.</p>
 
       <figure class="fig">
         <div class="figbox">
@@ -297,37 +297,37 @@
             </div>
           </div>
         </div>
-        <figcaption>Figure 1 — The three inputs behind Agent Assisted Hours. All are aggregated to the agent or organization level; none are used to assess individual behavior.</figcaption>
+        <figcaption>Figure 1: The three inputs behind Agent Assisted Hours. All are aggregated to the agent or organization level; none are used to assess individual behavior.</figcaption>
       </figure>
     </section>
 
     <section id="method">
       <div class="eyebrow">Methodology</div>
       <h2>How the time saved is estimated</h2>
-      <p>Agent Assisted Hours is currently available for two kinds of Copilot Studio agents, and each earns credit for the work it does in a way that matches how it operates. Conversational agents save time <em>through interactions</em> — answering questions, retrieving information, and helping users finish tasks efficiently. Autonomous agents save time by <em>executing workflows</em> with minimal user involvement, combining retrieval and task automation to complete work end to end. The pipeline below shows how each type is credited.</p>
+      <p>Agent Assisted Hours is currently available for two kinds of Copilot Studio agents, and each earns credit for the work it does in a way that matches how it operates. Conversational agents save time <em>through interactions</em>: answering questions, retrieving information, and helping users finish tasks efficiently. Autonomous agents save time by <em>executing workflows</em> with minimal user involvement, combining retrieval and task automation to complete work end to end. The pipeline below shows how each type is credited.</p>
 
       <figure class="fig">
         <div class="figbox">
           <div class="pipe">
             <div class="pipe-band">Conversational agents · time saved per chat session</div>
             <div class="pipe-group">
-              <div class="stage"><div class="snum"><span class="slab">CREDIT</span><span class="sval">A</span></div><div><div class="sname">Information retrieval</div><div class="smeta">A time-savings multiplier is applied for each knowledge-source reference. <span class="smetric">6 min per reference</span> — derived from an AI usage study.</div></div></div>
+              <div class="stage"><div class="snum"><span class="slab">CREDIT</span><span class="sval">A</span></div><div><div class="sname">Information retrieval</div><div class="smeta">A time-savings multiplier is applied for each knowledge-source reference. <span class="smetric">6 min per reference</span>, derived from an AI usage study.</div></div></div>
               <div class="stage"><div class="snum"><span class="slab">CREDIT</span><span class="sval">B</span></div><div><div class="sname">Session-outcome weighting</div><div class="smeta">For sessions with no knowledge-source reference that still assisted the user, time saved is weighted by outcome. <span class="smetric">Resolved 100% · Escalated and Abandoned 70%</span></div></div></div>
             </div>
             <div class="pipe-arrow">↓ sums to time saved per session ↓</div>
             <div class="pipe-band b2">Autonomous agents · time saved per run</div>
             <div class="pipe-group" style="border-top:none;border-radius:8px;margin-top:6px">
               <div class="stage"><div class="snum"><span class="slab">CREDIT</span><span class="sval">A</span></div><div><div class="sname">Information retrieval</div><div class="smeta">Same multiplier for each knowledge-source reference. <span class="smetric">6 min per reference</span></div></div></div>
-              <div class="stage"><div class="snum"><span class="slab">CREDIT</span><span class="sval">B</span></div><div><div class="sname">Task automation</div><div class="smeta">Time saved from specific actions the agent performs — such as updating a file or completing a task — using an estimate for each action based on telemetry-based observations and research estimates.</div></div></div>
+              <div class="stage"><div class="snum"><span class="slab">CREDIT</span><span class="sval">B</span></div><div><div class="sname">Task automation</div><div class="smeta">Time saved from specific actions the agent performs, such as updating a file or completing a task, using an estimate for each action based on telemetry-based observations and research estimates.</div></div></div>
               <div class="stage"><div class="snum"><span class="slab">CREDIT</span><span class="sval">C</span></div><div><div class="sname">Unattributed actions</div><div class="smeta">Where action details are not known, an average time saving is applied as the <span class="smetric">default multiplier</span>.</div></div></div>
             </div>
           </div>
         </div>
-        <figcaption>Figure 2 — How each agent type is credited. Conversational sessions are credited for retrieval and session outcome; autonomous runs add automated actions time savings on top of retrieval.</figcaption>
+        <figcaption>Figure 2: How each agent type is credited. Conversational sessions are credited for retrieval and session outcome; autonomous runs add automated actions time savings on top of retrieval.</figcaption>
       </figure>
 
       <h3>Conversational agents: crediting partial progress</h3>
-      <p>For conversational agents, time savings are generated through interactions — answering questions, retrieving information, and helping users complete tasks efficiently. Two major contributors for time savings in conversational agents are time saved during information retrieval and during question answering. First, time saved in information retrieval is estimated with a time-savings multiplier for each knowledge-source reference, where the multiplier is derived from an AI usage study (6 minutes). Second, for sessions that have no knowledge-source reference but still assisted the user by answering queries, time saved is credited based on the session outcome.</p>
+      <p>For conversational agents, time savings are generated through interactions: answering questions, retrieving information, and helping users complete tasks efficiently. Two major contributors for time savings in conversational agents are time saved during information retrieval and during question answering. First, time saved in information retrieval is estimated with a time-savings multiplier for each knowledge-source reference, where the multiplier is derived from an AI usage study (6 minutes). Second, for sessions that have no knowledge-source reference but still assisted the user by answering queries, time saved is credited based on the session outcome.</p>
 
       <figure class="fig">
         <div class="figbox">
@@ -336,10 +336,10 @@
             <div class="crow"><div class="clab">Escalated / abandoned</div><div class="ctrack"><div class="cfill a" style="width:70%">70% credited</div></div></div>
           </div>
         </div>
-        <figcaption>Figure 3 — Session-outcome weighting for conversational sessions without a knowledge-source reference. Crediting partial progress keeps the metric inclusive of sessions that helped even when they did not fully resolve.</figcaption>
+        <figcaption>Figure 3: Session-outcome weighting for conversational sessions without a knowledge-source reference. Crediting partial progress keeps the metric inclusive of sessions that helped even when they did not fully resolve.</figcaption>
       </figure>
 
-      <p>This approach is deliberately inclusive of time saved across all sessions — whether there was complete or partial progress — so that genuinely helpful interactions are not discarded simply because they ended in escalation.</p>
+      <p>This approach is deliberately inclusive of time saved across all sessions, whether there was complete or partial progress, so that genuinely helpful interactions are not discarded simply because they ended in escalation.</p>
 
       <h3>Autonomous agents: retrieval plus automated actions</h3>
       <p>For autonomous agents, time savings are generated through the execution of end-to-end workflows with minimal user involvement, combining information retrieval capabilities with task automation to complete business processes efficiently. Agent Assisted Hours (AAH) estimates the total time saved by autonomous agents by aggregating savings derived from information retrieval activities, automated task execution, and broader agent-driven workflow activity. Specifically, AAH estimates time savings across autonomous agent runs by considering multiple components. Time savings from information retrieval are calculated using a predefined time-savings multiplier for each knowledge-source reference, where the multiplier is derived from AI usage studies and is currently set to six minutes per reference. Time savings from task automation are estimated based on the specific actions performed by the agent, such as updating files, completing tasks, or executing workflow steps, using telemetry-based time-savings estimates associated with those actions. In scenarios where detailed action-level information is unavailable, time savings are estimated using the average time savings observed across known actions, which serves as the default time-savings multiplier.</p>
@@ -349,7 +349,7 @@
     <section id="results">
       <div class="eyebrow">In the report</div>
       <h2>What the numbers show</h2>
-      <p>Agent Assisted Hours surfaces in the Copilot Studio agents report as a headline impact figure alongside engagement and satisfaction. The two snapshots below are illustrative views from the report — one for conversational agents, one for autonomous agents — over the same measurement window.</p>
+      <p>Agent Assisted Hours surfaces in the Copilot Studio agents report as a headline impact figure alongside engagement and satisfaction. The two snapshots below are illustrative views from the report (one for conversational agents, one for autonomous agents) over the same measurement window.</p>
 
       <figure class="fig">
         <div class="figbox">
@@ -375,24 +375,24 @@
     <section id="scope">
       <div class="eyebrow">Scope</div>
       <h2>How to read the metric</h2>
-      <p>Agent Assisted Hours is an estimate of time saved, aggregated for interpretation — not a precise clock on any one person's work. All inputs are used solely to generate aggregated insights at the agent or organization level, and are never used to measure, monitor, or assess individual behavior.</p>
+      <p>Agent Assisted Hours is an estimate of time saved, aggregated for interpretation, not a precise clock on any one person's work. All inputs are used solely to generate aggregated insights at the agent or organization level, and are never used to measure, monitor, or assess individual behavior.</p>
       <p>The agent-impact measurement space is also an active research area. The measurement approach and the underlying time-savings estimates will evolve as new application areas for agents emerge and as we learn more about real-world usage patterns.</p>
 
       <div class="panel note">
         <h3>Explore the details</h3>
-        <p style="margin:0">For a deeper look at how the metric is calculated — including formulas and interpretation guidance — see the Microsoft Learn documentation: <a href="https://learn.microsoft.com/en-us/viva/insights/advanced/analyst/templates/copilot-studio-agents">Copilot Studio agents report | Microsoft Learn</a>. You can also explore Agent Assisted Hours directly in the Copilot Studio agents report in Viva Insights to see where agents are delivering value.</p>
+        <p style="margin:0">For a deeper look at how the metric is calculated, including formulas and interpretation guidance, see the Microsoft Learn documentation: <a href="https://learn.microsoft.com/en-us/viva/insights/advanced/analyst/templates/copilot-studio-agents">Copilot Studio agents report | Microsoft Learn</a>. You can also explore Agent Assisted Hours directly in the Copilot Studio agents report in Viva Insights to see where agents are delivering value.</p>
       </div>
     </section>
 
     <section id="next">
       <div class="eyebrow">Next in the series</div>
       <h2>From time saved to human-augmented hours</h2>
-      <p>Agent Assisted Hours answers one half of the value question: how much time do agents save on a shared task? Part 2 takes up the complementary half. When an agent runs a long, multi-step workflow, it performs work a person would otherwise have to do themselves — human-equivalent hours added to what a person could accomplish alone. The next article introduces <b>New Assisted Hours</b> and the research behind it.</p>
+      <p>Agent Assisted Hours answers one half of the value question: how much time do agents save on a shared task? Part 2 takes up the complementary half. When an agent runs a long, multi-step workflow, it performs work a person would otherwise have to do themselves: human-equivalent hours added to what a person could accomplish alone. The next article introduces <b>New Assisted Hours</b> and the research behind it.</p>
 
       <a class="nextcard" href="https://example.com/REPLACE-WITH-PART-2-NEW-ASSISTED-HOURS-URL">
         <div class="nc-lab">Part 2 · Inside the Metrics</div>
         <div class="nc-title">New Assisted Hours: the human-augmented work agents make possible</div>
-        <div class="nc-desc">A layered pipeline and six research stages that estimate the human-equivalent hours an agent contributes — an additive view that complements time saved.</div>
+        <div class="nc-desc">A layered pipeline and six research stages that estimate the human-equivalent hours an agent contributes, an additive view that complements time saved.</div>
         <span class="nc-soon">Coming soon</span>
       </a>
     </section>
@@ -400,7 +400,7 @@
 
   <footer>
     <div class="foot-nav">← Back to Articles<span class="sep">·</span>Inside the Metrics · Part 1<span class="sep">·</span>Last updated: July 2026</div>
-    <div class="foot-desc">A Copilot Analytics Lab article on Agent Assisted Hours — how Microsoft estimates the time end users save through Copilot Studio conversational and autonomous agents, the signals and benchmarks behind the estimate, and how to read it.</div>
+    <div class="foot-desc">A Copilot Analytics Lab article on Agent Assisted Hours: how Microsoft estimates the time end users save through Copilot Studio conversational and autonomous agents, the signals and benchmarks behind the estimate, and how to read it.</div>
   </footer>
 
 </div>

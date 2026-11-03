@@ -354,7 +354,7 @@
 }
 
 /* "View code" and the votes share one row. The vote buttons sit edge to edge, and the last one's
-   6px padding hangs into the card padding so its count lines up with the text above. */
+   6px padding hangs into the card padding so its icon lines up with the text above. */
 .labs-code-card .labs-card__footer {
   gap: 12px 4px;
 }

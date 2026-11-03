@@ -35,7 +35,7 @@ const items = updates
     const tagPrefix = update.tags.length > 0 ? `[${update.tags.join(", ")}] ` : "";
 
     return `    <item>
-      <title>${escapeXml(`${update.tool} — ${update.title}`)}</title>
+      <title>${escapeXml(`${update.tool}: ${update.title}`)}</title>
       <link>${escapeXml(absoluteUrl(update.link))}</link>
       <description>${escapeXml(`${tagPrefix}${update.summary}`)}</description>
       <pubDate>${rssDate(update.date)}</pubDate>

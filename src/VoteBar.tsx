@@ -11,7 +11,8 @@ interface VoteBarProps {
   cardId: string;
   className?: string;
   /** "pill" has semibold counts and sits 12px below the content above it. "inline" is the
-      minimal Figma "feedback" cluster (bare icon + count) for card footers. */
+      minimal Figma "feedback" cluster (bare icon + count) for card footers. Only thumbs up
+      shows a count; thumbs down is icon only. */
   variant?: "pill" | "inline";
 }
 
@@ -50,7 +51,7 @@ export function VoteBar({ cardId, className, variant = "pill" }: VoteBarProps) {
         type="button"
         className="labs-vote__button labs-vote__button--down"
         aria-pressed={myVote === "down"}
-        aria-label={`Thumbs down. ${counts.down} ${counts.down === 1 ? "vote" : "votes"}`}
+        aria-label="Thumbs down"
         disabled={pending}
         onClick={() => vote("down")}
       >
@@ -61,7 +62,6 @@ export function VoteBar({ cardId, className, variant = "pill" }: VoteBarProps) {
             <ThumbDislike16Regular aria-hidden="true" />
           )}
         </span>
-        <span className="labs-vote__count">{counts.down}</span>
       </button>
     </div>
   );

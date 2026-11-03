@@ -119,7 +119,7 @@ export const templates: TemplateItem[] = [
     id: "valuelens",
     title: "ValueLens for Microsoft Copilot",
     description:
-      "Measure AI business value, ROI and cost across your whole Copilot estate — hours saved, assisted value, adoption, agent governance and user feedback in one Power BI template. Ships with a sample dataset so you can explore it before connecting a tenant.",
+      "Measure AI business value, ROI and cost across your whole Copilot estate: hours saved, assisted value, adoption, agent governance and user feedback in one Power BI template. Ships with a sample dataset so you can explore it before connecting a tenant.",
     url: "https://github.com/microsoft/ValueLens-for-Microsoft-Copilot#-pick-a-deployment-path",
     icon: BoardSplit24Regular,
     image: `${base}images/card-valuelens.png`,
@@ -133,7 +133,7 @@ export const templates: TemplateItem[] = [
     id: "consumption-central",
     title: "Consumption Central for Microsoft Copilot",
     description:
-      "One Power BI template for Microsoft Copilot credit consumption and cost — Cowork / Work IQ, Copilot Studio, GitHub Copilot and Azure AI Foundry together in a single view.",
+      "One Power BI template for Microsoft Copilot credit consumption and cost: Cowork / Work IQ, Copilot Studio, GitHub Copilot and Azure AI Foundry together in a single view.",
     url: "https://github.com/microsoft/ConsumptionCentral-for-Microsoft-Copilot",
     icon: DataTrending24Regular,
     image: `${base}images/card-consumption-central.png`,
@@ -147,7 +147,7 @@ export const templates: TemplateItem[] = [
     id: "aio-dashboard",
     title: "AI in One Dashboard",
     description:
-      "Comprehensive Copilot and Agent analytics covering adoption, usage, impact, and ROI — all in a single Power BI dashboard.",
+      "Comprehensive Copilot and Agent analytics covering adoption, usage, impact, and ROI, all in a single Power BI dashboard.",
     url: "https://github.com/microsoft/AI-in-One-Dashboard#-dashboard-preview",
     icon: BoardSplit24Regular,
     image: `${base}images/spot/dashboard.svg`,
@@ -177,7 +177,7 @@ export const templates: TemplateItem[] = [
     id: "cowork-value-estimator",
     title: "Cowork Value Estimator",
     description:
-      "Your personal Copilot Cowork impact report — research-anchored Time Saved, professional-services-equivalent value, and work mapped to Jobs, Business Processes, and the four Value Pillars.",
+      "Your personal Copilot Cowork impact report: research-anchored Time Saved, professional-services-equivalent value, and work mapped to Jobs, Business Processes, and the four Value Pillars.",
     url: "https://github.com/microsoft/What-I-did-with-Cowork#option-1--let-cowork-install-it-for-you-easiest",
     icon: Sparkle24Regular,
     image: `${base}images/spot/clock.svg`,
@@ -272,7 +272,7 @@ export const resources: ResourceItem[] = [
     id: "viva-insights-essentials",
     title: "Business Analytics Analysis - Essentials",
     description:
-      "Get started with R & Python utility scripts — exploratory data analysis, standard visualisations (bar charts, trend lines, network diagrams), and custom KPI generation from Business Analytics data.",
+      "Get started with R & Python utility scripts: exploratory data analysis, standard visualisations (bar charts, trend lines, network diagrams), and custom KPI generation from Business Analytics data.",
     url: "https://microsoft.github.io/viva-insights-sample-code/essentials/",
     icon: DocumentBulletList24Regular,
     category: "Code",
@@ -286,7 +286,7 @@ export const resources: ResourceItem[] = [
     id: "advanced-analytics",
     title: "Advanced Analytics",
     description:
-      "Machine learning & statistical modelling — Random Forest models for top-performer prediction, Information Value for feature selection, and pairwise chi-square tests for hypothesis testing.",
+      "Machine learning & statistical modelling: Random Forest models for top-performer prediction, Information Value for feature selection, and pairwise chi-square tests for hypothesis testing.",
     url: "https://microsoft.github.io/viva-insights-sample-code/advanced/",
     icon: DocumentBulletList24Regular,
     category: "Code",
@@ -300,7 +300,7 @@ export const resources: ResourceItem[] = [
     id: "copilot-analytics",
     title: "Copilot Analytics",
     description:
-      "Copilot-specific scripts — usage volume & breadth analysis, habituality scoring, Power User vs Habitual User segmentation, and adoption trend tracking across your organisation.",
+      "Copilot-specific scripts: usage volume & breadth analysis, habituality scoring, Power User vs Habitual User segmentation, and adoption trend tracking across your organisation.",
     url: "https://microsoft.github.io/viva-insights-sample-code/copilot/",
     icon: DocumentBulletList24Regular,
     category: "Code",
@@ -314,7 +314,7 @@ export const resources: ResourceItem[] = [
     id: "frontier-analytics",
     title: "Frontier Analytics",
     description:
-      "AI-assisted, export-first toolkit — ready-to-paste prompts for coding agents, schema docs for person queries & Purview audit logs, and sample specs for ROI estimation dashboards.",
+      "AI-assisted, export-first toolkit: ready-to-paste prompts for coding agents, schema docs for person queries & Purview audit logs, and sample specs for ROI estimation dashboards.",
     url: "https://microsoft.github.io/viva-insights-sample-code/frontier-analytics/",
     icon: DocumentBulletList24Regular,
     category: "Code",
@@ -342,7 +342,7 @@ export const resources: ResourceItem[] = [
     id: "network-analysis",
     title: "Network Analysis",
     description:
-      "Organisational Network Analysis (ONA) — visualise collaboration flows, identify influencers & connectors, map cross-team silos, and track M&A integration or remote-work patterns.",
+      "Organisational Network Analysis (ONA): visualise collaboration flows, identify influencers & connectors, map cross-team silos, and track M&A integration or remote-work patterns.",
     url: "https://microsoft.github.io/viva-insights-sample-code/network/",
     icon: DocumentBulletList24Regular,
     category: "Code",
@@ -404,7 +404,7 @@ export const research: ResearchItem[] = [
     id: "agent-assisted-hours",
     title: "Agent assisted Hours",
     description:
-      "Understand agent-assisted hours — how much time agents are helping teams reclaim, with a breakdown of impact across the organization.",
+      "Understand agent-assisted hours: how much time agents are helping teams reclaim, with a breakdown of impact across the organization.",
     url: `${base}agent-assisted-hours.html`,
     icon: DocumentBulletList24Regular,
     kind: "Research",
@@ -416,7 +416,7 @@ export const research: ResearchItem[] = [
     id: "new-agent-assisted-hours",
     title: "New Assisted Hours",
     description:
-      "The refreshed agent-assisted hours view — an updated breakdown of the time agents are helping teams reclaim across the organization.",
+      "The refreshed agent-assisted hours view, an updated breakdown of the time agents are helping teams reclaim across the organization.",
     url: `${base}new-agent-assisted-hours.html`,
     icon: DocumentBulletList24Regular,
     kind: "Research",
@@ -452,7 +452,7 @@ export const research: ResearchItem[] = [
     id: "work-trend-index-2026",
     title: "Microsoft Work Trend Index Report 2026",
     description:
-      "The latest annual Work Trend Index report — data-driven insights on how AI is reshaping work, productivity, and the future of organizations.",
+      "The latest annual Work Trend Index report: data-driven insights on how AI is reshaping work, productivity, and the future of organizations.",
     url: "https://assets-c4akfrf5b4d3f4b7.z01.azurefd.net/assets/2026/05/2026_Work_Trend_Index_Annual_Report_050526-7_69fc5b1c4e265.pdf",
     icon: DocumentBulletList24Regular,
     kind: "Research",
@@ -464,7 +464,7 @@ export const research: ResearchItem[] = [
     id: "copilot-advanced-analytics",
     title: "Advanced Analysis Examples with Copilot Analytics",
     description:
-      "A recipe book of analysis and visualisation examples for measuring Copilot adoption and impact — built for analytics leaders and data scientists.",
+      "A recipe book of analysis and visualisation examples for measuring Copilot adoption and impact, built for analytics leaders and data scientists.",
     url: "https://aka.ms/CopilotAdvancedAnalytics",
     icon: DocumentBulletList24Regular,
     kind: "Research",
@@ -476,7 +476,7 @@ export const research: ResearchItem[] = [
     id: "getting-started-custom-analysis",
     title: "Getting Started with Custom Analysis in Copilot Analytics",
     description:
-      "A tactical playbook for custom analysis — from planning your measurement programme and setting up Business Analytics to running queries and building an analysis playbook.",
+      "A tactical playbook for custom analysis, from planning your measurement programme and setting up Business Analytics to running queries and building an analysis playbook.",
     url: "https://adoption.microsoft.com/files/copilot/GettingStartedWithCustomAnalysisInCopilotAnalytics.pptx",
     icon: DocumentBulletList24Regular,
     kind: "Playbook",
@@ -488,7 +488,7 @@ export const research: ResearchItem[] = [
     id: "new-future-of-work",
     title: "The New Future of Work",
     description:
-      "A research hub from Microsoft — controlled studies, real-world signals, and researcher perspectives on how AI is changing work.",
+      "A research hub from Microsoft: controlled studies, real-world signals, and researcher perspectives on how AI is changing work.",
     url: "https://microsoft.github.io/nfw-reader/",
     icon: DocumentBulletList24Regular,
     kind: "Research",
@@ -500,7 +500,7 @@ export const research: ResearchItem[] = [
     id: "causal-impact-copilot-word",
     title: "How Copilot Changed the Pace of Work in Word",
     description:
-      "A study of 72,000+ Word users reveals how sustained Copilot adoption changed the pace of work — and introduces a new method to measure AI impact as products and people evolve together.",
+      "A study of 72,000+ Word users reveals how sustained Copilot adoption changed the pace of work and introduces a new method to measure AI impact as products and people evolve together.",
     url: "https://microsoft.github.io/nfw-reader/posts/causal-impact-copilot",
     icon: DocumentBulletList24Regular,
     kind: "Research",
@@ -512,7 +512,7 @@ export const research: ResearchItem[] = [
     id: "when-ai-met-the-meeting",
     title: "When AI Met the Meeting",
     description:
-      "An in-depth exploration of how AI is transforming meetings — from preparation and real-time assistance to post-meeting insights and action items.",
+      "An in-depth exploration of how AI is transforming meetings, from preparation and real-time assistance to post-meeting insights and action items.",
     url: "https://microsoft.github.io/viva-insights-sample-code/articles/when-ai-met-the-meeting/",
     icon: DocumentBulletList24Regular,
     kind: "Research",

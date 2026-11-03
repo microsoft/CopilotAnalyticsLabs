@@ -138,7 +138,7 @@ export function SiteHeader() {
             <DialogContent>
               <div className="labs-contact">
                 <PortalText as="p" textRole="reading" tone="secondary">
-                  For further questions and doubts — Please drop a mail to
+                  For further questions and doubts, please drop a mail to
                 </PortalText>
                 <div className="labs-contact__email">
                   <a className="labs-link" href={`mailto:${CONTACT_EMAIL}`}>

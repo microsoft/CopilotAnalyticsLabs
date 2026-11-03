@@ -4,14 +4,14 @@
  * Storage strategy:
  *  - When VITE_SUPABASE_URL + VITE_SUPABASE_ANON_KEY are configured, votes are
  *    stored in a shared Supabase table so counts are global across all visitors.
- *    No user identity, cookies, or PII are sent — voting is fully anonymous. The
+ *    No user identity, cookies, or PII are sent; voting is fully anonymous. The
  *    anon key is public by design and writes are constrained by row-level
  *    security (only the `apply_vote` RPC can mutate counts).
  *  - Otherwise, counts fall back to localStorage so the UI still works locally.
  *
  * A per-browser record of *this* browser's vote (localStorage) prevents double
  * counting and lets the user toggle / switch their vote. It stores only the card
- * id and direction — never any identity.
+ * id and direction, never any identity.
  */
 
 import { useCallback, useState, useSyncExternalStore } from "react";
@@ -103,7 +103,7 @@ async function loadAllCounts(): Promise<void> {
         return;
       }
     } catch {
-      /* network error — fall through to local */
+      /* network error: fall through to local */
     }
   }
   const local = readJson<Record<string, VoteCounts>>(LS_LOCAL_COUNTS, {});

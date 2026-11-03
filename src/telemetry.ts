@@ -2,7 +2,7 @@
  * Lightweight telemetry module for Copilot Analytics Labs.
  *
  * Tracks page views and click events to localStorage and logs them to the
- * browser console.  No external dependencies — works fully offline on
+ * browser console.  No external dependencies; works fully offline on
  * GitHub Pages.
  *
  * Storage key: "cal_telemetry"
@@ -43,7 +43,7 @@ function writeStore(store: TelemetryStore): void {
     }
     localStorage.setItem(STORAGE_KEY, JSON.stringify(store));
   } catch {
-    /* storage full — silently skip */
+    /* storage full: silently skip */
   }
 }
 

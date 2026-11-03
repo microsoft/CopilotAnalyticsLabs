@@ -21,9 +21,9 @@ const useStyles = makeStyles({
 });
 
 interface DemoVideoButtonProps {
-  /** Template id — used for telemetry. */
+  /** Template id, used for telemetry. */
   id: string;
-  /** Template title — used for the dialog heading and the video aria-label. */
+  /** Template title, used for the dialog heading and the video aria-label. */
   title: string;
   /**
    * Direct MP4 URL. Use the github.com/<org>/<repo>/raw/<branch>/... form:
@@ -46,7 +46,7 @@ interface DemoVideoButtonProps {
  * GitHub serves MP4s as application/octet-stream, so navigating to the URL
  * directly downloads the file rather than playing it. Inside a <video> element
  * the explicit <source type="video/mp4"> tells the browser what to expect, so
- * playback works — the same approach the Analytics Hub uses.
+ * playback works. The Analytics Hub uses the same approach.
  */
 export function DemoVideoButton({
   id,
@@ -59,7 +59,9 @@ export function DemoVideoButton({
 }: DemoVideoButtonProps) {
   const styles = useStyles();
   const [open, setOpen] = useState(false);
-  const heading = label === "Play demo" ? title : `${title} — ${label.replace(/^(Watch|Play)\s+/i, "")}`;
+  const videoKind = label.replace(/^(Watch|Play)\s+/i, "");
+  const heading =
+    label === "Play demo" ? title : `${title}: ${videoKind.charAt(0).toUpperCase()}${videoKind.slice(1)}`;
 
   return (
     <>
