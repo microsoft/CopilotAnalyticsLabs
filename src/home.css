@@ -116,13 +116,15 @@
   pointer-events: none;
 }
 
+/* The artwork is drawn at 90% of the box height, centred vertically and still flush right. */
 .labs-hero__art > img {
   position: absolute;
   inset-block: 0;
   inset-inline-end: 0;
-  block-size: 100%;
+  block-size: 90%;
   inline-size: auto;
   max-inline-size: none;
+  margin-block: auto;
 }
 
 .labs-hero__header {
