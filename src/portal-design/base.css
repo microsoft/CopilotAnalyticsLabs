@@ -1,0 +1,255 @@
+/* Portal design kit: global foundations. Import once, after the app's own index.css.
+   Mirrors the portal's index.css: Segoe UI, base text, headings and the shared button recipes. */
+@import './theme.css';
+@import './typography.css';
+
+@font-face {
+  font-family: 'Segoe UI';
+  src: url('https://res-1.cdn.office.net/files/fabric-cdn-prod_20230815.002/assets/fonts/segoeui-westeuropean/segoeui-regular.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Segoe UI';
+  src: url('https://res-1.cdn.office.net/files/fabric-cdn-prod_20230815.002/assets/fonts/segoeui-westeuropean/segoeui-semibold.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+}
+
+:root {
+  font-family: var(--type-family);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html,
+body,
+#root {
+  min-width: 320px;
+  min-height: 100%;
+  margin: 0;
+}
+
+body {
+  min-height: 100vh;
+  font: var(--type-reading);
+}
+
+b,
+strong,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+th {
+  font-weight: 600;
+}
+
+.eyebrow {
+  display: block;
+  color: light-dark(#616161, var(--color-text-muted));
+  font: var(--type-metadata); font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+/* Ordinary actions. PortalButton applies these classes; external links can use them on <a>. */
+.inline-action-button {
+  display: inline;
+  padding: 0;
+  border: 0;
+  color: inherit;
+  background: transparent;
+  vertical-align: baseline;
+  text-align: inherit;
+  text-decoration: underline dotted;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.inline-action-button:hover:not(:disabled):not([aria-disabled="true"]) {
+  color: var(--color-brand);
+  text-decoration-style: solid;
+}
+
+.inline-action-button:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+.inline-action-button:is(:disabled, [aria-disabled="true"]) {
+  color: var(--color-text-muted);
+  cursor: default;
+}
+
+.primary-button,
+.secondary-button,
+.tertiary-button {
+  appearance: none;
+  display: inline-flex;
+  min-height: 32px;
+  max-width: 100%;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border: 0;
+  border-radius: 4px;
+  cursor: pointer;
+  font: var(--type-control); font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.primary-button:focus-visible,
+.secondary-button:focus-visible,
+.tertiary-button:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+.primary-button svg,
+.secondary-button svg,
+.tertiary-button svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+:is(.primary-button, .secondary-button, .tertiary-button)[data-icon-only="true"] {
+  width: 32px;
+  min-width: 32px;
+  height: 32px;
+  padding: 6px;
+}
+
+:is(.primary-button, .secondary-button, .tertiary-button)[data-icon-only="true"] svg {
+  width: 20px;
+  height: 20px;
+}
+
+:is(.primary-button, .secondary-button, .tertiary-button)[data-shape="circular"] {
+  border-radius: 50%;
+}
+
+:is(.primary-button, .secondary-button, .tertiary-button)[data-shape="circular"]:not([data-icon-only="true"]) {
+  border-radius: var(--borderRadiusCircular);
+}
+
+.tertiary-button {
+  color: light-dark(#424242, var(--color-text-secondary));
+  background: transparent;
+}
+
+.tertiary-button:hover:not(:disabled):not([aria-disabled="true"]) {
+  background: light-dark(#f0f0f0, var(--color-surface-subtle));
+  text-decoration: none;
+}
+
+.tertiary-button:active:not(:disabled):not([aria-disabled="true"]) {
+  background: light-dark(#e0e0e0, var(--color-hover));
+}
+
+.tertiary-button:is(:disabled, [aria-disabled="true"]) {
+  color: light-dark(#b3b3b3, var(--color-text-disabled));
+  cursor: default;
+}
+
+.tertiary-button[data-on-accent="true"]:not(:disabled):not([aria-disabled="true"]) {
+  color: var(--card-accent-foreground);
+}
+
+.tertiary-button[data-on-accent="true"]:hover:not(:disabled):not([aria-disabled="true"]) {
+  background: var(--card-accent-hover);
+}
+
+.tertiary-button[data-on-accent="true"]:active:not(:disabled):not([aria-disabled="true"]) {
+  background: var(--card-accent-pressed);
+}
+
+.tertiary-button[data-on-accent="true"]:focus-visible {
+  outline-color: var(--card-accent-focus);
+}
+
+.primary-button {
+  color: light-dark(#fff, var(--color-on-brand));
+  background: #0f6cbd;
+}
+
+.portal-brand-action:not(:disabled):not([aria-disabled="true"]),
+.inline-action-button.portal-brand-action[data-disabled-appearance="brand"] {
+  color: var(--color-brand);
+}
+
+.primary-button:hover:not(:disabled):not([aria-disabled="true"]) {
+  background: #115ea3;
+}
+
+.primary-button:active:not(:disabled):not([aria-disabled="true"]) {
+  background: #0c3b5e;
+}
+
+.secondary-button {
+  padding: 5px 11px;
+  border: 1px solid light-dark(#d1d1d1, var(--color-border));
+  color: light-dark(#242424, var(--color-text));
+  background: light-dark(#fff, var(--color-surface));
+  box-shadow: none;
+}
+
+.secondary-button[data-icon-only="true"] {
+  padding: 5px;
+}
+
+.secondary-button:hover:not(:disabled):not([aria-disabled="true"]) {
+  background: light-dark(#f5f5f5, var(--color-surface-subtle));
+}
+
+.secondary-button:active:not(:disabled):not([aria-disabled="true"]) {
+  background: light-dark(#e0e0e0, var(--color-hover));
+}
+
+.primary-button:is(:disabled, [aria-disabled="true"]),
+.secondary-button:is(:disabled, [aria-disabled="true"]) {
+  color: light-dark(#b3b3b3, var(--color-text-disabled));
+  background: light-dark(#f5f5f5, var(--color-surface-subtle));
+  cursor: default;
+  box-shadow: none;
+}
+
+.secondary-button:is(:disabled, [aria-disabled="true"]) {
+  border-color: transparent;
+}
+
+/* The portal's standard raised card surface. Use with PortalCard: className="data-table-card". */
+.data-table-card {
+  overflow: hidden;
+  padding: 18px 20px;
+  border-radius: 8px;
+  background: light-dark(#fff, var(--color-surface));
+  box-shadow: 0 1px 2px rgb(0 0 0 / 14%), 0 0 2px rgb(0 0 0 / 12%);
+}
+
+.data-table-scroll {
+  overflow-x: auto;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}

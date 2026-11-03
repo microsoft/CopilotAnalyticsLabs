@@ -69,6 +69,12 @@ export const TelemetryEvents = {
   ResearchViewClick: "CopilotAnalyticsLabs.ResearchViewClick",
 } as const;
 
+/** Sends to Microsoft Clarity once its script has loaded; does nothing before that. */
+function sendToClarity(...args: string[]): void {
+  if (typeof window === "undefined") return;
+  (window as Window & { clarity?: (...args: string[]) => void }).clarity?.(...args);
+}
+
 /* ─── Public API ─── */
 
 /** Log a page view. Call once on mount. */
@@ -85,9 +91,7 @@ export function logPageView(): void {
   writeStore(store);
 
   // Send page view event to Microsoft Clarity
-  if (typeof window !== "undefined" && (window as any).clarity) {
-    (window as any).clarity("event", TelemetryEvents.PageView);
-  }
+  sendToClarity("event", TelemetryEvents.PageView);
 
   console.log(
     `%c[Telemetry] PageView #${store.pageViews}`,
@@ -106,11 +110,9 @@ export function logClick(
   writeStore(store);
 
   // Send custom event to Microsoft Clarity for server-side tracking
-  if (typeof window !== "undefined" && (window as any).clarity) {
-    (window as any).clarity("event", eventName);
-    if (properties) {
-      (window as any).clarity("set", eventName, JSON.stringify(properties));
-    }
+  sendToClarity("event", eventName);
+  if (properties) {
+    sendToClarity("set", eventName, JSON.stringify(properties));
   }
 
   console.log(

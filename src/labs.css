@@ -1,0 +1,721 @@
+/* Copilot Analytics Labs layout on top of the portal design kit (src/portal-design).
+   This file arranges layout. Colors, borders, radii, type and shadows come from kit tokens
+   (var(--color-…), var(--type-…), Fluent radius variables) and kit components. */
+
+/* ---- App shell ---- */
+
+.labs-app {
+  --labs-header-height: 52px;
+  --labs-gutter: 32px;
+  --labs-column-width: 1024px;
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+  color: var(--color-text);
+  background: var(--color-page);
+}
+
+.labs-main {
+  flex: 1 0 auto;
+}
+
+/* Labs keeps its original centred 1024px content column, narrower than the kit's 1440px
+   maximum, so wide screens keep their page margins. */
+.labs-container {
+  width: 100%;
+  max-width: calc(var(--labs-column-width) + 2 * var(--labs-gutter));
+  margin-inline: auto;
+  padding-inline: var(--labs-gutter);
+}
+
+/* The disclaimer band and the footer run wider than the content column: 64px from the window
+   edges, or in line with the content where its margins are narrower than that. */
+.labs-container--full {
+  max-width: none;
+  padding-inline: clamp(var(--labs-gutter), (100% - var(--labs-column-width)) / 2, 64px);
+}
+
+/* ---- Disclaimer band ---- */
+
+.labs-disclaimer {
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-text-secondary);
+  background: var(--color-surface-subtle);
+  font: var(--type-metadata);
+}
+
+.labs-disclaimer__inner {
+  display: flex;
+  min-height: 40px;
+  align-items: center;
+  gap: 8px;
+  padding-block: 4px;
+}
+
+.labs-disclaimer__icon {
+  flex: 0 0 auto;
+  color: var(--color-text-muted);
+}
+
+.labs-disclaimer__text {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* The disclaimer's link isn't underlined until hover; its external-link icon, sized to the 12px
+   text, still sets it apart without relying on color. The offset stands the glyph on the baseline. */
+.labs-disclaimer .labs-link > svg {
+  width: 12px;
+  height: 12px;
+  vertical-align: -2px;
+}
+
+/* ---- Site header ---- */
+
+.labs-site-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-surface);
+}
+
+.labs-site-header__inner {
+  display: flex;
+  min-height: calc(var(--labs-header-height) - 1px);
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.labs-brand {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 12px;
+}
+
+.labs-brand__divider {
+  width: 1px;
+  height: 16px;
+  flex: 0 0 auto;
+  background: var(--color-border-strong);
+}
+
+.labs-brand__title {
+  min-width: 0;
+  color: var(--color-text);
+  font: var(--type-control);
+  font-weight: var(--type-weight-semibold);
+}
+
+/* The header's Labs name is the home link. It keeps the brand look and underlines on hover. */
+.labs-brand__home {
+  border-radius: 2px;
+  text-decoration: none;
+}
+
+.labs-brand__home:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.labs-brand__home:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+.labs-wordmark {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-text-secondary);
+  font: var(--type-control);
+  font-weight: var(--type-weight-semibold);
+  white-space: nowrap;
+}
+
+.labs-wordmark img {
+  display: block;
+}
+
+.labs-site-nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+}
+
+/* Product logos in header links use the kit's 16px labelled-button icon size. */
+.labs-site-nav img {
+  display: block;
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
+}
+
+/* The two actions wrap as one, so the icon button never sits alone on a line. */
+.labs-site-nav__actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* The new-announcements dot sits on the megaphone's top-right corner, ringed in the header color.
+   Two classes outrank Fluent's own badge positioning. */
+.labs-announcements {
+  position: relative;
+}
+
+.labs-announcements .labs-announcements__dot {
+  position: absolute;
+  inset-block-start: calc(50% - 11px);
+  inset-inline-end: calc(50% - 8px);
+  box-shadow: 0 0 0 1px var(--color-surface);
+}
+
+/* ---- Links ---- */
+
+/* Links inside running text stay underlined so they don't rely on color alone. */
+.labs-link {
+  color: var(--color-brand);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.labs-link:hover {
+  text-decoration-thickness: 2px;
+}
+
+.labs-link--standalone {
+  text-decoration: none;
+}
+
+.labs-link--standalone:hover {
+  text-decoration: underline;
+  text-decoration-thickness: auto;
+}
+
+.labs-link > svg {
+  width: 16px;
+  height: 16px;
+  margin-inline-start: 2px;
+  vertical-align: text-bottom;
+}
+
+:is(.labs-link, .labs-title-link, .labs-breadcrumb a):focus-visible {
+  border-radius: var(--borderRadiusSmall);
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+.labs-title-link {
+  color: var(--color-brand);
+}
+
+.labs-title-link:hover {
+  text-decoration: underline;
+}
+
+/* ---- Site footer ---- */
+
+.labs-site-footer {
+  border-top: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+  background: var(--color-surface-subtle);
+  font: var(--type-metadata);
+}
+
+.labs-site-footer__inner {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-block: 24px;
+}
+
+.labs-site-footer__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+}
+
+/* ---- Subpages ---- */
+
+.labs-page {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  padding-block: 24px 48px;
+}
+
+.labs-page-header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.labs-page-header__description {
+  max-width: 760px;
+}
+
+.labs-breadcrumb {
+  margin-bottom: 4px;
+}
+
+.labs-breadcrumb ol {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  list-style: none;
+  font: var(--type-support);
+}
+
+.labs-breadcrumb li {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.labs-breadcrumb a {
+  color: var(--color-text-secondary);
+}
+
+.labs-breadcrumb a:hover {
+  color: var(--color-text);
+  text-decoration: underline;
+}
+
+.labs-breadcrumb [aria-current="page"],
+.labs-breadcrumb svg {
+  color: var(--color-text-muted);
+}
+
+.labs-narrow {
+  width: 100%;
+  max-width: 860px;
+}
+
+/* ---- Sections ---- */
+
+.labs-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.labs-section__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ---- Filters ---- */
+
+.labs-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px 24px;
+}
+
+.labs-filter-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+}
+
+.labs-filters__divider {
+  width: 1px;
+  height: 24px;
+  background: var(--color-border);
+}
+
+/* ---- Cards ---- */
+
+/* Three cards per row in the full content column. */
+.labs-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+  gap: 16px;
+}
+
+.labs-card {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 12px;
+  padding: 24px;
+}
+
+.labs-card__media {
+  display: block;
+  width: calc(100% + 48px);
+  max-width: none;
+  height: 160px;
+  flex: 0 0 auto;
+  margin: -24px -24px 4px;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-surface-subtle);
+  object-fit: cover;
+}
+
+/* Spot illustrations are shown whole. The inset draws the artwork at about 85% of the band's
+   height without changing the band itself. The brand tint is the Fluent library's color-theme tile,
+   and lets the illustrations' light shapes stand clear of the band. */
+.labs-card__media--contain {
+  padding: 12px;
+  background: var(--color-brand-soft);
+  object-fit: contain;
+}
+
+.labs-card__media--icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-muted);
+}
+
+.labs-card__media--icon svg {
+  width: 48px;
+  height: 48px;
+}
+
+.labs-card__title {
+  overflow-wrap: anywhere;
+}
+
+.labs-card__footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: auto;
+}
+
+.labs-card__footer--stacked {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.labs-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.labs-card__actions > * {
+  flex: 1 1 auto;
+}
+
+.labs-card__divider {
+  height: 1px;
+  background: var(--color-border);
+}
+
+.labs-card__meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 12px;
+}
+
+/* Line the subtle button's label up with the card text above it. */
+.labs-card__meta-row > .tertiary-button:first-child {
+  margin-inline-start: -12px;
+}
+
+/* Votes stay at the end of the row, even when they are alone or wrap. */
+:is(.labs-card__footer, .labs-card__meta-row) > .labs-vote {
+  margin-inline-start: auto;
+}
+
+.labs-card__subheading {
+  margin-top: 8px;
+}
+
+/* ---- Badges ---- */
+
+.labs-tag-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+/* A transparent border shows up as an outline in Windows forced colors. */
+.labs-badge {
+  display: inline-flex;
+  min-height: 20px;
+  align-items: center;
+  padding: 1px 7px;
+  border: 1px solid transparent;
+  border-radius: var(--borderRadiusMedium);
+  color: var(--color-text-secondary);
+  background: var(--color-surface-subtle);
+  font: var(--type-badge);
+  white-space: nowrap;
+}
+
+:root[data-theme="high-contrast"] .labs-badge {
+  border-color: currentColor;
+}
+
+.labs-badge--brand {
+  color: var(--color-brand);
+  background: var(--color-brand-soft);
+}
+
+.labs-badge--success {
+  color: var(--color-success);
+  background: var(--color-success-soft);
+}
+
+.labs-badge--warning {
+  color: var(--color-warning);
+  background: var(--color-warning-soft);
+}
+
+/* ---- Empty state ---- */
+
+.labs-empty {
+  padding-block: 48px;
+  text-align: center;
+}
+
+/* ---- Votes ---- */
+
+.labs-vote {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 12px;
+}
+
+.labs-vote--inline {
+  margin-top: 0;
+}
+
+.labs-vote__button {
+  display: inline-flex;
+  min-height: 24px;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 6px;
+  border: 0;
+  border-radius: var(--borderRadiusMedium);
+  color: var(--color-text-secondary);
+  background: transparent;
+  cursor: pointer;
+  font: var(--type-metadata);
+}
+
+.labs-vote:not(.labs-vote--inline) .labs-vote__button {
+  font: var(--type-badge);
+}
+
+.labs-vote__button:hover:not(:disabled) {
+  background: var(--color-hover);
+}
+
+.labs-vote__button:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+.labs-vote__button:disabled {
+  cursor: default;
+}
+
+.labs-vote__button--up[aria-pressed="true"] {
+  color: var(--color-success);
+}
+
+.labs-vote__button--down[aria-pressed="true"] {
+  color: var(--color-danger);
+}
+
+/* Positioning context for the ripple, which is centred on the thumb icon. */
+.labs-vote__icon {
+  position: relative;
+  display: inline-flex;
+}
+
+.labs-vote__icon svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* A ring the size of the icon that expands outwards and fades as it goes. */
+.labs-vote__ripple {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 16px;
+  height: 16px;
+  margin: -8px 0 0 -8px;
+  border: 1px solid var(--color-success);
+  border-radius: 50%;
+  pointer-events: none;
+  animation: labs-vote-ripple 450ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes labs-vote-ripple {
+  from {
+    opacity: 0.55;
+    transform: scale(0.5);
+  }
+
+  to {
+    opacity: 0;
+    transform: scale(2.4);
+  }
+}
+
+.labs-vote__count {
+  min-width: 8px;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+/* ---- Dialogs ---- */
+
+.labs-contact {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.labs-contact__email {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+  overflow-wrap: anywhere;
+}
+
+.labs-contact__status {
+  min-height: 16px;
+  color: var(--color-success);
+  font: var(--type-metadata);
+}
+
+.labs-video {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: var(--borderRadiusXLarge);
+}
+
+/* ---- What's new ---- */
+
+.labs-feed {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  padding: 8px 8px 8px 12px;
+}
+
+.labs-feed__url {
+  flex: 1 1 240px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.labs-ordered-list {
+  display: grid;
+  gap: 8px;
+  padding-inline-start: 20px;
+  color: var(--color-text-secondary);
+  font: var(--type-reading);
+}
+
+.labs-ordered-list :is(em, strong) {
+  font-style: normal;
+  font-weight: var(--type-weight-semibold);
+}
+
+.labs-update-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Every item carries a leading rule. The negative margin pushes the rule at the start of
+   each line outside the row, where it is clipped, so a wrapped line doesn't start with one. */
+.labs-update__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 17px;
+  overflow: hidden;
+  color: var(--color-text-muted);
+  font: var(--type-metadata);
+}
+
+.labs-update__meta > * {
+  margin-inline-start: -9px;
+  padding-inline-start: 8px;
+  border-inline-start: 1px solid var(--color-border);
+}
+
+/* ---- Kit additions ---- */
+
+/* Tab strips scroll horizontally, which would clip an outer focus ring, so it sits inside the tab. */
+.service-tab:focus-visible {
+  border-radius: var(--borderRadiusMedium);
+  outline: 2px solid var(--color-focus);
+  outline-offset: -2px;
+}
+
+/* ---- Narrow screens ---- */
+
+@media (max-width: 900px) {
+  .labs-app {
+    --labs-header-height: 0px;
+  }
+
+  .labs-site-header {
+    position: static;
+  }
+
+  .labs-site-header__inner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    padding-block: 8px;
+  }
+
+  .labs-site-nav {
+    justify-content: flex-start;
+  }
+
+  /* Lines the first link's label up with the brand; lines that wrap start at the gutter. */
+  .labs-site-nav > :first-child {
+    margin-inline-start: -12px;
+  }
+}
+
+@media (max-width: 720px) {
+  .labs-filters__divider {
+    display: none;
+  }
+}
+
+@media (max-width: 600px) {
+  .labs-app {
+    --labs-gutter: 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .labs-vote__ripple {
+    display: none;
+  }
+}

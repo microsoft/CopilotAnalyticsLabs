@@ -43,11 +43,11 @@ export default function Root() {
   else page = <App />
 
   return (
-    <>
+    <div className="labs-app">
       <DisclaimerBar />
       <SiteHeader />
-      {page}
+      <main className="labs-main">{page}</main>
       <SiteFooter />
-    </>
+    </div>
   )
 }

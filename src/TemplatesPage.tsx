@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { makeStyles, mergeClasses, shorthands } from "@fluentui/react-components";
-import { ChevronLeft20Filled, Open16Filled } from "@fluentui/react-icons";
+import { Open16Regular } from "@fluentui/react-icons";
 import {
   templates,
   templateTypeFilters,
@@ -11,306 +10,11 @@ import type { TemplateTypeFilter, TemplatePageImpactFilter } from "./data";
 import { logClick, logPageView, TelemetryEvents } from "./telemetry";
 import { VoteBar } from "./VoteBar";
 import { DemoVideoButton } from "./DemoVideo";
-
-const useStyles = makeStyles({
-  page: {
-    minHeight: "100vh",
-    display: "flex",
-    flexDirection: "column",
-    backgroundColor: "#F8F9FC",
-    fontFamily: '"Segoe UI", system-ui, sans-serif',
-    color: "#242424",
-  },
-  hero: {
-    background:
-      "linear-gradient(113deg, rgba(240,231,255,0.7) 0%, rgba(255,255,255,1) 45%, rgba(228,243,255,0.9) 100%)",
-    ...shorthands.padding("48px", "48px", "32px"),
-    '@media (max-width: 600px)': {
-      ...shorthands.padding("32px", "16px", "24px"),
-    },
-  },
-  container: {
-    width: "100%",
-    maxWidth: "1024px",
-    marginLeft: "auto",
-    marginRight: "auto",
-  },
-  breadcrumb: {
-    margin: 0,
-    display: "flex",
-    alignItems: "center",
-    marginBottom: "0",
-  },
-  breadcrumbLink: {
-    display: "inline-flex",
-    alignItems: "center",
-    gap: "4px",
-    color: "#335CCC",
-    fontSize: "14px",
-    fontWeight: 600,
-    lineHeight: "20px",
-    textDecoration: "none",
-    cursor: "pointer",
-    ':hover': {
-      textDecoration: "underline",
-    },
-  },
-  title: {
-    margin: "8px 0 0",
-    fontSize: "34px",
-    lineHeight: "42px",
-    fontWeight: 700,
-    color: "#0E1726",
-    '@media (max-width: 600px)': {
-      fontSize: "26px",
-      lineHeight: "34px",
-    },
-  },
-  description: {
-    margin: "12px 0 0",
-    fontSize: "15px",
-    lineHeight: "22px",
-    color: "#424242",
-    maxWidth: "760px",
-  },
-  body: {
-    flex: 1,
-    ...shorthands.padding("32px", "48px", "64px"),
-    '@media (max-width: 600px)': {
-      ...shorthands.padding("24px", "16px", "48px"),
-    },
-  },
-  filters: {
-    display: "flex",
-    flexWrap: "wrap",
-    alignItems: "center",
-    columnGap: "28px",
-    rowGap: "16px",
-    marginBottom: "40px",
-  },
-  filterGroup: {
-    display: "flex",
-    alignItems: "center",
-    flexWrap: "wrap",
-    gap: "10px",
-  },
-  filterDivider: {
-    width: "1px",
-    height: "24px",
-    backgroundColor: "#E0E0E0",
-    '@media (max-width: 720px)': {
-      display: "none",
-    },
-  },
-  filterLabel: {
-    fontSize: "13px",
-    fontWeight: 600,
-    color: "#616161",
-    flexShrink: 0,
-  },
-  chipRow: {
-    display: "flex",
-    flexWrap: "wrap",
-    gap: "8px",
-  },
-  chip: {
-    display: "inline-flex",
-    alignItems: "center",
-    fontSize: "13px",
-    lineHeight: "18px",
-    fontWeight: 500,
-    color: "#424242",
-    backgroundColor: "#ffffff",
-    cursor: "pointer",
-    ...shorthands.padding("6px", "14px"),
-    ...shorthands.borderRadius("999px"),
-    ...shorthands.border("1px", "solid", "#E0E0E0"),
-    ':hover': {
-      backgroundColor: "#F5F5F5",
-    },
-  },
-  chipActive: {
-    color: "#ffffff",
-    backgroundColor: "#335CCC",
-    ...shorthands.border("1px", "solid", "#335CCC"),
-    ':hover': {
-      backgroundColor: "#294DAE",
-    },
-  },
-  section: {
-    marginBottom: "48px",
-  },
-  sectionHeader: {
-    display: "flex",
-    alignItems: "baseline",
-    gap: "10px",
-    marginBottom: "20px",
-  },
-  sectionTitle: {
-    margin: 0,
-    fontSize: "22px",
-    lineHeight: "28px",
-    fontWeight: 700,
-    color: "#0E1726",
-  },
-  sectionCount: {
-    fontSize: "13px",
-    color: "#8A8A8A",
-    fontWeight: 500,
-  },
-  grid: {
-    display: "grid",
-    gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
-    gap: "20px",
-  },
-  card: {
-    minHeight: "274px",
-    display: "flex",
-    flexDirection: "column",
-    backgroundColor: "#ffffff",
-    boxShadow: "0 0 2px rgba(0,0,0,0.12), 0 4px 16px rgba(0,0,0,0.06)",
-    ...shorthands.borderRadius("16px"),
-    ...shorthands.overflow("hidden"),
-    boxSizing: "border-box",
-  },
-  cardImage: {
-    width: "100%",
-    height: "160px",
-    objectFit: "cover",
-    display: "block",
-  },
-  cardContent: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "8px",
-    // The footer sits closer to the card's bottom edge than to its sides.
-    ...shorthands.padding("24px", "24px", "16px"),
-    flex: 1,
-  },
-  tagRow: {
-    display: "flex",
-    flexWrap: "wrap",
-    gap: "6px",
-  },
-  tag: {
-    display: "inline-flex",
-    alignItems: "center",
-    fontSize: "11px",
-    lineHeight: "16px",
-    fontWeight: 600,
-    ...shorthands.padding("2px", "8px"),
-    ...shorthands.borderRadius("999px"),
-    color: "#3B4A66",
-    backgroundColor: "#EEF2FF",
-  },
-  tagType: {
-    color: "#7A3EA6",
-    backgroundColor: "#F5EAFE",
-  },
-  cardTitle: {
-    margin: 0,
-    fontSize: "16px",
-    lineHeight: "22px",
-    fontWeight: 600,
-    color: "#0E1726",
-    whiteSpace: "nowrap",
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-  },
-  cardDescription: {
-    margin: 0,
-    fontSize: "13px",
-    lineHeight: "18px",
-    color: "#616161",
-    flex: 1,
-  },
-  cardButton: {
-    display: "inline-flex",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: "6px",
-    minHeight: "32px",
-    backgroundColor: "#ffffff",
-    color: "#242424",
-    // <button> does not inherit the page font by default.
-    fontFamily: "inherit",
-    fontSize: "14px",
-    lineHeight: "20px",
-    fontWeight: 600,
-    textDecorationLine: "none",
-    ...shorthands.padding("5px", "12px"),
-    ...shorthands.borderRadius("4px"),
-    ...shorthands.border("1px", "solid", "#D1D1D1"),
-    ':hover': {
-      backgroundColor: "#F7F7F7",
-    },
-  },
-  cardFooter: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: "12px",
-    marginTop: "auto",
-  },
-  // Bottom block of a card: primary buttons, a rule, then the secondary link
-  // and vote bar, pinned to the card's bottom edge.
-  footer: {
-    display: "flex",
-    flexDirection: "column",
-    marginTop: "auto",
-  },
-  buttonsRow: {
-    display: "flex",
-    flexWrap: "wrap",
-    gap: "20px",
-  },
-  // The two primary buttons share the row evenly; their natural widths vary
-  // with the label and would otherwise wrap onto separate lines. The tighter
-  // padding and gap are minimums that keep the longest label on one line.
-  buttonGrow: {
-    flexGrow: 1,
-    flexBasis: 0,
-    minWidth: "120px",
-    gap: "4px",
-    whiteSpace: "nowrap",
-    paddingLeft: "8px",
-    paddingRight: "8px",
-  },
-  footerDivider: {
-    height: "1px",
-    backgroundColor: "#E0E0E0",
-    marginTop: "16px",
-    marginBottom: "16px",
-  },
-  footerRow: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "flex-end",
-    gap: "16px",
-    minHeight: "20px",
-  },
-  footerLink: {
-    marginRight: "auto",
-    ...shorthands.border("none"),
-    ...shorthands.padding(0),
-    minHeight: "20px",
-    backgroundColor: "transparent",
-    color: "#335CCC",
-    ':hover': {
-      backgroundColor: "transparent",
-      textDecorationLine: "underline",
-    },
-  },
-  empty: {
-    ...shorthands.padding("48px", "0"),
-    textAlign: "center",
-    fontSize: "14px",
-    color: "#616161",
-  },
-});
+import { FilterGroup } from "./FilterGroup";
+import { PageHeader } from "./PageHeader";
+import { PortalCard, PortalText } from "./portal-design";
 
 export default function TemplatesPage() {
-  const styles = useStyles();
   const [typeFilter, setTypeFilter] = useState<TemplateTypeFilter>("All");
   const [impactFilter, setImpactFilter] = useState<TemplatePageImpactFilter>("All");
 
@@ -349,149 +53,124 @@ export default function TemplatesPage() {
   const hasResults = sections.some((section) => section.items.length > 0);
 
   return (
-    <div className={styles.page}>
-      <header className={styles.hero}>
-        <div className={styles.container}>
-          <nav className={styles.breadcrumb}>
-            <a className={styles.breadcrumbLink} href={`${import.meta.env.BASE_URL}#/`}>
-              <ChevronLeft20Filled />
-              Back to Labs
-            </a>
-          </nav>
-          <h1 className={styles.title}>Browse all templates</h1>
-          <p className={styles.description}>
-            Production-ready dashboards for Copilot, GitHub Copilot, and business value analytics. Filter by
-            product type and impact scope to find the right starting point.
-          </p>
-        </div>
-      </header>
+    <div className="labs-container labs-page">
+      <PageHeader
+        crumb="Templates"
+        title="Browse all templates"
+        description="Production-ready dashboards for Copilot, GitHub Copilot, and business value analytics. Filter by product type and impact scope to find the right starting point."
+      />
 
-      <main className={styles.body}>
-        <div className={styles.container}>
-          <div className={styles.filters}>
-            <div className={styles.filterGroup}>
-              <span className={styles.filterLabel}>Type</span>
-              <div className={styles.chipRow} role="group" aria-label="Filter by type">
-                {templateTypeFilters.map((cat) => (
-                  <button
-                    key={cat}
-                    type="button"
-                    className={mergeClasses(styles.chip, typeFilter === cat && styles.chipActive)}
-                    aria-pressed={typeFilter === cat}
-                    onClick={() => setTypeFilter(cat)}
-                  >
-                    {cat}
-                  </button>
-                ))}
+      <div className="labs-filters">
+        <FilterGroup
+          label="Type"
+          groupLabel="Filter by type"
+          options={templateTypeFilters}
+          value={typeFilter}
+          onChange={setTypeFilter}
+        />
+        <span className="labs-filters__divider" aria-hidden="true" />
+        <FilterGroup
+          label="Impact"
+          groupLabel="Filter by impact"
+          options={templatePageImpactFilters}
+          value={impactFilter}
+          onChange={setImpactFilter}
+        />
+      </div>
+
+      {!hasResults ? (
+        <PortalCard className="data-table-card labs-empty">
+          <PortalText as="p" textRole="reading" tone="secondary">
+            No templates match the selected filters.
+          </PortalText>
+        </PortalCard>
+      ) : (
+        sections
+          .filter((section) => section.items.length > 0)
+          .map((section) => (
+            <section key={section.key} className="labs-section" aria-labelledby={`templates-${section.key}`}>
+              <div className="labs-section__header">
+                <PortalText as="h2" id={`templates-${section.key}`} textRole="card-title">
+                  {section.title}
+                </PortalText>
+                <span className="labs-badge">{section.items.length}</span>
               </div>
-            </div>
+              <div className="labs-card-grid">
+                {section.items.map((item) => {
+                  const viewLink = (
+                    <a
+                      className="secondary-button"
+                      href={item.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      aria-label={`View template: ${item.title} (opens in a new tab)`}
+                      onClick={() => logClick(TelemetryEvents.TemplateViewClick, { template: item.id })}
+                    >
+                      View template
+                      <Open16Regular aria-hidden="true" />
+                    </a>
+                  );
 
-            <div className={styles.filterDivider} aria-hidden="true" />
-
-            <div className={styles.filterGroup}>
-              <span className={styles.filterLabel}>Impact</span>
-              <div className={styles.chipRow} role="group" aria-label="Filter by impact">
-                {templatePageImpactFilters.map((cat) => (
-                  <button
-                    key={cat}
-                    type="button"
-                    className={mergeClasses(styles.chip, impactFilter === cat && styles.chipActive)}
-                    aria-pressed={impactFilter === cat}
-                    onClick={() => setImpactFilter(cat)}
-                  >
-                    {cat}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {!hasResults ? (
-            <p className={styles.empty}>No templates match the selected filters.</p>
-          ) : (
-            sections
-              .filter((section) => section.items.length > 0)
-              .map((section) => (
-                <section key={section.key} className={styles.section}>
-                  <div className={styles.sectionHeader}>
-                    <h2 className={styles.sectionTitle}>{section.title}</h2>
-                    <span className={styles.sectionCount}>{section.items.length}</span>
-                  </div>
-                  <div className={styles.grid}>
-                    {section.items.map((item) => (
-                      <article key={item.id} className={styles.card}>
-                        {item.image ? <img className={styles.cardImage} src={item.image} alt="" /> : null}
-                        <div className={styles.cardContent}>
-                          <div className={styles.tagRow}>
-                            <span className={mergeClasses(styles.tag, styles.tagType)}>{item.type}</span>
-                            {item.impact.map((tag) => (
-                              <span key={tag} className={styles.tag}>
-                                {tag}
-                              </span>
-                            ))}
+                  return (
+                    <PortalCard key={item.id} role="article" className="data-table-card labs-card">
+                      {item.image ? (
+                        <img
+                          className={`labs-card__media${item.imageIsIllustration ? " labs-card__media--contain" : ""}`}
+                          src={item.image}
+                          alt=""
+                        />
+                      ) : null}
+                      <div className="labs-tag-row">
+                        <span className="labs-badge labs-badge--brand">{item.type}</span>
+                        {item.impact.map((tag) => (
+                          <span key={tag} className="labs-badge">
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                      <PortalText as="h3" textRole="card-title" className="labs-card__title">
+                        {item.title}
+                      </PortalText>
+                      <PortalText as="p" textRole="support" tone="secondary">
+                        {item.description}
+                      </PortalText>
+                      {item.videoUrl || item.setupVideoUrl ? (
+                        // Primary actions, a rule, then the setup video and votes.
+                        <div className="labs-card__footer labs-card__footer--stacked">
+                          <div className="labs-card__actions">
+                            {viewLink}
+                            {item.videoUrl ? (
+                              <DemoVideoButton id={item.id} title={item.title} videoUrl={item.videoUrl} />
+                            ) : null}
                           </div>
-                          <h3 className={styles.cardTitle}>{item.title}</h3>
-                          <p className={styles.cardDescription}>{item.description}</p>
-                          {(item.videoUrl || item.setupVideoUrl) ? (
-                            <div className={styles.footer}>
-                              <div className={styles.buttonsRow}>
-                                <a
-                                  className={mergeClasses(styles.cardButton, styles.buttonGrow)}
-                                  href={item.url}
-                                  target="_blank"
-                                  rel="noreferrer"
-                                  onClick={() => logClick(TelemetryEvents.TemplateViewClick, { template: item.id })}
-                                >
-                                  View template
-                                  <Open16Filled fontSize={12} />
-                                </a>
-                                {item.videoUrl ? (
-                                  <DemoVideoButton
-                                    id={item.id}
-                                    title={item.title}
-                                    videoUrl={item.videoUrl}
-                                    className={mergeClasses(styles.cardButton, styles.buttonGrow)}
-                                  />
-                                ) : null}
-                              </div>
-                              <div className={styles.footerDivider} aria-hidden="true" />
-                              <div className={styles.footerRow}>
-                                {item.setupVideoUrl ? (
-                                  <DemoVideoButton
-                                    id={`${item.id}-setup`}
-                                    title={item.title}
-                                    videoUrl={item.setupVideoUrl}
-                                    label="Watch setup"
-                                    className={mergeClasses(styles.cardButton, styles.footerLink)}
-                                  />
-                                ) : null}
-                                <VoteBar cardId={item.id} variant="inline" />
-                              </div>
-                            </div>
-                          ) : (
-                            <div className={styles.cardFooter}>
-                              <a
-                                className={styles.cardButton}
-                                href={item.url}
-                                target="_blank"
-                                rel="noreferrer"
-                                onClick={() => logClick(TelemetryEvents.TemplateViewClick, { template: item.id })}
-                              >
-                                View template
-                                <Open16Filled fontSize={12} />
-                              </a>
-                              <VoteBar cardId={item.id} variant="inline" />
-                            </div>
-                          )}
+                          <div className="labs-card__divider" aria-hidden="true" />
+                          <div className="labs-card__meta-row">
+                            {item.setupVideoUrl ? (
+                              <DemoVideoButton
+                                id={`${item.id}-setup`}
+                                title={item.title}
+                                videoUrl={item.setupVideoUrl}
+                                label="Watch setup"
+                                variant="subtle"
+                                tone="brand"
+                              />
+                            ) : null}
+                            <VoteBar cardId={item.id} variant="inline" />
+                          </div>
                         </div>
-                      </article>
-                    ))}
-                  </div>
-                </section>
-              ))
-          )}
-        </div>
-      </main>
+                      ) : (
+                        <div className="labs-card__footer">
+                          {viewLink}
+                          <VoteBar cardId={item.id} variant="inline" />
+                        </div>
+                      )}
+                    </PortalCard>
+                  );
+                })}
+              </div>
+            </section>
+          ))
+      )}
     </div>
   );
 }

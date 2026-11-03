@@ -1,0 +1,598 @@
+/* Copilot Analytics Labs home page layout, on top of labs.css and the portal design kit.
+   This file arranges layout. Colors, borders, radii, type and shadows come from kit tokens
+   (var(--color-…), var(--type-…), Fluent radius variables) and kit components. */
+
+.labs-home {
+  --labs-home-tabs-height: 49px;
+  /* Space on each side of the rule between home sections. The sections are large, so they sit
+     further apart than the kit's 32px section spacing. */
+  --labs-home-section-gap: 64px;
+}
+
+/* ---- Section tabs ---- */
+
+/* Sticks below the site header. Below 900px the header scrolls away and --labs-header-height is 0. */
+.labs-home__tabs-shell {
+  position: sticky;
+  top: var(--labs-header-height);
+  z-index: 90;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-surface);
+}
+
+.labs-home__tabs {
+  gap: 28px;
+  padding-top: 8px;
+}
+
+/* ---- Page body ---- */
+
+/* The body spans the page so the rules between sections reach both edges; the hero and each
+   section keep the centred column. The hero sets its own space below the tabs. */
+.labs-home__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--labs-home-section-gap);
+  padding-bottom: var(--labs-home-section-gap);
+}
+
+/* A hairline: the 1px rule is drawn at half height, so it is one device pixel on high-DPI screens and a
+   lighter 1px line elsewhere. Browsers round a 0.5px border up to 1px, so the scale does the thinning. */
+.labs-home__separator {
+  border-top: 1px solid var(--color-border);
+  transform: scaleY(0.5);
+  transform-origin: top;
+}
+
+.labs-home__section {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 16px;
+  /* Section starts land just below the sticky tabs, inside the scroll-spy line. */
+  scroll-margin-top: calc(var(--labs-header-height) + var(--labs-home-tabs-height) + 8px);
+}
+
+.labs-home__section > .primary-service-tabs {
+  margin-bottom: 0;
+}
+
+.labs-home__head {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.labs-home__heading-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 16px;
+}
+
+.labs-home__description {
+  max-width: 760px;
+  margin-top: 4px;
+}
+
+/* Long card descriptions stop at three lines; ClampedDescription adds a tooltip with the full text. */
+.labs-featured__description,
+.labs-template-card__description,
+.labs-code-card__description {
+  display: -webkit-box;
+  overflow: hidden;
+  color: var(--color-text-secondary);
+  font: var(--type-support);
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+}
+
+/* ---- Hero ---- */
+
+/* The hero keeps the original Labs hero's type sizes, by request. They aren't kit roles, so they are
+   set here; the colors are the kit's text tokens. */
+.labs-hero {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 24px;
+  padding-top: 40px;
+}
+
+/* Decorative artwork flush with the column's right edge. It runs from the top of the hero to 40px
+   below the values and scales to that height; a narrower box crops it from the left. The artwork
+   is a Fluent spot illustration on its own rounded tile with a transparent surround. */
+.labs-hero__art {
+  position: absolute;
+  z-index: -1;
+  inset-block: 0 -40px;
+  inset-inline-end: 0;
+  inline-size: min(480px, 46%);
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.labs-hero__art > img {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-end: 0;
+  block-size: 100%;
+  inline-size: auto;
+  max-inline-size: none;
+}
+
+.labs-hero__header {
+  display: flex;
+  max-width: 740px;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.labs-hero__title {
+  font: var(--type-weight-semibold) 40px/47.8px var(--type-family);
+}
+
+.labs-hero__subtitle {
+  max-width: 640px;
+  color: var(--color-text-secondary);
+  font: var(--type-weight-regular) 16px/22px var(--type-family);
+}
+
+.labs-hero__divider {
+  width: 100%;
+  max-width: 600px;
+  height: 1px;
+  background: var(--color-border);
+}
+
+/* A plain row of values split by short rules. */
+.labs-hero__values {
+  display: flex;
+  align-items: stretch;
+  gap: 18px;
+}
+
+.labs-hero__value-divider {
+  width: 1px;
+  height: 44px;
+  flex: 0 0 auto;
+  align-self: center;
+  background: var(--color-border);
+}
+
+.labs-hero__value {
+  display: flex;
+  width: fit-content;
+  min-width: 0;
+  max-width: 230px;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.labs-hero__value-title {
+  white-space: nowrap;
+}
+
+/* The descriptions carry their own line breaks. */
+.labs-hero__value-description {
+  white-space: pre-line;
+}
+
+/* Narrower columns would bring the artwork's mark under the subtitle and values. */
+@media (max-width: 1064px) {
+  .labs-hero__art {
+    display: none;
+  }
+}
+
+@media (max-width: 700px) {
+  .labs-hero__values {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .labs-hero__value-divider {
+    display: none;
+  }
+}
+
+@media (max-width: 600px) {
+  .labs-hero {
+    gap: 20px;
+    padding-top: 32px;
+  }
+
+  .labs-hero__title {
+    font-size: 30px;
+    line-height: 38px;
+  }
+
+  .labs-hero__subtitle {
+    max-width: none;
+    font: var(--type-reading);
+  }
+}
+
+@media (max-width: 400px) {
+  .labs-hero__value-title,
+  .labs-hero__value-description {
+    white-space: normal;
+  }
+}
+
+:root:is([data-theme="high-contrast"], [data-theme="forced-colors"]) .labs-hero__art {
+  display: none;
+}
+
+@media (forced-colors: active) {
+  .labs-hero__art {
+    display: none;
+  }
+}
+
+/* ---- What's new ---- */
+
+.labs-pill-dot {
+  width: 4px;
+  height: 4px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+/* Three cards per view; the arrow buttons scroll the row. The 4px inset keeps card shadows
+   from being clipped by the scroll area. */
+.labs-featured__row {
+  display: grid;
+  grid-auto-columns: calc((100% - 32px) / 3);
+  grid-auto-flow: column;
+  gap: 16px;
+  margin: -4px;
+  padding: 4px;
+  overflow-x: auto;
+  scroll-padding-inline: 4px;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+
+.labs-featured__row::-webkit-scrollbar {
+  display: none;
+}
+
+.labs-featured__card {
+  scroll-snap-align: start;
+}
+
+.labs-featured__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+}
+
+.labs-featured__nav {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+/* ---- Templates ---- */
+
+/* Three equal columns; the featured template takes the first one across two rows. */
+.labs-template-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.labs-template-card--featured {
+  grid-row: span 2;
+}
+
+.labs-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+}
+
+.labs-stats__item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.labs-stats__value {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.labs-stats__value > svg {
+  flex: 0 0 auto;
+  color: var(--color-text-secondary);
+}
+
+/* ---- Sample code ---- */
+
+.labs-code-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.labs-code-card--wide {
+  grid-column: span 2;
+  flex-direction: row;
+  gap: 24px;
+}
+
+/* The inset draws the spot illustration at about 85% of the tile, matching the card bands, on the
+   same brand tint. */
+.labs-code-card__image {
+  width: 128px;
+  height: 128px;
+  flex: 0 0 auto;
+  padding: 10px;
+  border-radius: var(--borderRadiusXLarge);
+  background: var(--color-brand-soft);
+  object-fit: contain;
+}
+
+.labs-code-card__body {
+  display: flex;
+  min-width: 0;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* "View code" and the votes share one row. The vote buttons sit edge to edge, and the last one's
+   6px padding hangs into the card padding so its count lines up with the text above. */
+.labs-code-card .labs-card__footer {
+  gap: 12px 4px;
+}
+
+.labs-code-card .labs-vote {
+  gap: 0;
+  margin-inline-end: -6px;
+}
+
+/* ---- Research and playbooks ---- */
+
+/* The list card is as tall as the column beside it. */
+.labs-research {
+  --labs-research-gap: 32px;
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: var(--labs-research-gap);
+}
+
+/* The bottom padding keeps the card running past the last panel, so a selected band never meets
+   the card's rounded corner. */
+.labs-research__intro {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 24px;
+  padding-bottom: 24px;
+}
+
+.labs-research__panels {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Each panel button chooses the list shown beside it. The panels are plain bars. The selected one
+   is a surface band that runs across the gap to the list card, which sits on top of its end. The
+   padding keeps the indicator's place in both states, so the text doesn't move when it's chosen. */
+.labs-research__panel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-inline-end: calc(-1 * var(--labs-research-gap));
+  padding-block: 20px;
+  /* 16px to the indicator, 3px for it and 12px after it. */
+  padding-inline: 31px var(--labs-research-gap);
+  border: 0;
+  color: var(--color-text);
+  background: transparent;
+  cursor: pointer;
+  font: inherit;
+  text-align: start;
+}
+
+.labs-research__panel:not([aria-pressed="true"]):hover {
+  background: var(--color-hover);
+}
+
+.labs-research__panel[aria-pressed="true"] {
+  background: var(--color-surface);
+}
+
+/* A 3px brand indicator, like the tab indicator, runs the height of the selected panel's text. */
+.labs-research__panel[aria-pressed="true"]::before {
+  position: absolute;
+  inset-block: 20px;
+  inset-inline-start: 16px;
+  width: 3px;
+  border-radius: var(--borderRadiusSmall);
+  background: var(--color-brand);
+  content: "";
+}
+
+/* The ring sits inside the bar, and a focused bar rises above the card, so none of the ring is
+   hidden where the bar meets the card. */
+.labs-research__panel:focus-visible {
+  z-index: 2;
+  outline: 2px solid var(--color-focus);
+  outline-offset: -2px;
+}
+
+.data-table-card.labs-research__list {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  padding-block: 4px;
+}
+
+.labs-research__item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-block: 16px;
+}
+
+.labs-research__item + .labs-research__item {
+  border-top: 1px solid var(--color-border);
+}
+
+.labs-research__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 12px;
+}
+
+.labs-research__row > p {
+  flex: 1 1 280px;
+  min-width: 0;
+}
+
+.labs-research__row > .labs-vote {
+  margin-inline-start: auto;
+}
+
+/* "View all" sits at the foot of the card, at least 24px below the last row. */
+.labs-research__item:last-of-type {
+  margin-bottom: 8px;
+}
+
+.labs-research__all {
+  display: inline-flex;
+  align-self: flex-start;
+  align-items: center;
+  gap: 4px;
+  margin-block: auto 16px;
+  font: var(--type-control);
+  font-weight: var(--type-weight-semibold);
+}
+
+/* ---- Roadmap ---- */
+
+.labs-roadmap__panel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.labs-roadmap__panel:focus-visible {
+  border-radius: var(--borderRadiusXLarge);
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+.labs-roadmap__grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.labs-roadmap__item--wide {
+  grid-column: span 2;
+}
+
+.labs-roadmap__icon {
+  display: inline-flex;
+  width: 36px;
+  height: 36px;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--borderRadiusMedium);
+  color: var(--color-text-secondary);
+  background: var(--color-surface-subtle);
+}
+
+.labs-roadmap__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+  font: var(--type-control);
+  font-weight: var(--type-weight-semibold);
+}
+
+/* ---- Narrow screens ---- */
+
+/* Four sample code cards in a narrower column leave too little room for "View code" and the votes
+   on one row. */
+@media (max-width: 1064px) {
+  .labs-code-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  /* Card rows wrap instead of scrolling sideways, so the arrows have nothing to do. */
+  .labs-featured__row {
+    grid-auto-flow: row;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    overflow: visible;
+  }
+
+  .labs-featured__nav {
+    display: none;
+  }
+
+  .labs-template-grid,
+  .labs-roadmap__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .labs-template-card--featured {
+    grid-row: auto;
+  }
+
+  .labs-research {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* The card moves below the panels, so the bars end at the column edge. */
+  .labs-research__intro {
+    padding-bottom: 0;
+  }
+
+  .labs-research__panel {
+    margin-inline-end: 0;
+    padding-inline-end: 16px;
+  }
+}
+
+@media (max-width: 600px) {
+  .labs-home {
+    --labs-home-section-gap: 48px;
+  }
+
+  .labs-featured__row,
+  .labs-template-grid,
+  .labs-code-grid,
+  .labs-roadmap__grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .labs-code-card--wide {
+    grid-column: auto;
+    flex-direction: column;
+  }
+
+  .labs-roadmap__item--wide {
+    grid-column: auto;
+  }
+}

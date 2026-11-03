@@ -1,0 +1,114 @@
+/* Tabs and selection pills.
+   Primary tabs: page or section navigation (PortalPrimaryTabs).
+   Segmented pills: filters and small selections (class "portal-segmented-control" on a group of buttons). */
+.service-tabs {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+}
+
+.service-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.primary-service-tabs {
+  gap: 28px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.service-tab {
+  position: relative;
+  height: 40px;
+  flex: 0 0 auto;
+  padding: 0 0 12px;
+  border: 0;
+  color: var(--color-text-secondary);
+  background: transparent;
+  cursor: pointer;
+  font: var(--type-control); font-weight: 600;
+}
+
+.service-tab::after {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  border-radius: 2px;
+  background: transparent;
+  content: '';
+}
+
+.service-tab:hover,
+.service-tab.active {
+  color: var(--color-text);
+}
+
+.service-tab.active::after {
+  background: var(--color-brand);
+}
+
+.service-tab-with-icon {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.service-tab-with-icon > .portal-tab-icon {
+  display: inline-flex;
+}
+
+.portal-segmented-control {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.portal-segmented-control button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 32px;
+  padding: 0 12px;
+  border: 1px solid light-dark(#d1d1d1, var(--color-border));
+  border-radius: 16px;
+  color: light-dark(#424242, var(--color-text-secondary));
+  background: light-dark(#fff, var(--color-surface));
+  cursor: pointer;
+  font: var(--type-control);
+  white-space: nowrap;
+}
+
+.portal-segmented-control button > svg {
+  flex: 0 0 16px;
+  width: 16px;
+  height: 16px;
+}
+
+.portal-segmented-control--small button {
+  min-height: 24px;
+  padding: 0 8px;
+  border-radius: 12px;
+}
+
+.portal-segmented-control button:hover {
+  background: light-dark(#f5f5f5, var(--color-hover));
+}
+
+.portal-segmented-control button.active,
+.portal-segmented-control button[aria-pressed="true"] {
+  border-color: var(--color-brand);
+  color: var(--color-brand);
+  background: light-dark(#ebf3fc, var(--color-brand-soft));
+  font-weight: 600;
+}
+
+.portal-segmented-control button:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}

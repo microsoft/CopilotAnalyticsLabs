@@ -1,0 +1,20 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g>
+<rect width="206" height="106" transform="matrix(1 0 0 -1 194 202)" fill="#CEDEFF"/>
+<g>
+<use xlink:href="#stroke0_5589_9374" fill="#F5F5F5"/>
+<mask fill="white">
+<use xlink:href="#stroke0_5589_9374"/>
+</mask>
+<path d="M101 97.0001H229C273.183 97.0001 309 132.817 309 177V295C309 303.837 316.163 311 325 311L395 311V415L283 415C238.817 415 203 379.183 203 335V218C203 209.164 195.837 202 187 202H101L101 97.0001Z" stroke-width="4" stroke="#294482" mask="url(#stroke1_5589_9374)"/>
+</g>
+<path d="M252 189V323C252 347.301 271.699 367 296 367H411V359H296C276.118 359 260 342.882 260 323V189C260 164.699 240.301 145 216 145H101V153H216C235.882 153 252 169.118 252 189Z" fill="#294482"/>
+<ellipse cx="54" cy="53" rx="54" ry="53" transform="matrix(1 0 0 -1 341 416)" fill="#FFE4B4" stroke="#294482" stroke-width="4"/>
+<circle cx="53" cy="53" r="53" transform="matrix(1 0 0 -1 344 202)" fill="#5C8DF8"/>
+<rect x="63" y="96" width="106" height="106" rx="20" fill="#5C8DF8"/>
+<circle cx="19" cy="19" r="19" transform="matrix(1 0 0 -1 97 168)" fill="#294482"/>
+</g>
+<defs>
+<path d="M309 177C309 132.817 273.183 97.0001 229 97.0001H101L101 202H187C195.837 202 203 209.164 203 218V335C203 379.183 238.817 415 283 415L395 415V311L325 311C316.163 311 309 303.837 309 295V177Z"/>
+</defs>
+</svg>

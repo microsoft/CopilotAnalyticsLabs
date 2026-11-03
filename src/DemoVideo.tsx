@@ -6,27 +6,17 @@ import {
   DialogSurface,
   DialogTitle,
   makeStyles,
-  shorthands,
 } from "@fluentui/react-components";
-import { Play16Regular } from "@fluentui/react-icons";
+import { Dismiss20Regular, Open16Regular, Play16Regular } from "@fluentui/react-icons";
+import { PortalButton, PortalText, type PortalButtonProps } from "./portal-design";
 import { logClick, TelemetryEvents } from "./telemetry";
 
+// Layout only: widen Fluent's 600px dialog so the video has room. Set through makeStyles so it
+// merges with (and overrides) the DialogSurface's own Griffel max-width.
 const useStyles = makeStyles({
   surface: {
     maxWidth: "min(1040px, 92vw)",
     width: "min(1040px, 92vw)",
-  },
-  video: {
-    width: "100%",
-    height: "auto",
-    display: "block",
-    backgroundColor: "#000000",
-    ...shorthands.borderRadius("6px"),
-  },
-  fallback: {
-    fontSize: "14px",
-    lineHeight: "20px",
-    color: "#424242",
   },
 });
 
@@ -42,7 +32,11 @@ interface DemoVideoButtonProps {
   videoUrl: string;
   /** Button label. Defaults to "Play demo". */
   label?: string;
-  /** Button class, so each surface keeps its own card-button styling. */
+  /** Portal button variant, so each surface keeps its own button hierarchy. Defaults to secondary. */
+  variant?: PortalButtonProps["variant"];
+  /** Brand-colored label, for subtle buttons that act as a link-like action. */
+  tone?: PortalButtonProps["tone"];
+  /** Extra class for layout. */
   className?: string;
 }
 
@@ -54,48 +48,73 @@ interface DemoVideoButtonProps {
  * the explicit <source type="video/mp4"> tells the browser what to expect, so
  * playback works — the same approach the Analytics Hub uses.
  */
-export function DemoVideoButton({ id, title, videoUrl, label = "Play demo", className }: DemoVideoButtonProps) {
+export function DemoVideoButton({
+  id,
+  title,
+  videoUrl,
+  label = "Play demo",
+  variant = "secondary",
+  tone,
+  className,
+}: DemoVideoButtonProps) {
   const styles = useStyles();
   const [open, setOpen] = useState(false);
   const heading = label === "Play demo" ? title : `${title} — ${label.replace(/^(Watch|Play)\s+/i, "")}`;
 
   return (
     <>
-      <button
-        type="button"
+      <PortalButton
+        variant={variant}
+        tone={tone}
         className={className}
+        aria-label={`${label}: ${title}`}
         onClick={() => {
           setOpen(true);
           logClick(TelemetryEvents.TemplateDemoClick, { template: id });
         }}
       >
+        <Play16Regular aria-hidden="true" />
         {label}
-        <Play16Regular fontSize={16} />
-      </button>
+      </PortalButton>
 
       <Dialog open={open} onOpenChange={(_, data) => setOpen(data.open)}>
         <DialogSurface className={styles.surface}>
           <DialogBody>
-            <DialogTitle>{heading}</DialogTitle>
+            <DialogTitle
+              action={
+                <PortalButton variant="subtle" iconOnly aria-label="Close" onClick={() => setOpen(false)}>
+                  <Dismiss20Regular />
+                </PortalButton>
+              }
+            >
+              {heading}
+            </DialogTitle>
             <DialogContent>
               {/* Only mount the video while the dialog is open, so closing it
                   stops playback and releases the download. */}
               {open ? (
                 <video
-                  className={styles.video}
+                  className="labs-video"
                   controls
                   preload="metadata"
                   playsInline
                   aria-label={`${title} ${label} video`}
                 >
                   <source src={videoUrl} type="video/mp4" />
-                  <p className={styles.fallback}>
+                  <PortalText as="p" textRole="reading" tone="secondary">
                     Your browser cannot play this video.{" "}
-                    <a href={videoUrl} target="_blank" rel="noreferrer">
+                    <a
+                      className="labs-link"
+                      href={videoUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      aria-label="Download it instead (opens in a new tab)"
+                    >
                       Download it instead
+                      <Open16Regular aria-hidden="true" />
                     </a>
                     .
-                  </p>
+                  </PortalText>
                 </video>
               ) : null}
             </DialogContent>

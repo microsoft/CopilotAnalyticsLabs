@@ -1,0 +1,38 @@
+/* Card surfaces. The standard raised card is PortalCard className="data-table-card" (base.css).
+   Cards inside cards use PortalCard nested: border only, no shadow, in every theme. */
+.portal-card[data-card-radius="large"] {
+  border-radius: 8px;
+}
+
+.portal-card[data-card-surface="nested"],
+.portal-card[data-card-surface="nested-filled"] {
+  border: 1px solid var(--color-border);
+  background: transparent;
+  box-shadow: none;
+}
+
+.portal-card[data-card-surface="nested-filled"] {
+  background: var(--color-surface);
+}
+
+/* Gray summary panel inside a card, such as a highlighted total or explanation. */
+.portal-summary-surface,
+.portal-card[data-card-surface="nested"].portal-summary-surface {
+  --card-summary-background: light-dark(#fafafa, var(--color-surface-subtle));
+  --table-header-background: var(--card-summary-background);
+  border: 1px solid light-dark(#e0e0e0, var(--color-border));
+  border-radius: 8px;
+  background: var(--card-summary-background);
+  box-shadow: none;
+}
+
+/* Subtle neutral band behind an illustration. */
+.portal-illustration-surface {
+  background: light-dark(#fafafa, var(--color-surface-subtle));
+}
+
+/* Selectable option tiles. */
+.portal-option-surface {
+  border-radius: 8px;
+  background: light-dark(#f5f5f5, var(--color-surface-subtle));
+}

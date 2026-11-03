@@ -1,0 +1,49 @@
+/* Portal design kit: type roles. Use PortalText textRole="…" or font: var(--type-<role>). */
+:root {
+  --type-family: 'Segoe UI', SegoeUI, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --type-weight-regular: 400;
+  --type-weight-semibold: 600;
+  --type-reading-size: 14px;
+  --type-reading-line-height: 20px;
+  --type-support-size: 14px;
+  --type-support-line-height: 20px;
+  --type-card-size: 16px;
+  --type-card-line-height: 22px;
+  --type-metadata-size: 12px;
+  --type-metadata-line-height: 16px;
+
+  --type-page-title: 600 28px/36px var(--type-family);
+  --type-section-title: 600 24px/32px var(--type-family);
+  --type-card-title: 600 var(--type-card-size)/var(--type-card-line-height) var(--type-family);
+  --type-reading: 400 var(--type-reading-size)/var(--type-reading-line-height) var(--type-family);
+  --type-support: 400 var(--type-support-size)/var(--type-support-line-height) var(--type-family);
+  --type-control: var(--type-support);
+  --type-table: var(--type-support);
+  --type-metadata: 400 var(--type-metadata-size)/var(--type-metadata-line-height) var(--type-family);
+  --type-badge: 600 var(--type-metadata-size)/var(--type-metadata-line-height) var(--type-family);
+  --type-metric: 600 28px/36px var(--type-family);
+  --type-metric-unit: 400 18px/28px var(--type-family);
+  --type-metric-compact: 600 24px/32px var(--type-family);
+  --type-metric-featured: 600 36px/44px var(--type-family);
+  --type-metric-featured-compact: 600 32px/40px var(--type-family);
+  --type-metric-editorial: 600 72px/76px var(--type-family);
+  --type-story-title: 400 20px/28px var(--type-family);
+  --type-step-title: 600 18px/24px var(--type-family);
+}
+
+:where(small) {
+  font: var(--type-metadata);
+}
+
+/* Stateful controls keep their selected/active weight treatment. */
+:where([data-typography="control"], [data-typography="table"]) {
+  font: var(--type-support);
+}
+
+[data-text-tone="secondary"] {
+  color: var(--color-text-secondary);
+}
+
+[data-text-tone="muted"] {
+  color: var(--color-text-muted);
+}
