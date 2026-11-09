@@ -187,7 +187,7 @@ const templateOrder = [
   "valuelens",
   "consumption-central",
   "cowork-value-estimator",
-  "cowork-team-report",
+  "cowork-chargeback-report",
 ];
 
 const templateFilterLabelHome: Record<TemplateImpactFilter, string> = {
@@ -250,10 +250,10 @@ const templateMeta: Record<
   "m365-copilot-personal": {
     badges: [{ text: "Individual", tone: "orange" }],
   },
-  "cowork-team-report": {
+  "cowork-chargeback-report": {
     badges: [
       { text: "New", tone: "blue" },
-      { text: "AI-impact", tone: "teal" },
+      { text: "Org wide", tone: "purple" },
       { text: "Team", tone: "red" },
     ],
   },
@@ -1068,35 +1068,28 @@ function App() {
                         })}
                       </div>
                     ) : null}
-                    {item.videoUrl || item.setupVideoUrl ? (
-                      <div className="labs-card__footer labs-card__footer--stacked">
-                        <div className="labs-card__actions">
-                          {viewLink}
-                          {item.videoUrl ? (
-                            <DemoVideoButton id={item.id} title={item.title} videoUrl={item.videoUrl} />
-                          ) : null}
-                        </div>
-                        <div className="labs-card__divider" aria-hidden="true" />
-                        <div className="labs-card__meta-row">
-                          {item.setupVideoUrl ? (
-                            <DemoVideoButton
-                              id={`${item.id}-setup`}
-                              title={item.title}
-                              videoUrl={item.setupVideoUrl}
-                              label="Watch setup"
-                              variant="subtle"
-                              tone="brand"
-                            />
-                          ) : null}
-                          <VoteBar cardId={item.id} variant="inline" />
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="labs-card__footer">
+                    <div className="labs-card__footer labs-card__footer--stacked">
+                      <div className="labs-card__actions">
                         {viewLink}
+                        {item.videoUrl ? (
+                          <DemoVideoButton id={item.id} title={item.title} videoUrl={item.videoUrl} />
+                        ) : null}
+                      </div>
+                      <div className="labs-card__divider" aria-hidden="true" />
+                      <div className="labs-card__meta-row">
+                        {item.setupVideoUrl ? (
+                          <DemoVideoButton
+                            id={`${item.id}-setup`}
+                            title={item.title}
+                            videoUrl={item.setupVideoUrl}
+                            label="Watch setup"
+                            variant="subtle"
+                            tone="brand"
+                          />
+                        ) : null}
                         <VoteBar cardId={item.id} variant="inline" />
                       </div>
-                    )}
+                    </div>
                   </PortalCard>
                 );
               })}

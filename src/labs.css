@@ -420,6 +420,7 @@
 
 .labs-card__meta-row {
   display: flex;
+  min-height: 32px;
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;

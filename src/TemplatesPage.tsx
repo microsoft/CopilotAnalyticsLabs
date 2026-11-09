@@ -34,18 +34,20 @@ export default function TemplatesPage() {
     const newAndPopular = [...filtered]
       .sort((a, b) => (b.addedOn ?? "").localeCompare(a.addedOn ?? ""))
       .slice(0, 3);
+    const newAndPopularIds = new Set(newAndPopular.map((item) => item.id));
+    const remaining = filtered.filter((item) => !newAndPopularIds.has(item.id));
 
     return [
       { key: "new", title: "New and Popular", items: newAndPopular },
       {
         key: "abv",
         title: "AI Business Value templates",
-        items: filtered.filter((item) => item.collections.includes("AI Business Value")),
+        items: remaining.filter((item) => item.collections.includes("AI Business Value")),
       },
       {
         key: "m365",
         title: "Microsoft 365 templates",
-        items: filtered.filter((item) => item.collections.includes("Microsoft 365")),
+        items: remaining.filter((item) => item.collections.includes("Microsoft 365")),
       },
     ];
   }, [typeFilter, impactFilter]);
@@ -134,36 +136,28 @@ export default function TemplatesPage() {
                       <PortalText as="p" textRole="support" tone="secondary">
                         {item.description}
                       </PortalText>
-                      {item.videoUrl || item.setupVideoUrl ? (
-                        // Primary actions, a rule, then the setup video and votes.
-                        <div className="labs-card__footer labs-card__footer--stacked">
-                          <div className="labs-card__actions">
-                            {viewLink}
-                            {item.videoUrl ? (
-                              <DemoVideoButton id={item.id} title={item.title} videoUrl={item.videoUrl} />
-                            ) : null}
-                          </div>
-                          <div className="labs-card__divider" aria-hidden="true" />
-                          <div className="labs-card__meta-row">
-                            {item.setupVideoUrl ? (
-                              <DemoVideoButton
-                                id={`${item.id}-setup`}
-                                title={item.title}
-                                videoUrl={item.setupVideoUrl}
-                                label="Watch setup"
-                                variant="subtle"
-                                tone="brand"
-                              />
-                            ) : null}
-                            <VoteBar cardId={item.id} variant="inline" />
-                          </div>
-                        </div>
-                      ) : (
-                        <div className="labs-card__footer">
+                      <div className="labs-card__footer labs-card__footer--stacked">
+                        <div className="labs-card__actions">
                           {viewLink}
+                          {item.videoUrl ? (
+                            <DemoVideoButton id={item.id} title={item.title} videoUrl={item.videoUrl} />
+                          ) : null}
+                        </div>
+                        <div className="labs-card__divider" aria-hidden="true" />
+                        <div className="labs-card__meta-row">
+                          {item.setupVideoUrl ? (
+                            <DemoVideoButton
+                              id={`${item.id}-setup`}
+                              title={item.title}
+                              videoUrl={item.setupVideoUrl}
+                              label="Watch setup"
+                              variant="subtle"
+                              tone="brand"
+                            />
+                          ) : null}
                           <VoteBar cardId={item.id} variant="inline" />
                         </div>
-                      )}
+                      </div>
                     </PortalCard>
                   );
                 })}

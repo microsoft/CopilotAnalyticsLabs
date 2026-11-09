@@ -218,6 +218,20 @@ export const templates: TemplateItem[] = [
     collections: ["Microsoft 365"],
   },
   {
+    id: "cowork-chargeback-report",
+    title: "Cowork Chargeback Report",
+    description:
+      "Monitor Cowork credit usage and chargebacks to track consumption, understand costs, and allocate spend across your organization.",
+    url: "https://github.com/microsoft/CreditUsage",
+    icon: DataTrending24Regular,
+    image: `${base}images/spot/report.svg`,
+    imageIsIllustration: true,
+    addedOn: "2026-11-09",
+    type: "Copilot",
+    impact: ["Org wide", "Team"],
+    collections: ["AI Business Value"],
+  },
+  {
     id: "cowork-team-report",
     title: "Cowork Team Report",
     description:
