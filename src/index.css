@@ -10,14 +10,6 @@ html {
   scroll-behavior: auto;
 }
 
-body {
-  font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
-  background: #faf9f8;
-  color: #242424;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
 a {
   text-decoration: none;
   color: inherit;
@@ -30,11 +22,6 @@ a {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #c4c4c4;
+  background: var(--color-border-strong);
   border-radius: 4px;
-}
-
-/* Roadmap card "Flow Sparkle" icon: blue→purple gradient fill (def lives in App roadmap section). */
-.roadmap-flow-icon path {
-  fill: url(#roadmapFlowGradient);
 }
