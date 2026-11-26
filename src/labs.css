@@ -337,11 +337,18 @@
 
 /* ---- Cards ---- */
 
-/* Three cards per row in the full content column. */
-.labs-card-grid {
+.labs-card-grid,
+.labs-library-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
   gap: 16px;
+}
+
+.labs-card-grid {
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+}
+
+.labs-library-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
 }
 
 .labs-card {

@@ -4,6 +4,7 @@ import {
   resources,
   codeDomainFilters,
   codeTechFilters,
+  isLibrary,
 } from "./data";
 import type { CodeDomainFilter, CodeTechFilter } from "./data";
 import { logClick, logPageView, TelemetryEvents } from "./telemetry";
@@ -27,22 +28,26 @@ export default function CodesPage() {
         (techFilter === "All" || item.tech.includes(techFilter)),
     );
 
-    // "New and Popular" mirrors the home page logic: most recently added first, capped.
-    const newAndPopular = [...filtered]
+    const libraries = filtered.filter(isLibrary);
+    const sampleCode = filtered.filter((item) => !isLibrary(item));
+
+    // "New and Popular" contains only sample code: most recently added first, capped.
+    const newAndPopular = [...sampleCode]
       .sort((a, b) => (b.addedOn ?? "").localeCompare(a.addedOn ?? ""))
       .slice(0, 3);
 
     return [
+      { key: "libraries", title: "Libraries", items: libraries },
       { key: "new", title: "New and Popular", items: newAndPopular },
       {
         key: "analytics",
         title: "Analytics",
-        items: filtered.filter((item) => item.collections.includes("Analytics")),
+        items: sampleCode.filter((item) => item.collections.includes("Analytics")),
       },
       {
         key: "export",
         title: "Export",
-        items: filtered.filter((item) => item.collections.includes("Export")),
+        items: sampleCode.filter((item) => item.collections.includes("Export")),
       },
     ];
   }, [domainFilter, techFilter]);
@@ -54,7 +59,7 @@ export default function CodesPage() {
       <PageHeader
         crumb="Sample code"
         title="Browse all sample code"
-        description="Reusable scripts, prompt libraries, and analytical methods for Python, R, Power BI, and more. Filter by analysis focus and language to find the right starting point."
+        description="Open-source packages, reusable scripts, prompts, and analytical methods for Python, R, Power BI, and more. Filter by analysis focus and language to find the right starting point."
       />
 
       <div className="labs-filters">
@@ -78,7 +83,7 @@ export default function CodesPage() {
       {!hasResults ? (
         <PortalCard className="data-table-card labs-empty">
           <PortalText as="p" textRole="reading" tone="secondary">
-            No sample code matches the selected filters.
+            No libraries or sample code match the selected filters.
           </PortalText>
         </PortalCard>
       ) : (
@@ -95,6 +100,8 @@ export default function CodesPage() {
               <div className="labs-card-grid">
                 {section.items.map((item) => {
                   const Icon = item.icon ?? DocumentBulletList24Regular;
+                  const library = isLibrary(item);
+                  const action = library ? "View documentation" : "View code";
                   return (
                     <PortalCard key={item.id} role="article" className="data-table-card labs-card">
                       {item.image ? (
@@ -130,10 +137,13 @@ export default function CodesPage() {
                           href={item.url}
                           target="_blank"
                           rel="noreferrer"
-                          aria-label={`View code: ${item.title} (opens in a new tab)`}
-                          onClick={() => logClick(TelemetryEvents.CodeViewClick, { resource: item.id })}
+                          aria-label={`${action}: ${item.title} (opens in a new tab)`}
+                          onClick={() => logClick(
+                            library ? TelemetryEvents.VivaInsightsClick : TelemetryEvents.CodeViewClick,
+                            { resource: item.id },
+                          )}
                         >
-                          View code
+                          {action}
                           <Open16Regular aria-hidden="true" />
                         </a>
                         <VoteBar cardId={item.id} variant="inline" />

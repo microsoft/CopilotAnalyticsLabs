@@ -1,5 +1,6 @@
 import {
   BoardSplit24Regular,
+  Code24Regular,
   DataTrending24Regular,
   Sparkle24Regular,
   DocumentBulletList24Regular,
@@ -46,8 +47,12 @@ export interface ResourceItem {
   tech: CodeTechTag[];
   /** Domain tags, used by the dedicated Sample Code page "Domain" filter. */
   domain: CodeDomainTag[];
-  /** Thematic sections the sample code belongs to on the Sample Code page. */
-  collections: ("Analytics" | "Export")[];
+  /** Sections this resource belongs to on the Sample Code page. */
+  collections: ("Analytics" | "Export" | "Libraries")[];
+}
+
+export function isLibrary(item: ResourceItem): boolean {
+  return item.collections.includes("Libraries");
 }
 
 export type CodeTechTag =
@@ -282,6 +287,34 @@ export function pageImpactToTag(filter: TemplatePageImpactFilter): TemplateItem[
 }
 
 export const resources: ResourceItem[] = [
+  {
+    id: "vivainsights-r",
+    title: "vivainsights (R)",
+    description:
+      "Use the open-source R package to validate Analyst portal query exports, calculate Copilot usage metrics, and explore collaboration networks.",
+    url: "https://microsoft.github.io/vivainsights/",
+    icon: Code24Regular,
+    category: "Code",
+    image: `${base}images/spot/dashboard.svg`,
+    addedOn: "2026-11-26",
+    tech: ["R"],
+    domain: ["Adoption & Usage", "Impact & ROI", "Copilot & Agents"],
+    collections: ["Libraries"],
+  },
+  {
+    id: "vivainsights-py",
+    title: "vivainsights (Python)",
+    description:
+      "Use the open-source Python package to work with Analyst portal query exports in pandas and explore Copilot usage and collaboration in notebooks.",
+    url: "https://microsoft.github.io/vivainsights-py/",
+    icon: Code24Regular,
+    category: "Code",
+    image: `${base}images/spot/device-laptop.svg`,
+    addedOn: "2026-11-26",
+    tech: ["Python"],
+    domain: ["Adoption & Usage", "Impact & ROI", "Copilot & Agents"],
+    collections: ["Libraries"],
+  },
   {
     id: "viva-insights-essentials",
     title: "Business Analytics Analysis - Essentials",

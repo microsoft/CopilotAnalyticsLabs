@@ -18,7 +18,7 @@ import {
   Sparkle20Regular,
   Star16Filled,
 } from "@fluentui/react-icons";
-import { research, resources, templates, templateImpactFilters, codeHomeTechFilters } from "./data";
+import { research, resources, templates, templateImpactFilters, codeHomeTechFilters, isLibrary } from "./data";
 import type { TemplateImpactFilter, CodeHomeTechFilter } from "./data";
 import { logClick, logPageView, TelemetryEvents } from "./telemetry";
 import { VoteBar } from "./VoteBar";
@@ -72,6 +72,8 @@ const featuredPillLabel: Record<FeaturedKind, string> = {
 // so it is also the threshold for showing the scroll arrows.
 const FEATURED_CARDS_PER_VIEW = 3;
 
+const libraries = resources.filter(isLibrary);
+
 interface FeaturedItem {
   id: string;
   sourceId: string;
@@ -81,6 +83,9 @@ interface FeaturedItem {
   description: string;
   url: string;
   addedOn?: string;
+  image?: string;
+  imageIsIllustration?: boolean;
+  isLibrary?: boolean;
 }
 
 async function fetchBadgeCount(url: string): Promise<string> {
@@ -141,9 +146,12 @@ function buildFeaturedItems(): FeaturedItem[] {
   const byDateDesc = (a: { addedOn?: string }, b: { addedOn?: string }) =>
     (b.addedOn ?? "").localeCompare(a.addedOn ?? "");
 
-  const groups: { kind: FeaturedKind; items: { id: string; title: string; description: string; url: string; addedOn?: string }[] }[] = [
+  const groups: {
+    kind: FeaturedKind;
+    items: Omit<FeaturedItem, "sourceId" | "kind" | "tone">[];
+  }[] = [
     { kind: "Template", items: templates },
-    { kind: "Code", items: resources },
+    { kind: "Code", items: resources.map((item) => ({ ...item, imageIsIllustration: true, isLibrary: isLibrary(item) })) },
     { kind: "Research", items: research.filter((item) => item.kind === "Research") },
     { kind: "Playbook", items: research.filter((item) => item.kind === "Playbook") },
   ];
@@ -162,6 +170,9 @@ function buildFeaturedItems(): FeaturedItem[] {
           description: item.description,
           url: item.url,
           addedOn: item.addedOn,
+          image: item.image,
+          imageIsIllustration: item.imageIsIllustration,
+          isLibrary: item.isLibrary,
         })),
     )
     .sort(byDateDesc);
@@ -894,16 +905,25 @@ function App() {
               <div className="labs-featured__row" ref={featuredRowRef}>
                 {visibleFeatured.map((item) => {
                   const chip = featuredChipByKind[item.kind];
-                  const ctaLabel = {
-                    Template: "View template",
-                    Code: "View code",
-                    Research: "View report",
-                    Playbook: "View playbook",
-                  }[item.kind];
+                  const ctaLabel = item.isLibrary
+                    ? "View documentation"
+                    : {
+                        Template: "View template",
+                        Code: "View code",
+                        Research: "View report",
+                        Playbook: "View playbook",
+                      }[item.kind];
                   return (
                     <PortalCard key={item.id} role="article" className="data-table-card labs-card labs-featured__card">
+                      {item.image ? (
+                        <img
+                          className={`labs-card__media${item.imageIsIllustration ? " labs-card__media--contain" : ""}`}
+                          src={item.image}
+                          alt=""
+                        />
+                      ) : null}
                       <div className="labs-featured__meta">
-                        <span className={chip.badgeClass}>{chip.label}</span>
+                        <span className={chip.badgeClass}>{item.isLibrary ? "Library" : chip.label}</span>
                         <PortalText textRole="metadata" tone="muted">
                           {formatRelativeDate(item.addedOn)}
                         </PortalText>
@@ -919,7 +939,11 @@ function App() {
                           target="_blank"
                           rel="noreferrer"
                           aria-label={`${ctaLabel}: ${item.title} (opens in a new tab)`}
-                          onClick={() => logClick(TelemetryEvents.TemplateViewClick, { template: item.sourceId })}
+                          onClick={() =>
+                            item.isLibrary
+                              ? logClick(TelemetryEvents.VivaInsightsClick, { resource: item.sourceId })
+                              : logClick(TelemetryEvents.TemplateViewClick, { template: item.sourceId })
+                          }
                         >
                           {ctaLabel}
                           <Open16Regular aria-hidden="true" />
@@ -1024,7 +1048,7 @@ function App() {
                     role="article"
                     className={`data-table-card labs-card${isFeatured ? " labs-template-card--featured" : ""}`}
                   >
-                    {isFeatured && item.image ? (
+                    {item.image ? (
                       <img
                         className={`labs-card__media${item.imageIsIllustration ? " labs-card__media--contain" : ""}`}
                         src={item.image}
@@ -1120,6 +1144,39 @@ function App() {
               org's data.
             </PortalText>
           </div>
+          <section className="labs-section" aria-labelledby="sample-libraries-heading">
+            <PortalText as="h3" id="sample-libraries-heading" textRole="card-title">
+              Start with the vivainsights libraries
+            </PortalText>
+            <div className="labs-library-grid">
+              {libraries.map((item) => (
+                <PortalCard key={item.id} role="article" className="data-table-card labs-card">
+                  {item.image ? (
+                    <img className="labs-card__media labs-card__media--contain" src={item.image} alt="" />
+                  ) : null}
+                  <PortalText as="h4" textRole="card-title" className="labs-card__title">
+                    {item.title}
+                  </PortalText>
+                  <PortalText as="p" textRole="support" tone="secondary">
+                    {item.description}
+                  </PortalText>
+                  <div className="labs-card__footer">
+                    <a
+                      className="secondary-button"
+                      href={item.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      aria-label={`View documentation: ${item.title} (opens in a new tab)`}
+                      onClick={() => logClick(TelemetryEvents.VivaInsightsClick, { resource: item.id })}
+                    >
+                      View documentation
+                      <Open16Regular aria-hidden="true" />
+                    </a>
+                  </div>
+                </PortalCard>
+              ))}
+            </div>
+          </section>
           <div className="portal-segmented-control" role="group" aria-label="Filter sample code">
             {codeHomeTechFilters.map((cat) => (
               <button key={cat} type="button" aria-pressed={codeFilter === cat} onClick={() => setCodeFilter(cat)}>
