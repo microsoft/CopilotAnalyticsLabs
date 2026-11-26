@@ -2,7 +2,7 @@
  * Lightweight telemetry module for Copilot Analytics Labs.
  *
  * Tracks page views and click events to localStorage and logs them to the
- * browser console.  No external dependencies — works fully offline on
+ * browser console.  No external dependencies; works fully offline on
  * GitHub Pages.
  *
  * Storage key: "cal_telemetry"
@@ -43,11 +43,13 @@ function writeStore(store: TelemetryStore): void {
     }
     localStorage.setItem(STORAGE_KEY, JSON.stringify(store));
   } catch {
-    /* storage full — silently skip */
+    /* storage full: silently skip */
   }
 }
 
 /* ─── Event names (mirrors NovaClient CopilotAnalyticsLabsEventNames) ─── */
+// This list is kept in sync with the NovaClient registry, so names stay here
+// even when nothing in this app emits them yet.
 export const TelemetryEvents = {
   PageView: "CopilotAnalyticsLabs.PageView",
   ExploreTemplatesClick: "CopilotAnalyticsLabs.ExploreTemplatesClick",
@@ -67,6 +69,12 @@ export const TelemetryEvents = {
   ResearchViewClick: "CopilotAnalyticsLabs.ResearchViewClick",
 } as const;
 
+/** Sends to Microsoft Clarity once its script has loaded; does nothing before that. */
+function sendToClarity(...args: string[]): void {
+  if (typeof window === "undefined") return;
+  (window as Window & { clarity?: (...args: string[]) => void }).clarity?.(...args);
+}
+
 /* ─── Public API ─── */
 
 /** Log a page view. Call once on mount. */
@@ -83,9 +91,7 @@ export function logPageView(): void {
   writeStore(store);
 
   // Send page view event to Microsoft Clarity
-  if (typeof window !== "undefined" && (window as any).clarity) {
-    (window as any).clarity("event", TelemetryEvents.PageView);
-  }
+  sendToClarity("event", TelemetryEvents.PageView);
 
   console.log(
     `%c[Telemetry] PageView #${store.pageViews}`,
@@ -104,11 +110,9 @@ export function logClick(
   writeStore(store);
 
   // Send custom event to Microsoft Clarity for server-side tracking
-  if (typeof window !== "undefined" && (window as any).clarity) {
-    (window as any).clarity("event", eventName);
-    if (properties) {
-      (window as any).clarity("set", eventName, JSON.stringify(properties));
-    }
+  sendToClarity("event", eventName);
+  if (properties) {
+    sendToClarity("set", eventName, JSON.stringify(properties));
   }
 
   console.log(
