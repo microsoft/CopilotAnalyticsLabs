@@ -199,6 +199,7 @@ const templateOrder = [
   "consumption-central",
   "cowork-value-estimator",
   "cowork-chargeback-report",
+  "cowork-team-report",
 ];
 
 const templateFilterLabelHome: Record<TemplateImpactFilter, string> = {
@@ -212,14 +213,12 @@ const templateFilterLabelHome: Record<TemplateImpactFilter, string> = {
 const templateMeta: Record<
   string,
   {
-    featured?: boolean;
     badges?: { text: string; tone: "green" | "teal" | "purple" | "orange" | "red" | "blue" }[];
     /** Stats without a value are filled in at runtime and stay hidden until they load. */
     stats?: { value?: string; label: string }[];
   }
 > = {
   "aio-dashboard": {
-    featured: true,
     badges: [
       { text: "Featured", tone: "green" },
       { text: "AI-impact", tone: "teal" },
@@ -265,6 +264,12 @@ const templateMeta: Record<
     badges: [
       { text: "New", tone: "blue" },
       { text: "Org wide", tone: "purple" },
+      { text: "Team", tone: "red" },
+    ],
+  },
+  "cowork-team-report": {
+    badges: [
+      { text: "AI-impact", tone: "teal" },
       { text: "Team", tone: "red" },
     ],
   },
@@ -1025,7 +1030,6 @@ function App() {
             <div className="labs-template-grid">
               {visibleTemplates.map((item) => {
                 const meta = templateMeta[item.id] ?? {};
-                const isFeatured = Boolean(meta.featured);
                 const copyOverride = templateHomeCopyOverrides[item.id] ?? {};
                 const templateTitle = copyOverride.title ?? item.title;
                 const templateDescription = copyOverride.description ?? item.description;
@@ -1043,16 +1047,14 @@ function App() {
                   </a>
                 );
                 return (
-                  <PortalCard
-                    key={item.id}
-                    role="article"
-                    className={`data-table-card labs-card${isFeatured ? " labs-template-card--featured" : ""}`}
-                  >
+                  <PortalCard key={item.id} role="article" className="data-table-card labs-card">
                     {item.image ? (
                       <img
                         className={`labs-card__media${item.imageIsIllustration ? " labs-card__media--contain" : ""}`}
                         src={item.image}
                         alt=""
+                        loading="lazy"
+                        decoding="async"
                       />
                     ) : null}
                     {meta.badges?.length ? (
