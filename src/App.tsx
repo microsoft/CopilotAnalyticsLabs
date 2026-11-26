@@ -151,14 +151,7 @@ function buildFeaturedItems(): FeaturedItem[] {
     items: Omit<FeaturedItem, "sourceId" | "kind" | "tone">[];
   }[] = [
     { kind: "Template", items: templates },
-    {
-      kind: "Code",
-      items: resources.map((item) => ({
-        ...item,
-        imageIsIllustration: item.imageIsIllustration !== false,
-        isLibrary: isLibrary(item),
-      })),
-    },
+    { kind: "Code", items: resources.map((item) => ({ ...item, imageIsIllustration: true, isLibrary: isLibrary(item) })) },
     { kind: "Research", items: research.filter((item) => item.kind === "Research") },
     { kind: "Playbook", items: research.filter((item) => item.kind === "Playbook") },
   ];
@@ -924,11 +917,7 @@ function App() {
                     <PortalCard key={item.id} role="article" className="data-table-card labs-card labs-featured__card">
                       {item.image ? (
                         <img
-                          className={`labs-card__media${
-                            item.imageIsIllustration
-                              ? " labs-card__media--contain"
-                              : " labs-card__media--top"
-                          }`}
+                          className={`labs-card__media${item.imageIsIllustration ? " labs-card__media--contain" : ""}`}
                           src={item.image}
                           alt=""
                         />

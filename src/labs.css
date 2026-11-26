@@ -380,10 +380,6 @@
   object-fit: contain;
 }
 
-.labs-card__media--top {
-  object-position: center top;
-}
-
 .labs-card__media--icon {
   display: flex;
   align-items: center;

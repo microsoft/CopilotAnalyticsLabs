@@ -102,16 +102,12 @@ export default function CodesPage() {
                   const Icon = item.icon ?? DocumentBulletList24Regular;
                   const library = isLibrary(item);
                   const action = library ? "View documentation" : "View code";
-                  const imageClassName =
-                    item.imageIsIllustration === false
-                      ? "labs-card__media labs-card__media--top"
-                      : "labs-card__media labs-card__media--contain";
                   return (
                     <PortalCard key={item.id} role="article" className="data-table-card labs-card">
                       {item.image ? (
                         // Contain (not cover) so the square illustrations render at their natural
                         // proportions and stay centred, matching the L1 sample-code cards.
-                        <img className={imageClassName} src={item.image} alt="" />
+                        <img className="labs-card__media labs-card__media--contain" src={item.image} alt="" />
                       ) : (
                         <div className="labs-card__media labs-card__media--icon">
                           <Icon aria-hidden="true" />

@@ -41,8 +41,6 @@ export interface ResourceItem {
   icon: React.ComponentType;
   category: "Code" | "Prompts";
   image?: string;
-  /** Set to false for screenshots that should crop into the card media band. */
-  imageIsIllustration?: boolean;
   /** ISO date (YYYY-MM-DD) the item was added. Drives "New and Popular". */
   addedOn?: string;
   /** Technology tags, used by the home Sample Code section + page "Technology" filter. */
@@ -181,6 +179,19 @@ export const templates: TemplateItem[] = [
     collections: ["AI Business Value"],
   },
   {
+    id: "copilot-cli-personal-insights",
+    title: "GitHub Copilot CLI Personal Insights Dashboard",
+    description:
+      "A local, personal dashboard for exploring GitHub Copilot CLI usage - tokens, estimated cost, models, providers, trends, and task patterns. Unlike organizational insights tools, it is designed for one person's private analysis and runs entirely from local session data.",
+    url: "https://github.com/microsoft/ghc-cli-dashboard",
+    icon: DataTrending24Regular,
+    image: `${base}images/card-github-copilot-cli-personal.png`,
+    addedOn: "2026-09-15",
+    type: "GitHub",
+    impact: ["Individual"],
+    collections: ["AI Business Value"],
+  },
+  {
     id: "cowork-value-estimator",
     title: "Cowork Value Estimator",
     description:
@@ -316,21 +327,6 @@ export const resources: ResourceItem[] = [
     tech: ["Python"],
     domain: ["Adoption & Usage", "Impact & ROI", "Copilot & Agents"],
     collections: ["Libraries"],
-  },
-  {
-    id: "copilot-cli-personal-insights",
-    title: "GitHub Copilot CLI Personal Insights Dashboard",
-    description:
-      "A local, personal dashboard for exploring GitHub Copilot CLI usage - tokens, estimated cost, models, providers, trends, and task patterns. Unlike organizational insights tools, it is designed for one person's private analysis and runs entirely from local session data.",
-    url: "https://github.com/microsoft/ghc-cli-dashboard",
-    icon: DataTrending24Regular,
-    category: "Code",
-    image: `${base}images/code-copilot-cli-personal.png`,
-    imageIsIllustration: false,
-    addedOn: "2026-09-15",
-    tech: ["Python"],
-    domain: ["Adoption & Usage", "Copilot & Agents"],
-    collections: ["Analytics"],
   },
   {
     id: "viva-insights-essentials",
