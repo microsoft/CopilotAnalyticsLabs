@@ -2,7 +2,7 @@
  * Lightweight telemetry module for Copilot Analytics Labs.
  *
  * Tracks page views and click events to localStorage and logs them to the
- * browser console.  No external dependencies — works fully offline on
+ * browser console.  No external dependencies; works fully offline on
  * GitHub Pages.
  *
  * Storage key: "cal_telemetry"
@@ -28,6 +28,7 @@ const MAX_EVENTS = 500; // keep last 500 events to avoid unbounded growth
 interface UmamiPageviewProps {
   website: string;
   url: string;
+  referrer: string;
   [key: string]: unknown;
 }
 
@@ -65,7 +66,7 @@ function writeStore(store: TelemetryStore): void {
     }
     localStorage.setItem(STORAGE_KEY, JSON.stringify(store));
   } catch {
-    /* storage full — silently skip */
+    /* storage full: silently skip */
   }
 }
 
@@ -91,6 +92,12 @@ export const TelemetryEvents = {
   ResearchViewClick: "CopilotAnalyticsLabs.ResearchViewClick",
 } as const;
 
+/** Sends to Microsoft Clarity once its script has loaded; does nothing before that. */
+function sendToClarity(...args: string[]): void {
+  if (typeof window === "undefined") return;
+  (window as Window & { clarity?: (...args: string[]) => void }).clarity?.(...args);
+}
+
 /* ─── Public API ─── */
 
 /** Log a page view. Call once on mount. */
@@ -107,9 +114,7 @@ export function logPageView(): void {
   writeStore(store);
 
   // Send page view event to Microsoft Clarity
-  if (typeof window !== "undefined" && (window as any).clarity) {
-    (window as any).clarity("event", TelemetryEvents.PageView);
-  }
+  sendToClarity("event", TelemetryEvents.PageView);
 
   console.log(
     `%c[Telemetry] PageView #${store.pageViews}`,
@@ -117,20 +122,14 @@ export function logPageView(): void {
   );
 }
 
-/**
- * Report a pageview to Umami for a virtual (hash-based) route.
- *
- * The app navigates by mutating `location.hash` (see Root.tsx), which the
- * Umami tracker script cannot observe automatically — its auto-tracker only
- * hooks `history.pushState`/`replaceState`. `data-auto-pageview="false"` is
- * set on the tracker script tag in index.html, so pageviews must be sent
- * manually via this function on every route change, using `path` as the
- * canonical URL (e.g. "/", "/templates", "/codes", "/research") so each
- * route shows up as a distinct entry under "Pages" in Umami.
- */
-export function trackPageview(path: string): void {
+/** Report the resolved page path to Umami instead of the raw URL fragment. */
+export function trackPageview(path: string, isLandingPage: boolean): void {
   if (typeof window === "undefined" || !window.umami) return;
-  window.umami.track((props) => ({ ...props, url: path }));
+  window.umami.track((props) => ({
+    ...props,
+    url: path,
+    referrer: isLandingPage ? props.referrer : "",
+  }));
 }
 
 /** Log a click event with optional properties. */
@@ -144,11 +143,9 @@ export function logClick(
   writeStore(store);
 
   // Send custom event to Microsoft Clarity for server-side tracking
-  if (typeof window !== "undefined" && (window as any).clarity) {
-    (window as any).clarity("event", eventName);
-    if (properties) {
-      (window as any).clarity("set", eventName, JSON.stringify(properties));
-    }
+  sendToClarity("event", eventName);
+  if (properties) {
+    sendToClarity("set", eventName, JSON.stringify(properties));
   }
 
   console.log(

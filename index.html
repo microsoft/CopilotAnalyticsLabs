@@ -13,6 +13,7 @@
     <meta name="google-site-verification" content="tyIisn1inyHIxdRTqFSeUmutahJPCN3yz5qwtdBgSEM" />
     <meta name="msvalidate.01" content="BD57D471C03B8BD8BC5F621FE6AD44ED" />
     <link rel="canonical" href="https://microsoft.github.io/CopilotAnalyticsLabs/" />
+    <link rel="alternate" type="application/rss+xml" title="Copilot Analytics Labs: what's new" href="/CopilotAnalyticsLabs/feed.xml" />
 
     <!-- Open Graph / Social sharing -->
     <meta property="og:type" content="website" />
@@ -35,7 +36,7 @@
       "@type": "WebSite",
       "name": "Copilot Analytics Labs",
       "url": "https://microsoft.github.io/CopilotAnalyticsLabs/",
-      "description": "A DIY hub for experimental Copilot and Agent analytics — templates, sample codes, and research to quantify ROI.",
+      "description": "A DIY hub for experimental Copilot and Agent analytics: templates, sample codes, and research to quantify ROI.",
       "publisher": {
         "@type": "Organization",
         "name": "Microsoft"
@@ -44,18 +45,7 @@
     </script>
 
     <!-- Umami analytics -->
-    <!--
-      This app is a hash-routed SPA (see src/Root.tsx), so navigation never
-      calls history.pushState/replaceState — it only mutates location.hash.
-      Umami's auto-tracker only detects route changes via pushState/
-      replaceState, so it can never see these navigations, and
-      data-exclude-hash would strip the route from the URL anyway. We
-      disable the automatic pageview firing here and instead report each
-      route change manually (with the correct virtual path) from
-      src/Root.tsx via trackPageview() in src/telemetry.ts. This is what
-      previously caused "Pages" to show no breakdown: every visit was
-      recorded as a single view of the same base URL.
-    -->
+    <!-- Root reports pageviews manually for this hash-routed app. -->
     <script
       defer
       src="https://ca-umami-prod.lemonglacier-6a5930b7.uksouth.azurecontainerapps.io/script.js"
@@ -63,6 +53,7 @@
       data-domains="microsoft.github.io"
       data-do-not-track="true"
       data-exclude-search="true"
+      data-exclude-hash="true"
       data-auto-pageview="false"></script>
 
     <!-- Microsoft Clarity -->
