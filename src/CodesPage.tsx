@@ -97,7 +97,7 @@ export default function CodesPage() {
                 </PortalText>
                 <span className="labs-badge">{section.items.length}</span>
               </div>
-              <div className={section.key === "libraries" ? "labs-library-grid" : "labs-card-grid"}>
+              <div className="labs-card-grid">
                 {section.items.map((item) => {
                   const Icon = item.icon ?? DocumentBulletList24Regular;
                   const library = isLibrary(item);
@@ -108,7 +108,7 @@ export default function CodesPage() {
                         // Contain (not cover) so the square illustrations render at their natural
                         // proportions and stay centred, matching the L1 sample-code cards.
                         <img className="labs-card__media labs-card__media--contain" src={item.image} alt="" />
-                      ) : library ? null : (
+                      ) : (
                         <div className="labs-card__media labs-card__media--icon">
                           <Icon aria-hidden="true" />
                         </div>

@@ -83,6 +83,8 @@ interface FeaturedItem {
   description: string;
   url: string;
   addedOn?: string;
+  image?: string;
+  imageIsIllustration?: boolean;
   isLibrary?: boolean;
 }
 
@@ -144,9 +146,12 @@ function buildFeaturedItems(): FeaturedItem[] {
   const byDateDesc = (a: { addedOn?: string }, b: { addedOn?: string }) =>
     (b.addedOn ?? "").localeCompare(a.addedOn ?? "");
 
-  const groups: { kind: FeaturedKind; items: { id: string; title: string; description: string; url: string; addedOn?: string; isLibrary?: boolean }[] }[] = [
+  const groups: {
+    kind: FeaturedKind;
+    items: Omit<FeaturedItem, "sourceId" | "kind" | "tone">[];
+  }[] = [
     { kind: "Template", items: templates },
-    { kind: "Code", items: resources.map((item) => ({ ...item, isLibrary: isLibrary(item) })) },
+    { kind: "Code", items: resources.map((item) => ({ ...item, imageIsIllustration: true, isLibrary: isLibrary(item) })) },
     { kind: "Research", items: research.filter((item) => item.kind === "Research") },
     { kind: "Playbook", items: research.filter((item) => item.kind === "Playbook") },
   ];
@@ -165,6 +170,8 @@ function buildFeaturedItems(): FeaturedItem[] {
           description: item.description,
           url: item.url,
           addedOn: item.addedOn,
+          image: item.image,
+          imageIsIllustration: item.imageIsIllustration,
           isLibrary: item.isLibrary,
         })),
     )
@@ -908,6 +915,13 @@ function App() {
                       }[item.kind];
                   return (
                     <PortalCard key={item.id} role="article" className="data-table-card labs-card labs-featured__card">
+                      {item.image ? (
+                        <img
+                          className={`labs-card__media${item.imageIsIllustration ? " labs-card__media--contain" : ""}`}
+                          src={item.image}
+                          alt=""
+                        />
+                      ) : null}
                       <div className="labs-featured__meta">
                         <span className={chip.badgeClass}>{item.isLibrary ? "Library" : chip.label}</span>
                         <PortalText textRole="metadata" tone="muted">
@@ -1034,7 +1048,7 @@ function App() {
                     role="article"
                     className={`data-table-card labs-card${isFeatured ? " labs-template-card--featured" : ""}`}
                   >
-                    {isFeatured && item.image ? (
+                    {item.image ? (
                       <img
                         className={`labs-card__media${item.imageIsIllustration ? " labs-card__media--contain" : ""}`}
                         src={item.image}
@@ -1137,6 +1151,9 @@ function App() {
             <div className="labs-library-grid">
               {libraries.map((item) => (
                 <PortalCard key={item.id} role="article" className="data-table-card labs-card">
+                  {item.image ? (
+                    <img className="labs-card__media labs-card__media--contain" src={item.image} alt="" />
+                  ) : null}
                   <PortalText as="h4" textRole="card-title" className="labs-card__title">
                     {item.title}
                   </PortalText>
