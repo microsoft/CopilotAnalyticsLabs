@@ -2,7 +2,7 @@
  * Lightweight telemetry module for Copilot Analytics Labs.
  *
  * Tracks page views and click events to localStorage and logs them to the
- * browser console.  No external dependencies — works fully offline on
+ * browser console.  No external dependencies; works fully offline on
  * GitHub Pages.
  *
  * Storage key: "cal_telemetry"
@@ -25,6 +25,29 @@ interface TelemetryStore {
 const STORAGE_KEY = "cal_telemetry";
 const MAX_EVENTS = 500; // keep last 500 events to avoid unbounded growth
 
+interface UmamiPageviewProps {
+  website: string;
+  url: string;
+  referrer: string;
+  [key: string]: unknown;
+}
+
+interface UmamiTracker {
+  track(
+    payload?:
+      | string
+      | Record<string, unknown>
+      | ((props: UmamiPageviewProps) => UmamiPageviewProps),
+    data?: Record<string, unknown>
+  ): Promise<void>;
+}
+
+declare global {
+  interface Window {
+    umami?: UmamiTracker;
+  }
+}
+
 function readStore(): TelemetryStore {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -43,11 +66,13 @@ function writeStore(store: TelemetryStore): void {
     }
     localStorage.setItem(STORAGE_KEY, JSON.stringify(store));
   } catch {
-    /* storage full — silently skip */
+    /* storage full: silently skip */
   }
 }
 
 /* ─── Event names (mirrors NovaClient CopilotAnalyticsLabsEventNames) ─── */
+// This list is kept in sync with the NovaClient registry, so names stay here
+// even when nothing in this app emits them yet.
 export const TelemetryEvents = {
   PageView: "CopilotAnalyticsLabs.PageView",
   ExploreTemplatesClick: "CopilotAnalyticsLabs.ExploreTemplatesClick",
@@ -62,9 +87,16 @@ export const TelemetryEvents = {
   SectionView: "CopilotAnalyticsLabs.SectionView",
   HeroExploreClick: "CopilotAnalyticsLabs.HeroExploreClick",
   TemplateViewClick: "CopilotAnalyticsLabs.TemplateViewClick",
+  TemplateDemoClick: "CopilotAnalyticsLabs.TemplateDemoClick",
   CodeViewClick: "CopilotAnalyticsLabs.CodeViewClick",
   ResearchViewClick: "CopilotAnalyticsLabs.ResearchViewClick",
 } as const;
+
+/** Sends to Microsoft Clarity once its script has loaded; does nothing before that. */
+function sendToClarity(...args: string[]): void {
+  if (typeof window === "undefined") return;
+  (window as Window & { clarity?: (...args: string[]) => void }).clarity?.(...args);
+}
 
 /* ─── Public API ─── */
 
@@ -82,14 +114,22 @@ export function logPageView(): void {
   writeStore(store);
 
   // Send page view event to Microsoft Clarity
-  if (typeof window !== "undefined" && (window as any).clarity) {
-    (window as any).clarity("event", TelemetryEvents.PageView);
-  }
+  sendToClarity("event", TelemetryEvents.PageView);
 
   console.log(
     `%c[Telemetry] PageView #${store.pageViews}`,
     "color:#6264A7;font-weight:bold"
   );
+}
+
+/** Report the resolved page path to Umami instead of the raw URL fragment. */
+export function trackPageview(path: string, isLandingPage: boolean): void {
+  if (typeof window === "undefined" || !window.umami) return;
+  window.umami.track((props) => ({
+    ...props,
+    url: path,
+    referrer: isLandingPage ? props.referrer : "",
+  }));
 }
 
 /** Log a click event with optional properties. */
@@ -103,11 +143,9 @@ export function logClick(
   writeStore(store);
 
   // Send custom event to Microsoft Clarity for server-side tracking
-  if (typeof window !== "undefined" && (window as any).clarity) {
-    (window as any).clarity("event", eventName);
-    if (properties) {
-      (window as any).clarity("set", eventName, JSON.stringify(properties));
-    }
+  sendToClarity("event", eventName);
+  if (properties) {
+    sendToClarity("set", eventName, JSON.stringify(properties));
   }
 
   console.log(

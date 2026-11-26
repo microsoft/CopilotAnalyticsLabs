@@ -248,28 +248,28 @@
   <header class="masthead">
     <div class="kicker">Copilot Analytics Lab · Inside the Metrics · Part 2</div>
     <h1 class="title">Measuring the Additional Work AI Agents Make Possible</h1>
-    <p class="dek">New Assisted Hours (NAH) estimates the human-equivalent work an AI agent performs alongside a person — additional work done in parallel, not time subtracted from a task. This brief walks through the layered architecture, the six research stages behind it, and the calculations that make it auditable.</p>
+    <p class="dek">New Assisted Hours (NAH) estimates the human-equivalent work an AI agent performs alongside a person: additional work done in parallel, not time subtracted from a task. This brief walks through the layered architecture, the six research stages behind it, and the calculations that make it auditable.</p>
     <div class="byline">By the PANDAS team · A Copilot Analytics Lab technical brief · ~15 min read</div>
     <nav class="series-nav" aria-label="Article series">
-      <a class="sn-item" href="https://microsoft.github.io/CopilotAnalyticsLabs/agent-assisted-hours.html"><span class="sn-n">Part 1</span><span class="sn-t">Agent Assisted Hours — time saved</span></a>
-      <span class="sn-item cur"><span class="sn-n">Part 2</span><span class="sn-t">New Assisted Hours — human-augmented time</span></span>
+      <a class="sn-item" href="https://microsoft.github.io/CopilotAnalyticsLabs/agent-assisted-hours.html"><span class="sn-n">Part 1</span><span class="sn-t">Agent Assisted Hours: time saved</span></a>
+      <span class="sn-item cur"><span class="sn-n">Part 2</span><span class="sn-t">New Assisted Hours: human-augmented time</span></span>
     </nav>
   </header>
 
   <main>
     <div class="lead">
-      <p>When an AI agent runs a multi-step workflow — searching, reading, drafting, calling tools, revising, verifying — it performs work a person would otherwise have to do themselves. New Assisted Hours quantifies that work by asking a precise question: <b>if a person had produced the same output, step by step, how long would it have taken them?</b> That human-equivalent time, aggregated across the workflow, is what New Assisted Hours counts.</p>
-      <p>Crucially, this is an <b>additive</b> view of time, not a subtractive one. The agent works in parallel with the person, so its output is best understood as human-equivalent hours <em>added</em> to what the person could do alone, rather than minutes shaved off a task they were already doing. This is why assisted hours can grow even when a task's elapsed time barely moves when completed by an agent — a pattern we observed directly in controlled trials, where AI assistance lowered subjective workload with no change in completion time. Time saved — the <a href="https://microsoft.github.io/CopilotAnalyticsLabs/agent-assisted-hours.html">Agent Assisted Hours metric covered in Part 1</a> — and New Assisted Hours are complementary time-based views: one measures how much faster a shared task finishes, the other measures how much additional human-equivalent work the agent absorbed.</p>
+      <p>When an AI agent runs a multi-step workflow (searching, reading, drafting, calling tools, revising, verifying), it performs work a person would otherwise have to do themselves. New Assisted Hours quantifies that work by asking a precise question: <b>if a person had produced the same output, step by step, how long would it have taken them?</b> That human-equivalent time, aggregated across the workflow, is what New Assisted Hours counts.</p>
+      <p>Crucially, this is an <b>additive</b> view of time, not a subtractive one. The agent works in parallel with the person, so its output is best understood as human-equivalent hours <em>added</em> to what the person could do alone, rather than minutes shaved off a task they were already doing. This is why assisted hours can grow even when a task's elapsed time barely moves when completed by an agent, a pattern we observed directly in controlled trials, where AI assistance lowered subjective workload with no change in completion time. Time saved (the <a href="https://microsoft.github.io/CopilotAnalyticsLabs/agent-assisted-hours.html">Agent Assisted Hours metric covered in Part 1</a>) and New Assisted Hours are complementary time-based views: one measures how much faster a shared task finishes, the other measures how much additional human-equivalent work the agent absorbed.</p>
     </div>
 
     <div class="panel">
       <h3>Summary</h3>
       <ul class="tight">
-        <li><b>What it measures.</b> The human-equivalent time a typical worker would need to reproduce the agent's steps — a proxy for the human-augmented hours the agent added, computed per prompt and aggregated upward.</li>
+        <li><b>What it measures.</b> The human-equivalent time a typical worker would need to reproduce the agent's steps, a proxy for the human-augmented hours the agent added, computed per prompt and aggregated upward.</li>
         <li><b>Architecture.</b> A five-layer pipeline. Layer 1 reads the agent's steps from telemetry; Layer 2 assigns each step a calibrated human-equivalent time; Layer 3 aggregates with an effort discount. Layers 4–5 (complexity/user adjustment, net capacity) are future work.</li>
         <li><b>Evidence base.</b> Six linked research stages: two randomized controlled trials, a whole-task PERT estimation study, a microtask decomposition and time estimation stidy, an LLM benchmark with calibration, and an effort-discounting aggregation.</li>
         <li><b>Calibration.</b> Raw LLM time estimates are strongly biased; prediction-bin calibration reduces mean absolute error from ~11.7 min to ~1.99 min under leave-one-task-out cross-validation.</li>
-        <li><b>Aggregation.</b> A concave, order-aware discount — weight <code>k^α − (k−1)^α</code>, default α = 0.7 — prevents repeated steps from being overcounted, compressing a repetition-heavy worked example by ~58%.</li>
+        <li><b>Aggregation.</b> A concave, order-aware discount (weight <code>k^α − (k−1)^α</code>, default α = 0.7) prevents repeated steps from being overcounted, compressing a repetition-heavy worked example by ~58%.</li>
       </ul>
       <p class="panel-cta">This brief is the accessible overview. For the complete methodology, statistics, and derivations, see the <a href="https://example.com/REPLACE-WITH-RESEARCH-BRIEF-URL">detailed research brief</a>.</p>
     </div>
@@ -277,7 +277,7 @@
     <section id="architecture">
       <div class="eyebrow">Architecture</div>
       <h2>A layered pipeline</h2>
-      <p>New Assisted Hours is organized as a pipeline whose layers answer different measurement questions and feed forward. The agent's raw activity enters at Layer 1; a defensible assisted-hours figure leaves at Layer 3. The two layers beyond that are named but out of scope for this brief — they are where complexity adjustment and net-capacity accounting will eventually live.</p>
+      <p>New Assisted Hours is organized as a pipeline whose layers answer different measurement questions and feed forward. The agent's raw activity enters at Layer 1; a defensible assisted-hours figure leaves at Layer 3. The two layers beyond that are named but out of scope for this brief; they are where complexity adjustment and net-capacity accounting will eventually live.</p>
 
       <figure class="fig">
         <div class="figbox">
@@ -309,7 +309,7 @@
             </div>
           </div>
         </div>
-        <figcaption>Figure 1 — The five-layer New Assisted Hours architecture. Layers 1–3 are covered here; the six research stages populate Layers 2 and 3.</figcaption>
+        <figcaption>Figure 1: The five-layer New Assisted Hours architecture. Layers 1–3 are covered here; the six research stages populate Layers 2 and 3.</figcaption>
       </figure>
 
       <p>The architecture is informed by research conducted across these six stages: <b>Layer 2 is produced by Stages 1–5</b>, which together yield the calibrated per-step human-equivalent time <code>t<sub>cal,i</sub></code> stored in a lookup table, and <b>Layer 3 is Stage 6</b>, the effort-discounting rule that aggregates those per-step times into the session-level metric.</p>
@@ -325,7 +325,7 @@
           <div class="pipe">
             <div class="pipe-band">Stages 1–5 · Producing the calibrated step-time inputs (t<sub>cal,i</sub>)</div>
             <div class="pipe-group">
-              <div class="stage"><div class="snum"><span class="slab">STAGE</span><span class="sval">1</span></div><div><div class="sname">Observed human time — RCT</div><div class="smeta">Within-subject randomized controlled trial across three knowledge-work tasks. <span class="smetric">197 participants</span></div></div></div>
+              <div class="stage"><div class="snum"><span class="slab">STAGE</span><span class="sval">1</span></div><div><div class="sname">Observed human time (RCT)</div><div class="smeta">Within-subject randomized controlled trial across three knowledge-work tasks. <span class="smetric">197 participants</span></div></div></div>
               <div class="stage"><div class="snum"><span class="slab">STAGE</span><span class="sval">2</span></div><div><div class="sname">Revised document-review RCT</div><div class="smeta">Re-run on denser, less-searchable documents to force genuine reading. <span class="smetric">133 participants</span></div></div></div>
               <div class="stage"><div class="snum"><span class="slab">STAGE</span><span class="sval">3</span></div><div><div class="sname">Whole-task PERT time estimation</div><div class="smeta">Three-point human estimation of full-task time across seven task families. <span class="smetric">302 respondents / task</span></div></div></div>
               <div class="stage"><div class="snum"><span class="slab">STAGE</span><span class="sval">4</span></div><div><div class="sname">Microtask decomposition and time estimation</div><div class="smeta">Workflows mapped to tool-level, effort-bearing units. <span class="smetric">14 tool-primitive microtasks</span></div></div></div>
@@ -338,11 +338,11 @@
             </div>
           </div>
         </div>
-        <figcaption>Figure 2 — The six-stage estimation pipeline. Stages 1–5 build the calibrated per-step time; Stage 6 aggregates it into New Assisted Hours.</figcaption>
+        <figcaption>Figure 2: The six-stage estimation pipeline. Stages 1–5 build the calibrated per-step time; Stage 6 aggregates it into New Assisted Hours.</figcaption>
       </figure>
 
-      <h3>Stages 1 &amp; 2 — Observed human time (two RCTs)</h3>
-      <p>The baselines start in the lab. A first within-subject randomized controlled trial measured how long people actually take on three realistic tasks — infographic creation, executive-brief review, and comparison research — each performed both with and without AI assistance, alongside NASA-TLX workload, click-based strain, and abandonment. AI's effect on completion time was task-specific: significant on the infographic and comparison tasks, flat on the executive brief. Notably, subjective effort fell on all three tasks even where time did not — the first direct evidence that capacity and elapsed time are distinct.</p>
+      <h3>Stages 1 &amp; 2: Observed human time (two RCTs)</h3>
+      <p>The baselines start in the lab. A first within-subject randomized controlled trial measured how long people actually take on three realistic tasks (infographic creation, executive-brief review, and comparison research), each performed both with and without AI assistance, alongside NASA-TLX workload, click-based strain, and abandonment. AI's effect on completion time was task-specific: significant on the infographic and comparison tasks, flat on the executive brief. Notably, subjective effort fell on all three tasks even where time did not, the first direct evidence that capacity and elapsed time are distinct.</p>
       <p>Because the first document task could be shortcut with keyword search and copy-paste, a revised trial hardened it with longer, denser, less-searchable documents to force genuine reading and synthesis. Across 133 participants, AI produced a statistically significant reduction in completion time, and the robust medians became stronger ground-truth labels for calibration.</p>
 
       <div class="snap s1">
@@ -373,14 +373,14 @@
         <div class="snap-foot">Human time = control (no-AI) median. On the Operations task the median was flat; the significant gain appeared in the mean (−28 s, −5.9%).</div>
       </div>
 
-      <h3>Stage 3 — Whole-task PERT time estimation</h3>
-      <p>Controlled trials can only cover a handful of tasks, so coverage is extended with whole-task human estimation using an uncertainty-aware three-point PERT method — optimistic, most-likely, and pessimistic times combined as <code>(O + 4M + P) / 6</code>, with the median PERT as the primary estimator. Independent knowledge workers estimated full manual completion time for standardized whole-task vignettes across seven benchmark-style families (from academic editing to open-ended research), with 302 respondents per task. The resulting medians span roughly <b>92.5 to 700 minutes</b> and are strongly right-skewed (skewness 6.2–17.2) — the long-tailed shape knowledge work characteristically takes.</p>
+      <h3>Stage 3: Whole-task PERT time estimation</h3>
+      <p>Controlled trials can only cover a handful of tasks, so coverage is extended with whole-task human estimation using an uncertainty-aware three-point PERT method: optimistic, most-likely, and pessimistic times combined as <code>(O + 4M + P) / 6</code>, with the median PERT as the primary estimator. Independent knowledge workers estimated full manual completion time for standardized whole-task vignettes across seven benchmark-style families (from academic editing to open-ended research), with 302 respondents per task. The resulting medians span roughly <b>92.5 to 700 minutes</b> and are strongly right-skewed (skewness 6.2–17.2), the long-tailed shape knowledge work characteristically takes.</p>
 
-      <h3>Stage 4 — Microtask decomposition and time estimation</h3>
-      <p>Agent telemetry is expressed as tool calls, not whole tasks, so the whole-task and RCT baselines must be bridged to the level at which agents actually operate. Stage 4 decomposes workflows into <b>14 tool-primitive microtasks</b> — the small, effort-bearing units (search, open/read, extract, summarize, verify, refine, and so on) that compose an agent session. These become the unit at which per-step human-equivalent time is estimated and calibrated.</p>
+      <h3>Stage 4: Microtask decomposition and time estimation</h3>
+      <p>Agent telemetry is expressed as tool calls, not whole tasks, so the whole-task and RCT baselines must be bridged to the level at which agents actually operate. Stage 4 decomposes workflows into <b>14 tool-primitive microtasks</b>: the small, effort-bearing units (search, open/read, extract, summarize, verify, refine, and so on) that compose an agent session. These become the unit at which per-step human-equivalent time is estimated and calibrated.</p>
 
-      <h3>Stage 5 — LLM benchmark and calibration</h3>
-      <p>To scale beyond direct human elicitation, four LLMs were benchmarked against the 14 microtasks, evaluated by mean absolute error (MAE), RMSE, Spearman rank correlation, pairwise concordance, and leave-one-task-out cross-validation. Out of the box the models are not usable as time estimators: <b>raw estimates overestimated 79–86% of the tool-level microtasks</b>, with very weak rank correlation to observed times (ρ ≈ 0.12). A <b>prediction-bin calibration</b> — scaling estimates by predicted-duration bin — corrected the bias and, under leave-one-task-out cross-validation against ground-truth RCT timings, <b>reduced MAE from about 11.7 minutes to about 1.99 minutes</b>, outperforming model-family and complexity-based corrections. The bias direction is level-dependent: models overestimate microtasks but underestimate whole tasks, so calibration against human anchors is not optional.</p>
+      <h3>Stage 5: LLM benchmark and calibration</h3>
+      <p>To scale beyond direct human elicitation, four LLMs were benchmarked against the 14 microtasks, evaluated by mean absolute error (MAE), RMSE, Spearman rank correlation, pairwise concordance, and leave-one-task-out cross-validation. Out of the box the models are not usable as time estimators: <b>raw estimates overestimated 79–86% of the tool-level microtasks</b>, with very weak rank correlation to observed times (ρ ≈ 0.12). A <b>prediction-bin calibration</b> (scaling estimates by predicted-duration bin) corrected the bias and, under leave-one-task-out cross-validation against ground-truth RCT timings, <b>reduced MAE from about 11.7 minutes to about 1.99 minutes</b>, outperforming model-family and complexity-based corrections. The bias direction is level-dependent: models overestimate microtasks but underestimate whole tasks, so calibration against human anchors is not optional.</p>
 
       <table class="data">
         <thead><tr><th>Predicted-duration bin</th><th class="num">Calibration multiplier</th></tr></thead>
@@ -395,11 +395,11 @@
       <div class="excerpt">
         <div class="ex-lab">Stage 5 · estimation prompt (excerpt)</div>
         <div class="ex-body">You are an expert evaluator assessing task completion time complexity. Estimate how long it would take a skilled professional with relevant domain expertise (but no task-specific context) to complete this task with 50% success rate.</div>
-        <div class="ex-map"><b>Assessment Criteria</b> · <b>Time Horizon Categories</b> · <b>Output Format</b> — with per-component reasoning and a comparison anchor.</div>
+        <div class="ex-map"><b>Assessment Criteria</b> · <b>Time Horizon Categories</b> · <b>Output Format</b>, with per-component reasoning and a comparison anchor.</div>
         <div class="ex-link"><a href="#prompt">▸ See the full prompt</a></div>
       </div>
 
-      <h3>Stage 6 — Effective-effort discounting</h3>
+      <h3>Stage 6: Effective-effort discounting</h3>
       <p>Adding up per-step human-equivalent time overlooks how people actually work: humans exert less effort on a step the more they have already done it. The first search establishes context; later searches build on it. The first draft creates the backbone; later revisions make smaller changes. Stage 6 applies a concave, order-aware discount so repeated occurrences of a step receive progressively less marginal credit. Letting <code>t<sub>cal,i</sub></code> be the calibrated human-equivalent time for the <em>i</em>-th step, the naive baseline and the discounted rule are:</p>
 
       <div class="formula">
@@ -407,7 +407,7 @@
         <span class="fnote">where the marginal weight of the k-th occurrence of a step is w(k) = k<sup>α</sup> − (k−1)<sup>α</sup></span>
       </div>
 
-      <p>At <b>α = 1</b> the weights sum to a plain count and the rule reduces to naive addition. At <b>α &lt; 1</b> the function is concave, so the first occurrence keeps full credit while each repeat contributes less than the last. The default is <b>α = 0.7</b> — a governed parameter set mid-range of the effort-discounting literature and stress-tested with sensitivity analysis. Internal agent reasoning steps are excluded from scoring throughout.</p>
+      <p>At <b>α = 1</b> the weights sum to a plain count and the rule reduces to naive addition. At <b>α &lt; 1</b> the function is concave, so the first occurrence keeps full credit while each repeat contributes less than the last. The default is <b>α = 0.7</b>, a governed parameter set mid-range of the effort-discounting literature and stress-tested with sensitivity analysis. Internal agent reasoning steps are excluded from scoring throughout.</p>
     </section>
 
     <section id="results">
@@ -416,7 +416,7 @@
       <p>The RCT snapshots above are the observed human baselines. The remaining results establish that the estimation scales and that the discounting behaves as intended.</p>
 
       <h3>Whole-task human time spans an order of magnitude</h3>
-      <p>The PERT medians confirm how wide and skewed real task times are — from short clarifications to multi-hour research workflows.</p>
+      <p>The PERT medians confirm how wide and skewed real task times are, from short clarifications to multi-hour research workflows.</p>
       <figure class="fig">
         <div class="figbox">
           <div class="rangebar">
@@ -425,7 +425,7 @@
             <div class="rmark" style="left:88%"><div class="rval">700 min</div><div class="rdot"></div><div>prompting-methods test (longest median)</div></div>
           </div>
         </div>
-        <figcaption>Figure 3 — Whole-task human-time medians across seven task families (Stage 3), strongly right-skewed (skewness 6.2–17.2). Trimmed-10 means range from about 119 to 1,103 minutes.</figcaption>
+        <figcaption>Figure 3: Whole-task human-time medians across seven task families (Stage 3), strongly right-skewed (skewness 6.2–17.2). Trimmed-10 means range from about 119 to 1,103 minutes.</figcaption>
       </figure>
 
       <h3>Calibration turns a biased proxy into a usable signal</h3>
@@ -437,7 +437,7 @@
             <div class="crow"><div class="clab">After calibration</div><div class="ctrack"><div class="cfill good" style="width:17%">≈ 1.99 min</div></div></div>
           </div>
         </div>
-        <figcaption>Figure 4 — Mean absolute error against observed human times, under leave-one-task-out cross-validation. Raw estimates overestimate 79–86% of microtasks (ρ ≈ 0.12); calibration outperforms model-family and complexity-based corrections.</figcaption>
+        <figcaption>Figure 4: Mean absolute error against observed human times, under leave-one-task-out cross-validation. Raw estimates overestimate 79–86% of microtasks (ρ ≈ 0.12); calibration outperforms model-family and complexity-based corrections.</figcaption>
       </figure>
 
       <h3>Discounting compresses repetition, not the backbone</h3>
@@ -449,7 +449,7 @@
             <div class="crow"><div class="clab">Effort-discounted</div><div class="ctrack"><div class="cfill b" style="width:42%">≈ 25.6 units</div></div></div>
           </div>
         </div>
-        <figcaption>Figure 5 — A 34-call worked example (2 internal reasoning calls excluded): order-aware discounting compresses ~60.5 calibrated minutes to ~25.6 effective-effort units at α = 0.7 (~58% compression), concentrated on late-stage retries.</figcaption>
+        <figcaption>Figure 5: A 34-call worked example (2 internal reasoning calls excluded): order-aware discounting compresses ~60.5 calibrated minutes to ~25.6 effective-effort units at α = 0.7 (~58% compression), concentrated on late-stage retries.</figcaption>
       </figure>
 
       <div class="stats">
@@ -458,37 +458,37 @@
         <div class="stat"><div class="snumb">10.3 min</div><div class="sdesc">median agent runtime across sessions with a recorded runtime</div></div>
         <div class="stat"><div class="snumb">99</div><div class="sdesc">Deep Research sessions in the discounting telemetry sample</div></div>
       </div>
-      <p style="font-size:13.5px;color:var(--faint);margin-top:12px">Figure 6 — Session-level telemetry behind the discounting layer: multi-step, repetition-heavy workflows are the norm, which is exactly the setting the concave discount is designed for.</p>
+      <p style="font-size:13.5px;color:var(--faint);margin-top:12px">Figure 6: Session-level telemetry behind the discounting layer: multi-step, repetition-heavy workflows are the norm, which is exactly the setting the concave discount is designed for.</p>
     </section>
 
     <section id="validation">
       <div class="eyebrow">Validation</div>
       <h2>Why the signal holds together</h2>
-      <p>Two checks support using the metric. First, <b>external agreement</b>: the calibrated estimates closely match independent human estimates of how long the same tasks would take — the property you want before trusting a New Assisted Hours number. Second, <b>internal validity</b>: the calibration is validated under leave-one-task-out cross-validation against ground-truth trial timings, and it outperforms model-family and complexity-based corrections. Two design choices run through the whole program and explain why the results cohere: task difficulty is anchored in observed human time rather than tokens or model internals, and aggregation is built to be robust to outliers so a few unusually large or small sessions do not distort the picture. The consistent lesson is that raw model estimates cannot substitute for human-grounded baselines — calibration against human anchors is what makes the metric trustworthy.</p>
+      <p>Two checks support using the metric. First, <b>external agreement</b>: the calibrated estimates closely match independent human estimates of how long the same tasks would take, the property you want before trusting a New Assisted Hours number. Second, <b>internal validity</b>: the calibration is validated under leave-one-task-out cross-validation against ground-truth trial timings, and it outperforms model-family and complexity-based corrections. Two design choices run through the whole program and explain why the results cohere: task difficulty is anchored in observed human time rather than tokens or model internals, and aggregation is built to be robust to outliers so a few unusually large or small sessions do not distort the picture. The consistent lesson is that raw model estimates cannot substitute for human-grounded baselines; calibration against human anchors is what makes the metric trustworthy.</p>
 
       <h3>Effort discounting in practice</h3>
       <p>The discounting layer was exercised on telemetry from 99 Deep Research sessions, including agent runs on tasks similar to those used in the RCTs plus a fully worked-out example. Because the rule is order-aware, the compression a session receives scales with how repetition-heavy it is. A few worked out examples from tasks similar to the RCT tasks make the behaviour concrete (values are agent-session calibrated totals, not the 15-minute-capped RCT times):</p>
       <table class="data">
         <thead><tr><th>Agent session </th><th class="num">Naive additive</th><th class="num">Effective effort (α = 0.7)</th><th class="num">Compression</th></tr></thead>
         <tbody>
-          <tr><td>Infographic task — similar to the RCT infographic task</td><td class="num">≈ 21 min</td><td class="num">≈ 15 min</td><td class="num">≈ 30%</td></tr>
-          <tr><td>Document-review task  — similar to the RCT Biz-snap document task</td><td class="num">≈ 102 min</td><td class="num">≈ 37 min</td><td class="num">≈ 64%</td></tr>
+          <tr><td>Infographic task (similar to the RCT infographic task)</td><td class="num">≈ 21 min</td><td class="num">≈ 15 min</td><td class="num">≈ 30%</td></tr>
+          <tr><td>Document-review task (similar to the RCT Biz-snap document task)</td><td class="num">≈ 102 min</td><td class="num">≈ 37 min</td><td class="num">≈ 64%</td></tr>
           <tr><td>Fully worked-out example (34-call Deep Research session)</td><td class="num">≈ 60.5 min</td><td class="num">≈ 25.6 min</td><td class="num">≈ 58%</td></tr>
         </tbody>
       </table>
-      <p>The compression depends on the task as seen above. A light, low-repetition session loses little — there is barely any iteration to discount — while a longer, retry-heavy session is compressed substantially. In every case the discount concentrates on late-stage repeats, so the early backbone steps of a workflow retain their full human-equivalent credit and only the redundant later passes are down-weighted.</p>
+      <p>The compression depends on the task as seen above. A light, low-repetition session loses little (there is barely any iteration to discount), while a longer, retry-heavy session is compressed substantially. In every case the discount concentrates on late-stage repeats, so the early backbone steps of a workflow retain their full human-equivalent credit and only the redundant later passes are down-weighted.</p>
     </section>
 
     <section id="scope">
       <div class="eyebrow">Scope</div>
       <h2>What the metric does and does not claim</h2>
-      <p>New Assisted Hours measures the human-equivalent effort represented by the agent's actions — the depth and volume of work performed. It deliberately does not, on its own, assess output quality, whether the user ultimately used the result, or direct economic outcomes such as revenue or ROI; those are necessary complements addressed separately. It is also a modular layer: the discount strength is set by governance rather than learned per user, and complexity/user adjustment (Layer 4) and net-capacity accounting (Layer 5) remain future work.</p>
+      <p>New Assisted Hours measures the human-equivalent effort represented by the agent's actions: the depth and volume of work performed. It deliberately does not, on its own, assess output quality, whether the user ultimately used the result, or direct economic outcomes such as revenue or ROI; those are necessary complements addressed separately. It is also a modular layer: the discount strength is set by governance rather than learned per user, and complexity/user adjustment (Layer 4) and net-capacity accounting (Layer 5) remain future work.</p>
       <ul class="defs">
-        <li><b>Human-equivalent time per session</b> — <span>the calibrated, pre-discount estimate summed over steps.</span></li>
-        <li><b>Effective-effort units</b> — <span>the discounted total that becomes the New Assisted Hours figure.</span></li>
-        <li><b>Repetition ratio</b> — <span>repeated tool calls as a share of scored calls; the primary driver of discounting.</span></li>
-        <li><b>Discount factor α</b> — <span>default 0.7; a governed parameter, not a fitted constant.</span></li>
-        <li><b>Calibration error (MAE)</b> — <span>tracked against any available ground-truth timings.</span></li>
+        <li><b>Human-equivalent time per session</b>: <span>the calibrated, pre-discount estimate summed over steps.</span></li>
+        <li><b>Effective-effort units</b>: <span>the discounted total that becomes the New Assisted Hours figure.</span></li>
+        <li><b>Repetition ratio</b>: <span>repeated tool calls as a share of scored calls; the primary driver of discounting.</span></li>
+        <li><b>Discount factor α</b>: <span>default 0.7; a governed parameter, not a fitted constant.</span></li>
+        <li><b>Calibration error (MAE)</b>: <span>tracked against any available ground-truth timings.</span></li>
       </ul>
     </section>
 
@@ -583,7 +583,7 @@
 
   <footer>
     <div class="foot-nav">← Back to Articles<span class="sep">·</span>Inside the Metrics · Part 2<span class="sep">·</span>Last updated: July 2026</div>
-    <div class="foot-desc">A Copilot Analytics Lab technical brief on how New Assisted Hours is constructed — its layered architecture, the six research stages behind it, the calibration and effort-discounting calculations, and the results that make the metric auditable.</div>
+    <div class="foot-desc">A Copilot Analytics Lab technical brief on how New Assisted Hours is constructed: its layered architecture, the six research stages behind it, the calibration and effort-discounting calculations, and the results that make the metric auditable.</div>
     <div class="legal">© 2026 Microsoft. All rights reserved. This document is provided "as-is." Information and views expressed in this document, including URL and other Internet Web site references, may change without notice. You bear the risk of using it. This document does not provide you with any legal rights to any intellectual property in any Microsoft product. You may copy and use this document for your internal reference purposes.</div>
   </footer>
 

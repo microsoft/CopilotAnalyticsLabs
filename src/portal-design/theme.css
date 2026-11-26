@@ -1,0 +1,146 @@
+/* Portal design kit: color tokens. Light and dark values use light-dark(); PortalThemeProvider sets
+   :root[data-theme] so high-contrast and forced-colors modes map every token to system colors. */
+:root {
+  color-scheme: light dark;
+  --color-page: light-dark(#f9f9f9, #141820);
+  --color-surface: light-dark(#fff, #1c2129);
+  --color-surface-raised: light-dark(#fff, #252c35);
+  --color-surface-subtle: light-dark(#f5f5f5, #20262e);
+  --color-hover: light-dark(#f0f0f0, #2c3541);
+  --color-pressed: light-dark(#e0e0e0, #354252);
+  --color-text: light-dark(#242424, #f3f6fa);
+  --color-text-secondary: light-dark(#424242, #d1d9e3);
+  --color-text-muted: light-dark(#616161, #b3bdca);
+  --color-text-disabled: light-dark(#b3b3b3, #858585);
+  --color-border: light-dark(#e0e0e0, #424c5b);
+  --color-border-strong: light-dark(#b3b3b3, #707e92);
+  --color-brand: light-dark(#0f6cbd, #75b9ed);
+  --color-brand-fill: light-dark(#0f6cbd, #0f6cbd);
+  --color-brand-soft: light-dark(#ebf3fc, #173650);
+  --color-on-brand: #fff;
+  --color-neutral-fill: light-dark(#242424, #f0f0f0);
+  --color-on-neutral: light-dark(#fff, #242424);
+  --color-success: light-dark(#107c10, #7cce7c);
+  --color-success-soft: light-dark(#dff6dd, #17351c);
+  --color-warning: light-dark(#8a5100, #f5c26b);
+  --color-warning-soft: light-dark(#fff4ce, #3b3018);
+  --color-danger: light-dark(#c42b1c, #ff9990);
+  --color-danger-soft: light-dark(#fde7e9, #442424);
+  --color-focus: light-dark(#0f6cbd, #75b9ed);
+  --color-shadow: light-dark(rgb(0 0 0 / 8%), rgb(0 0 0 / 45%));
+}
+
+:root[data-theme="light"] { color-scheme: light; }
+:root[data-theme="dark"] { color-scheme: dark; }
+
+:root[data-theme="high-contrast"] {
+  color-scheme: dark;
+  --contrast-canvas: #000;
+  --contrast-text: #fff;
+  --contrast-highlight: #1aebff;
+  --contrast-link: #ffff00;
+  --contrast-disabled: #3ff23f;
+}
+
+:root[data-theme="forced-colors"] {
+  --contrast-canvas: Canvas;
+  --contrast-text: CanvasText;
+  --contrast-highlight: Highlight;
+  --contrast-link: LinkText;
+  --contrast-disabled: GrayText;
+}
+
+:root:is([data-theme="high-contrast"], [data-theme="forced-colors"]) {
+  --color-page: var(--contrast-canvas);
+  --color-surface: var(--contrast-canvas);
+  --color-surface-raised: var(--contrast-canvas);
+  --color-surface-subtle: var(--contrast-canvas);
+  --color-hover: var(--contrast-canvas);
+  --color-pressed: var(--contrast-canvas);
+  --color-text: var(--contrast-text);
+  --color-text-secondary: var(--contrast-text);
+  --color-text-muted: var(--contrast-text);
+  --color-text-disabled: var(--contrast-disabled);
+  --color-border: var(--contrast-text);
+  --color-border-strong: var(--contrast-text);
+  --color-brand: var(--contrast-link);
+  --color-brand-fill: var(--contrast-text);
+  --color-brand-soft: var(--contrast-canvas);
+  --color-on-brand: var(--contrast-canvas);
+  --color-neutral-fill: var(--contrast-text);
+  --color-on-neutral: var(--contrast-canvas);
+  --color-success: var(--contrast-text);
+  --color-success-soft: var(--contrast-canvas);
+  --color-warning: var(--contrast-text);
+  --color-warning-soft: var(--contrast-canvas);
+  --color-danger: var(--contrast-text);
+  --color-danger-soft: var(--contrast-canvas);
+  --color-focus: var(--contrast-highlight);
+  --color-shadow: transparent;
+}
+
+:root:is([data-theme="high-contrast"], [data-theme="forced-colors"]) :focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+:root[data-theme="high-contrast"] .primary-button:not(:disabled):not([aria-disabled="true"]) {
+  color: var(--color-on-brand);
+  background: var(--color-brand-fill);
+}
+
+/* Custom chrome does not receive Fluent's preset state styles. */
+:root:is([data-theme="high-contrast"], [data-theme="forced-colors"]) :is(
+  .primary-button, .secondary-button, .tertiary-button
+):hover:not(:disabled):not([aria-disabled="true"]) {
+  outline: 1px solid var(--color-focus);
+  outline-offset: -1px;
+}
+
+:root:is([data-theme="high-contrast"], [data-theme="forced-colors"]) :is(
+  .fui-Card, .fui-DialogSurface, .fui-PopoverSurface, .fui-MenuPopover
+) {
+  border: 1px solid var(--color-border);
+  box-shadow: none;
+}
+
+body {
+  color: var(--color-text);
+  background: var(--color-page);
+}
+
+@media (forced-colors: active) {
+  :root, :root[data-theme] {
+    --contrast-canvas: Canvas;
+    --contrast-text: CanvasText;
+    --contrast-highlight: Highlight;
+    --contrast-link: LinkText;
+    --contrast-disabled: GrayText;
+    --color-page: Canvas;
+    --color-surface: Canvas;
+    --color-surface-raised: Canvas;
+    --color-surface-subtle: Canvas;
+    --color-text: CanvasText;
+    --color-text-secondary: CanvasText;
+    --color-text-muted: CanvasText;
+    --color-border: ButtonBorder;
+    --color-border-strong: ButtonBorder;
+    --color-brand: LinkText;
+    --color-focus: Highlight;
+    --color-hover: Canvas;
+    --color-pressed: Canvas;
+    --color-text-disabled: GrayText;
+    --color-brand-fill: Highlight;
+    --color-brand-soft: Canvas;
+    --color-on-brand: HighlightText;
+    --color-neutral-fill: CanvasText;
+    --color-on-neutral: Canvas;
+    --color-success: CanvasText;
+    --color-success-soft: Canvas;
+    --color-warning: CanvasText;
+    --color-warning-soft: Canvas;
+    --color-danger: CanvasText;
+    --color-danger-soft: Canvas;
+    --color-shadow: transparent;
+  }
+}

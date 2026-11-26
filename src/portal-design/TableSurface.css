@@ -1,0 +1,55 @@
+/* Ordinary data tables: <table className="portal-standard-table"> inside a
+   <PortalCard className="data-table-card"> with a <div className="data-table-scroll"> wrapper.
+   14px/20px text, semibold headers, 48px rows, 1px dividers and no divider under the last row. */
+:root {
+  --table-standard-row-height: 48px;
+  --table-header-block-padding: 12px;
+}
+
+.portal-standard-table {
+  --table-edge-padding: 0px;
+  --table-cell-padding: 12px;
+  width: 100%;
+  border-collapse: collapse;
+  color: var(--color-text);
+  font: var(--type-table);
+}
+
+.portal-standard-table > :is(thead, tbody, tfoot) > tr > :is(th, td) {
+  height: var(--table-standard-row-height);
+  padding: 8px var(--table-cell-padding);
+  border-bottom: 1px solid var(--color-border);
+  text-align: left;
+  vertical-align: middle;
+}
+
+.portal-standard-table > thead > tr > th {
+  height: 48px;
+  padding-block: var(--table-header-block-padding);
+  vertical-align: bottom;
+  color: var(--color-text);
+  background: var(--table-header-background, var(--color-surface));
+  font: var(--type-table); font-weight: 600;
+}
+
+/* The card supplies the 20px gutter, so the first and last cells sit flush with the dividers. */
+.portal-standard-table > :is(thead, tbody, tfoot) > tr > :is(th, td):first-child {
+  padding-inline-start: var(--table-edge-padding);
+}
+
+.portal-standard-table > :is(thead, tbody, tfoot) > tr > :is(th, td):last-child {
+  padding-inline-end: var(--table-edge-padding);
+}
+
+.portal-standard-table > tbody:last-child > tr:last-child > :is(th, td) {
+  border-bottom: 0;
+}
+
+/* Opt-in hover and keyboard-focus row fill for rows with actions. */
+.portal-standard-table--interactive > tbody > tr:is(:hover, :focus-within) {
+  background: var(--color-hover);
+}
+
+.data-table-card:has(> .data-table-scroll) {
+  padding-block-end: var(--table-container-inset, 20px);
+}
