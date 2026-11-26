@@ -25,6 +25,29 @@ interface TelemetryStore {
 const STORAGE_KEY = "cal_telemetry";
 const MAX_EVENTS = 500; // keep last 500 events to avoid unbounded growth
 
+interface UmamiPageviewProps {
+  website: string;
+  url: string;
+  referrer: string;
+  [key: string]: unknown;
+}
+
+interface UmamiTracker {
+  track(
+    payload?:
+      | string
+      | Record<string, unknown>
+      | ((props: UmamiPageviewProps) => UmamiPageviewProps),
+    data?: Record<string, unknown>
+  ): Promise<void>;
+}
+
+declare global {
+  interface Window {
+    umami?: UmamiTracker;
+  }
+}
+
 function readStore(): TelemetryStore {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -97,6 +120,16 @@ export function logPageView(): void {
     `%c[Telemetry] PageView #${store.pageViews}`,
     "color:#6264A7;font-weight:bold"
   );
+}
+
+/** Report the resolved page path to Umami instead of the raw URL fragment. */
+export function trackPageview(path: string, isLandingPage: boolean): void {
+  if (typeof window === "undefined" || !window.umami) return;
+  window.umami.track((props) => ({
+    ...props,
+    url: path,
+    referrer: isLandingPage ? props.referrer : "",
+  }));
 }
 
 /** Log a click event with optional properties. */
