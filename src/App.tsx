@@ -924,7 +924,11 @@ function App() {
                     <PortalCard key={item.id} role="article" className="data-table-card labs-card labs-featured__card">
                       {item.image ? (
                         <img
-                          className={`labs-card__media${item.imageIsIllustration ? " labs-card__media--contain" : ""}`}
+                          className={`labs-card__media${
+                            item.imageIsIllustration
+                              ? " labs-card__media--contain"
+                              : " labs-card__media--top"
+                          }`}
                           src={item.image}
                           alt=""
                         />
