@@ -179,6 +179,19 @@ export const templates: TemplateItem[] = [
     collections: ["AI Business Value"],
   },
   {
+    id: "copilot-cli-personal-insights",
+    title: "GitHub Copilot CLI Personal Insights Dashboard",
+    description:
+      "A local, personal dashboard for exploring GitHub Copilot CLI usage - tokens, estimated cost, models, providers, trends, and task patterns. Unlike organizational insights tools, it is designed for one person's private analysis and runs entirely from local session data.",
+    url: "https://github.com/microsoft/ghc-cli-dashboard",
+    icon: DataTrending24Regular,
+    image: `${base}images/card-github-copilot-cli-personal.png`,
+    addedOn: "2026-09-15",
+    type: "GitHub",
+    impact: ["Individual"],
+    collections: ["AI Business Value"],
+  },
+  {
     id: "cowork-value-estimator",
     title: "Cowork Value Estimator",
     description:
