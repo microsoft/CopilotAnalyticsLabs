@@ -285,15 +285,11 @@
 
 /* ---- Templates ---- */
 
-/* Three equal columns; the featured template takes the first one across two rows. */
+/* Three equal columns; the six home templates fill two even rows. */
 .labs-template-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 16px;
-}
-
-.labs-template-card--featured {
-  grid-row: span 2;
 }
 
 .labs-stats {
@@ -556,10 +552,6 @@
   .labs-template-grid,
   .labs-roadmap__grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .labs-template-card--featured {
-    grid-row: auto;
   }
 
   .labs-research {
